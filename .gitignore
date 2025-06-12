@@ -1,0 +1,12 @@
+.DS_store
+*.o
+*.d
+*.a
+a.out
+ircserv
+obj/
+lib/
+.*.swp
+.*.swo
+.vscode/
+bircd/

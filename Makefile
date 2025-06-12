@@ -7,13 +7,14 @@ LIB_DIR :=
 #Filenames definition
 NAME := ircserv
 
-SRC_NAMES := main.cpp
+SRC_NAMES := main.cpp \
+			 Server.cpp
 
-#INC_NAMES := 
+INC_NAMES := ft_irc.h 
 
 OBJECTS := $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(notdir $(SRC_NAMES)))
 
-#INCLUDES := $(patsubst %.h, $(INC_DIR)/%.h, $(INC_NAMES))
+INCLUDES := $(patsubst %.h, $(INC_DIR)/%.h, $(INC_NAMES))
 
 DEPS := $(OBJECTS:.o=.d)
 
@@ -36,10 +37,10 @@ CUR_DIR := $(shell pwd)
 all: $(OBJECTS) $(NAME) 
 
 $(NAME): Makefile $(INCLUDES) $(OBJECTS) | $(LIB_DIR)
-	$(CC) $(CFLAGS) $(DEBUG) $(OBJECTS) -o $@ $(LIBS_TAG) $(LIBS_TAG)
+	$(CC) $(CFLAGS) -I $(INC_DIR) $(DEBUG) $(OBJECTS) -o $@ $(LIBS_TAG) $(LIBS_TAG)
 
-$(OBJ_DIR)/%.o: %.cpp Makefile | $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(DEBUG) -c $<  -o $@ 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -I $(INC_DIR) $(DEBUG) -c $<  -o $@ 
 
 $(OBJ_DIR):
 	@mkdir $(OBJ_DIR)
@@ -52,8 +53,7 @@ flags:
 
 show:
 	@echo $(OBJECTS)
-	@echo $(OBJECTS_BONUS)
-#	@echo $(SRC_NAMES)
+	@echo $(SRC_NAMES)
 
 clean: 
 	@rm -rf $(OBJ_DIR)

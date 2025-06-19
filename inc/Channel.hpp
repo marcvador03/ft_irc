@@ -1,26 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_irc.h                                           :+:      :+:    :+:   */
+/*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/04 19:25:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/06/19 15:51:51 by mpietrza         ###   ########.fr       */
+/*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
+/*   Updated: 2025/06/19 15:53:07 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# define FT_IRC_H
-
-# include <iostream>
-# include <string>
-# include "Server.hpp"
+#ifndef CHANNEL_HPP
+# define CHANNEL_HPP
 
 /*
-**`main.cpp`**  
-- Parse command-line arguments (port, password).  
-- Create and launch the `Server` instance.  
-- Manage the main loop (poll/select/epoll) and handle signals if needed.
-*/
+**`Channel.hpp` / `Channel.cpp`**  
+- Store channel name, topic, operators, invited users, etc.  
+- Manage channel modes (`i`, `t`, `k`, `o`, `l`).  
+- Forward messages to all users in channel.  
+- Implement commands like `KICK`, `INVITE`, `TOPIC`, `MODE`.  
+ */
 
 #endif

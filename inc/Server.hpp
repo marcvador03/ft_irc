@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/06/12 22:45:53 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/06/19 15:29:15 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,15 @@
 # include <sys/types.h>
 # include <bits/stdc++.h>
 # include <sys/poll.h>
+
+/*
+**`Server.hpp` / `Server.cpp`**  
+- Initialize listening sockets (IPv4/IPv6).  
+- Store and manage all connected `Client` objects.  
+- Dispatch incoming data (commands) to the right handlers.  
+- Provide methods for channel creation/deletion.  
+*/
+
 
 class Server{
 	public:

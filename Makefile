@@ -8,7 +8,9 @@ LIB_DIR :=
 NAME := ircserv
 
 SRC_NAMES := main.cpp \
-			 Server.cpp
+			 Server.cpp \
+			 Client.cpp \
+			 Channel.cpp
 
 INC_NAMES := ft_irc.h 
 

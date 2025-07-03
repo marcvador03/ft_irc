@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/06/19 15:29:15 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/03 17:12:04 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 # define SERVER_HPP
 # define PORT 6667
 # include <iostream>
+# include <vector>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <sys/types.h>
 # include <bits/stdc++.h>
 # include <sys/poll.h>
+# include "Client.hpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  
@@ -28,18 +30,33 @@
 - Provide methods for channel creation/deletion.  
 */
 
+class Client;
 
-class Server{
+class Server {
 	public:
-		Server ( void );
-		~Server( void );
+		Server ( int timeout );
+		virtual ~Server( void );
+		
+		std::vector<Client *> 	connections;
+		struct pollfd			fds[200];
+
+		void	addClient ( void );
+		void	removeClient ( void );
+		int		getTimeOut ( void ) const;
+
+
+	protected:
+		nfds_t					_serverfd;
+
 		
 	private:
-		int					_serverfd;
-		socklen_t			_socklen;
-		struct sockaddr_in	_server_addr;
-		struct pollfd		_fds[200];
-		int					_timeout;
+		Server ( void );
+		Server ( const Server &other );
+		Server &operator-( const Server &other );
+
+		socklen_t				_socklen;
+		struct sockaddr_in		_server_addr;
+		int						_timeout;
 };
 
 #endif

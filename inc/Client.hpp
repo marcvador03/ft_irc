@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/04 12:39:25 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/04 16:43:21 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ class Client {
 		Client ( nfds_t serverfd, int slot );
 		~Client ( void );
 		
-		std::string		ReceiveInput();
-		nfds_t			getClientfd( void ) const;
-		int				getSlot( void ) const;
+		void	ReceiveInput();
+		nfds_t	getClientfd( void ) const;
+		int		getSlot( void ) const;
 
 	private:
 		Client ( void );
@@ -43,6 +43,8 @@ class Client {
 		int					_slot;
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
+
+		std::string			_buffer_string;
 };
 
 #endif

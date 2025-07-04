@@ -6,37 +6,34 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/03 17:11:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/04 15:15:53 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_irc.h"
-#define PORT 6667
 
 int	main ( void )
 {
-	/*int					clientfd;
-	ssize_t				bytes_received;
-	char				buffer[1024];*/
-
 	Server server (60);
-	poll(server.fds, 1, server.getTimeOut());
-	while (!server.connections.empty())
+	while (1)
 	{
-		for (long unsigned int i = 0; i < server.connections.size(); i++)
+		poll(server.pfd, 200, -1);
+		for (long unsigned int i = 0; i <= server.connections.size(); i++) // monitors all connected clients sockets for their commands
 		{
-			if (server.fds[i].revents & POLLIN)
-				server.connections[i]->ReceiveInput();
-			else if (server.fds[i].revents & (POLLERR | POLLHUP))
-				std::cout << "we should close client fd" << std::endl;
-				//close Client fd??
+			if (server.pfd[i].revents & POLLIN)
+			{
+				if (i == 0)
+					server.addClient();
+				else
+				{	
+					char	buf[256];
+					int		bytes = recv(server.pfd[i].fd, buf, sizeof(buf), 0);
+					if (bytes == 0)
+						std::cout << "Connection lost" << std::endl;
+					server.connections[i]->ReceiveInput();
+				}
+			}
 		}
 	}
-	
-	//clientfd = accept(serverfd, (struct sockaddr *)&server_addr, &socklen);
-	//bytes_received = read(clientfd, buffer, sizeof(buffer) - 1);
-	//buffer[bytes_received] = '\0';
-
-
 	return (0);
 }

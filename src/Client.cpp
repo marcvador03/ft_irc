@@ -6,11 +6,11 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/04 16:51:12 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/05 15:45:23 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include "../inc/Client.hpp"
 
 Client::Client (nfds_t serverfd, int slot): 
 		_serverfd(serverfd),
@@ -30,23 +30,16 @@ Client::~Client( void )
 void	Client::ReceiveInput()
 {
 	char	buf[2048];
-	int		bytes; 
+	int		bytes;
 	
-	while (1)
+	std::memset(buf, 0, sizeof(buf));
+	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
+	if (bytes <= 0)
+		delete this;
+	else
 	{
-		std::memset(buf, 0, sizeof(buf));
-		bytes = recv(this->_clientfd, buf, sizeof(buf), 0);
-		if (bytes <= 0)
-		{
-			delete this;
-			break;
-		}
-		else
-		{
-			buf[bytes] = '\0';
-			this->_buffer_string = buf;		
-			std::cout << "Receiving input: " << this->_buffer_string;
-		}
+		buf[bytes] = '\0';
+			std::cout << "Receiving input: " << buf;
 	}
 }
 

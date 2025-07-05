@@ -6,13 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/04 14:32:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/05 15:31:39 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
-# define PORT 6668
+# define PORT 6667
 # define MAX_CONNECTIONS 1000
 # include <iostream>
 # include <map>
@@ -36,7 +36,7 @@ class Client;
 
 class Server {
 	public:
-		Server ( int timeout );
+		Server ( void );
 		virtual ~Server( void );
 		
 		std::map<int, Client *> 	connections;
@@ -44,10 +44,9 @@ class Server {
 
 		void	addClient ( void );
 		void	removeClient ( const Client *client );
-		int		getTimeOut ( void ) const;
+		//int		getTimeOut ( void ) const;
 
 	private:
-		Server ( void );
 		Server ( const Server &other );
 		Server &operator-( const Server &other );
 
@@ -59,7 +58,7 @@ class Server {
 		socklen_t				_socklen;
 		struct sockaddr_in		_server_addr;
 		std::map<int, bool>		_slots;
-		int						_timeout;
+		//int						_timeout;
 };
 
 #endif

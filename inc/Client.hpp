@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/04 16:43:21 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/05 15:44:03 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ class Client {
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
 
-		std::string			_buffer_string;
 };
 
 #endif

@@ -6,13 +6,13 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/04 16:04:31 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/05 15:31:48 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 
-Server::Server ( int timeout ): _timeout(timeout * 1000)
+Server::Server ( void )
 {
 	std::cout << "Launching Server..." << std::endl;
 	std::memset(&this->_server_addr, 0, sizeof(this->_server_addr));
@@ -65,10 +65,10 @@ void	Server::removeClient( const Client *client )
 
 /* Setters, Getters and private functions to manage available slot list */
 
-int	Server::getTimeOut( void ) const
+/*int	Server::getTimeOut( void ) const
 {
 	return this->_timeout;
-}
+}*/
 int	Server::getFirstSlot( void )
 {
 	for (int i = 0; i < MAX_CONNECTIONS; i++)

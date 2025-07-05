@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/04 16:14:24 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/05 15:31:26 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	main ( void )
 {
-	Server server (60);
+	Server server;
 	while (1)
 	{
 		poll(server.pfd, 200, -1);

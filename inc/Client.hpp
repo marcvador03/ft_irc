@@ -6,13 +6,14 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/06 15:46:10 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/06 15:48:52 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 # include <iostream>
+# include <cerrno>
 # include <sys/socket.h>
 # include "Server.hpp"
 

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/06 13:39:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/06 15:46:10 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,15 @@ class Client {
 		void	ReceiveInput();
 		
 		/* Setters & Getters */
-		nfds_t	getClientfd( void ) const;
+		int		getClientfd( void ) const;
 		int		getSlot( void ) const;
+		
+		/* Exceptions messages */
+		class ErrnoException: public std::exception {
+			public:
+				virtual const char* what() const throw()
+				{ return std::strerror(errno); }
+		};
 
 	private:
 		/* Coplien form - unauthorized constructors */	
@@ -43,9 +50,9 @@ class Client {
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
 		
-		nfds_t				_serverfd; //fd of server connected to
-		nfds_t				_clientfd; //fd of the client
-		int					_slot; //slot number [pollfd array position]
+		int	_serverfd; //fd of server connected to
+		int	_clientfd; //fd of the client
+		int	_slot; //slot number [pollfd array position]
   
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;

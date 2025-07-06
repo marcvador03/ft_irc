@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/06 13:40:55 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/06 15:46:10 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <iostream>
 # include <map>
 # include <iterator>
+# include <cerrno>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <sys/types.h>
@@ -40,14 +41,25 @@ class Server {
 		Server ( void );
 		virtual ~Server( void );
 		
-		/* List of connections and pollfd structure array */
-		std::map<int, Client *> 	connections;
-		struct pollfd			pfd[MAX_CONNECTIONS];
 
-		/* Functions to add/remove clients within the list of connections */
-		void	addClient ( void );
-		void	removeClient ( const Client *client );
+		/* Server launch sequences */
+		void	launch( void ); // initiate socket server and binds it to given port
+		void	listen_poll( void ); // sets the server in listening mode and keeps polling inputs
+		
 		//int		getTimeOut ( void ) const;
+
+		/* Exceptions messages */
+		class ErrnoException: public std::exception {
+			public:
+				virtual const char* what() const throw()
+				{ return std::strerror(errno); }
+		};
+		
+		class ServerPortIncorrectRange: public std::exception {
+			public:
+				virtual const char* what() const throw()
+				{ return "Port xx cannot be used for IRC server"; }
+		};
 
 	private:
 		/* Coplien form - unauthorized constructors */	
@@ -59,10 +71,18 @@ class Server {
 		void	setFreeSlot( const int i );
 		void	setBusySlot( const int i); // unused
 		
-		nfds_t					_serverfd; // fd of the server
+		/* Internal Functions to add/remove clients within the list of connections */
+		void	addClient ( void );
+		void	removeClient ( const Client *client );
+		
+		int						_serverfd; // fd of the server
 		std::map<int, bool>		_slots; // list slots for pollfd and status
 										// false: free to accept new client
 										// true: occupied by a client
+		
+		/* List of connections and pollfd structure array */
+		std::map<int, Client *> 	_connections;
+		struct pollfd				_pfd[MAX_CONNECTIONS];
 		
 		/* Internal variables for socket client management */
 		socklen_t				_socklen;

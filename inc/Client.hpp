@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/09 15:51:21 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/09 15:59:02 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <sys/types.h>
 # include <netinet/in.h>
 # include <bits/stdc++.h>
+# include <set>
+# include "Channel.hpp"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -27,11 +29,15 @@
 - Implement commands like `NICK`, `USER`, `JOIN`, `PRIVMSG`.  
 */
 
+class Channel;
+
 class Client {
 	public:
 		/* Coplien form */	
 		Client ( int serverfd, int slot );
 		~Client ( void );
+		
+		std::set<Channel *> _channels; //channels which client is member of
 
 		/* Method to receive bytes from client socket */
 		void	ReceiveInput();
@@ -52,6 +58,7 @@ class Client {
 		Client ( void );
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
+
 		
 		int	_serverfd; //fd of server connected to
 		int	_clientfd; //fd of the client

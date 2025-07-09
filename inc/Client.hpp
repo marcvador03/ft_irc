@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/06 15:48:52 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/09 15:51:21 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 # include <iostream>
 # include <cerrno>
 # include <sys/socket.h>
-# include "Server.hpp"
+# include <sys/types.h>
+# include <netinet/in.h>
+# include <bits/stdc++.h>
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -28,7 +30,7 @@
 class Client {
 	public:
 		/* Coplien form */	
-		Client ( nfds_t serverfd, int slot );
+		Client ( int serverfd, int slot );
 		~Client ( void );
 
 		/* Method to receive bytes from client socket */
@@ -59,6 +61,7 @@ class Client {
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
 
+		std::string			_name;			//client name
 };
 
 #endif

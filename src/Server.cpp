@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/06 15:42:59 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/10 14:59:44 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	Server::listen_poll( void )
 void	Server::addClient( void )
 {
 	Client	*c;
+
 	int	slot = this->getFirstSlot();
 	c = new Client(this->_serverfd, slot);
 	this->_pfd[slot].fd = c->getClientfd();
@@ -92,10 +93,6 @@ void	Server::removeClient( const Client *client )
 
 /* Setters, Getters and private functions to manage available slot list */
 
-/*int	Server::getTimeOut( void ) const
-{
-	return this->_timeout;
-}*/
 int	Server::getFirstSlot( void )
 {
 	for (int i = 0; i < MAX_CONNECTIONS; i++)

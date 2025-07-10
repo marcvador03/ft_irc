@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/09 15:59:02 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/10 15:29:42 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@ class Client {
 
 		/* Method to receive bytes from client socket */
 		void	ReceiveInput();
+
+		/*IRC Commands */
+		void	Pass (const std::string password);
+		void	Nick (const std::string nickname);
+		void	User (const std::string username, const std::string realname);
 		
 		/* Setters & Getters */
 		int		getClientfd( void ) const;
@@ -59,7 +64,6 @@ class Client {
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
 
-		
 		int	_serverfd; //fd of server connected to
 		int	_clientfd; //fd of the client
 		int	_slot; //slot number [pollfd array position]
@@ -67,8 +71,13 @@ class Client {
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
+		
+		bool		_pass; 			//true if correct pass was provided
+		bool		_isregistered; 	//registration status
 
-		std::string			_name;			//client name
+		std::string	_nickname;			//nickname, MUST BE UNIQUE ON SERVER
+		std::string	_username;			//username, ~ to be added as it is user-set and not server set
+		std::string	_realname;			//realname
 };
 
 #endif

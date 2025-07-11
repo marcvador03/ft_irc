@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/06 15:48:52 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/11 14:09:11 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,28 @@ class Client {
 			public:
 				virtual const char* what() const throw()
 				{ return std::strerror(errno); }
+	
+		/* Commands handling */
+		void handleJoin(const std::string &args);
+		void handlePart(const std::string &args);
+		void handleTopic(const std::string &args);
+		void handleInvite(const std::string &args);
+		void handleKick(const std::string &args);
+		void handleCap(const std::string &args);
+		void handlePass(const std::string &args);
+		void handleNick(const std::string &args);
+		void handleUser(const std::string &args);
+		void handleJoin(const std::string &args);
+		void handleOper(const std::string &args);
+		void handleQuit(const std::string &args);
+		void handleMode(const std::string &args);
+		void handlePrivmsg(const std::string &args);
+		void handleKill(const std::string &args);
+
+		/* Helpers */
+		std::string trim(const std::string &str);
+		void reply(const std::string &msg);
+
 		};
 
 	private:

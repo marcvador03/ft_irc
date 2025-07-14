@@ -6,17 +6,14 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/07/14 15:03:38 by mfleury          ###   ########.fr       */
-=======
-/*   Updated: 2025/07/09 15:59:02 by mfleury          ###   ########.fr       */
->>>>>>> 6eb504e (added channel list in Client class)
+/*   Updated: 2025/07/14 16:10:48 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 # include <iostream>
+# include <string>
 # include <cerrno>
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -66,7 +63,7 @@ class Client {
 		void handlePass(const std::string &args);
 		void handleNick(const std::string &args);
 		void handleUser(const std::string &args);
-		void handleJoin(const std::string &args);
+//		void handleJoin(const std::string &args);
 		void handleOper(const std::string &args);
 		void handleQuit(const std::string &args);
 		void handleMode(const std::string &args);
@@ -93,6 +90,9 @@ class Client {
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
+	
+		std::map <int, std::string> _args;
+		std::map <std::string, void(Client::*)(void)> _cmd;
 
 		std::string			_name;			//client name
 };

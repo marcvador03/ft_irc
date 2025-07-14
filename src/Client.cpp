@@ -6,11 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/07/11 14:47:31 by mpietrza         ###   ########.fr       */
-=======
-/*   Updated: 2025/07/09 16:05:45 by mfleury          ###   ########.fr       */
->>>>>>> 6eb504e (added channel list in Client class)
+/*   Updated: 2025/07/14 16:12:17 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +31,11 @@ Client::~Client( void )
 
 void	Client::ReceiveInput()
 {
-	char	buf[2048];
-	int		bytes;
+	char		buf[2048];
+	std::string line;
+	int			bytes;
+	int			i;
+	std::string::size_type start_pos;
 	
 	std::memset(buf, 0, sizeof(buf));
 	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
@@ -51,15 +50,20 @@ void	Client::ReceiveInput()
 		//mpietrza_2025-07-10
 		std::istringstream ss(buf);
 		//allows treating strings as streams in c++ allowing to read data from sources
-		std::string line;
-		while (std::getline(ss, line)) {
-			line = trim(line);
+		start_pos = 0;
+		i = 0;
+		while (std::getline(ss, line)) 
+		{
+			//line = trim(line); //marc: function unknown, what is the intent?
 			if (line.empty())
 				continue;
-
-			std::string cmd_name = line.substr(0, line.find(' '));
-			std::string args = line.substr(cmd_name.lenght());
-			//Call handler based on cmd_name
+			_args[i] = line.substr(start_pos, line.find(' '));
+			start_pos = line.find(' ');
+			if (start_pos == std::string::npos)
+				break;
+/*			std::string cmd_name = line.substr(0, line.find(' '));
+			std::string args = line.substr(cmd_name.lenght());*/
+/*			//Call handler based on cmd_name
 			if (cmd_name == "NICK")
 				handleNick(args);
 			else if (cmd_name == "USER")
@@ -68,8 +72,9 @@ void	Client::ReceiveInput()
 				handleJoin(args);
 			//have to add the rest of commands here
 			else
-				reply("Unknown command: " + cmd_name);
+				reply("Unknown command: " + cmd_name);*/
 		}
+		this->_cmd[_args[0]];
 	}
 }
 

@@ -6,13 +6,17 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/07/11 14:47:31 by mpietrza         ###   ########.fr       */
+=======
+/*   Updated: 2025/07/09 16:05:45 by mfleury          ###   ########.fr       */
+>>>>>>> 6eb504e (added channel list in Client class)
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
 
-Client::Client (nfds_t serverfd, int slot): 
+Client::Client (int serverfd, int slot): 
 		_serverfd(serverfd),
 		_slot(slot)
 {

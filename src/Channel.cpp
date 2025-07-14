@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/09 15:31:22 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/09 16:05:27 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,20 @@ void	Channel::addClient( int slot, Client *c )
 {
 	std::map<int, Client *>::iterator it = this->_clients.find(slot);
 	if (it == this->_clients.end())
+	{
+		c->_channels.insert(this);
 		this->_clients.insert(std::pair<int, Client *>(slot, c));
+	}
 }
 
 void	Channel::removeClient( int slot )
 {
 	std::map<int, Client *>::iterator it = this->_clients.find(slot);
 	if (it != this->_clients.end())
+	{
+		it->second->_channels.erase(this);
 		this->_clients.erase(it);
+	}
 }
 
 /*Getters and setters */

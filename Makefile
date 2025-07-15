@@ -10,7 +10,8 @@ NAME := ircserv
 SRC_NAMES := main.cpp \
 			 Server.cpp \
 			 Client.cpp \
-			 Channel.cpp
+			 Channel.cpp \
+			 ping.cpp
 
 INC_NAMES := ft_irc.h 
 

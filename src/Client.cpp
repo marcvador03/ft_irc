@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/15 14:32:36 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/15 15:28:11 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,27 +61,20 @@ void	Client::ReceiveInput()
 			start_pos = line.find(' ');
 			if (start_pos == std::string::npos)
 				break;
-/*			std::string cmd_name = line.substr(0, line.find(' '));
-			std::string args = line.substr(cmd_name.lenght());*/
-/*			//Call handler based on cmd_name
-			if (cmd_name == "NICK")
-				handleNick(args);
-			else if (cmd_name == "USER")
-				handleUser(args);
-			else if (cmd_name == "JOIN")
-				handleJoin(args);
-			//have to add the rest of commands here
-			else
-				reply("Unknown command: " + cmd_name);*/
+			this->_launch_cmd();
 		}
-
-		(this->*_memberPtr)(this->_args);
 
 	}
 }
 
-void	Client::launch_cmd( void )
+void	Client::_launch_cmd( void )
 {
+	if (this->_args[0] == "PING")
+		this->handlePing();
+	if (this->_args[0] == "NICK")
+		this->handleNick();
+	else
+		std::cout << "Unknown command: " + _args[0] << std::endl;
 }
 /* Commands handling */
 

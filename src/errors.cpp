@@ -1,27 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ping.cpp                                           :+:      :+:    :+:   */
+/*   errors.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/14 16:15:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/15 15:28:49 by mfleury          ###   ########.fr       */
+/*   Created: 2025/07/15 15:29:50 by mfleury           #+#    #+#             */
+/*   Updated: 2025/07/15 15:32:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
-
-void Client::handlePing( void ) const 
-{
-	send(this->_clientfd, "test", 4, 0);
-	std::cout << "ping sent" << std::endl;
-}
-
-void Client::handleNick( void ) 
-{
-	this->_nickname = this->_args[1];
-	std::cout << "nickname updated" << std::endl;
-}
 
 

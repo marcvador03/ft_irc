@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/15 14:20:48 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/15 15:26:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ class Client {
 		void 	handleMode(const std::string &args);
 		void 	handlePrivmsg(const std::string &args);
 		void 	handleKill(const std::string &args);
-		void 	handlePingtest( std::map <int, std::string> args ) const;
+		
+		void 	handlePing( void ) const;
+		void 	handleNick( void );
 		
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
@@ -99,10 +101,8 @@ class Client {
 	
 		t_arg _args;
 		
-		void (Client::*_memberPtr)( std::map<int, std::string>);
-		//std::map <std::string, void (Client::*)( std::map <int, std::string>)> _cmd;
-
 		std::string			_name;			//client name
+		std::string			_nickname;		
 };
 
 #endif

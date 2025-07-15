@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/14 16:10:48 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/15 13:45:19 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define CLIENT_HPP
 # include <iostream>
 # include <string>
+# include <iterator>
 # include <cerrno>
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -21,6 +22,8 @@
 # include <bits/stdc++.h>
 # include <set>
 # include "Channel.hpp"
+# include "ACmd.hpp"
+# include "Ping.hpp"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -31,6 +34,7 @@
 */
 
 class Channel;
+typedef std::map<int, std::string> t_arg;
 
 class Client {
 	public:
@@ -46,6 +50,25 @@ class Client {
 		/* Setters & Getters */
 		int		getClientfd( void ) const;
 		int		getSlot( void ) const;
+
+		/* Commands handling */
+		void	launch_cmd( void );
+		void 	handleJoin(const std::string &args);
+		void 	handlePart(const std::string &args);
+		void 	handleTopic(const std::string &args);
+		void 	handleInvite(const std::string &args);
+		void 	handleKick(const std::string &args);
+		void 	handleCap(const std::string &args);
+		void 	handlePass(const std::string &args);
+		void 	handleNick(const std::string &args);
+		void 	handleUser(const std::string &args);
+//		void 	handleJoin(const std::string &args);
+		void 	handleOper(const std::string &args);
+		void 	handleQuit(const std::string &args);
+		void 	handleMode(const std::string &args);
+		void 	handlePrivmsg(const std::string &args);
+		void 	handleKill(const std::string &args);
+		void 	handlePingtest( std::map <int, std::string> args ) const;
 		
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
@@ -53,25 +76,8 @@ class Client {
 				virtual const char* what() const throw()
 				{ return std::strerror(errno); }
 	
-		/* Commands handling */
-		void handleJoin(const std::string &args);
-		void handlePart(const std::string &args);
-		void handleTopic(const std::string &args);
-		void handleInvite(const std::string &args);
-		void handleKick(const std::string &args);
-		void handleCap(const std::string &args);
-		void handlePass(const std::string &args);
-		void handleNick(const std::string &args);
-		void handleUser(const std::string &args);
-//		void handleJoin(const std::string &args);
-		void handleOper(const std::string &args);
-		void handleQuit(const std::string &args);
-		void handleMode(const std::string &args);
-		void handlePrivmsg(const std::string &args);
-		void handleKill(const std::string &args);
 
 		/* Helpers */
-		std::string trim(const std::string &str);
 		void reply(const std::string &msg);
 
 		};
@@ -82,6 +88,8 @@ class Client {
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
 
+		std::string _trim(const std::string &str);
+		void		_launch_cmd( void );
 		
 		int	_serverfd; //fd of server connected to
 		int	_clientfd; //fd of the client
@@ -91,8 +99,11 @@ class Client {
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
 	
-		std::map <int, std::string> _args;
-		std::map <std::string, void(Client::*)(void)> _cmd;
+		t_arg _args;
+		std::map <std::string, ACmd *> _list; 
+		
+		//void (Client::*_memberPtr)( std::map<int, std::string>);
+		//std::map <std::string, void (Client::*)( std::map <int, std::string>)> _cmd;
 
 		std::string			_name;			//client name
 };

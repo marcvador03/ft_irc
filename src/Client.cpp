@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/14 16:12:17 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/15 13:45:19 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ Client::Client (int serverfd, int slot):
 	if (this->_clientfd == -1)
 		throw Client::ErrnoException(); 
 	std::cout << "Client connected" << std::endl;
+	_list["PING"] = Ping(this->_args);
+	_list["JOIN"] = Ping(*this);
 }
 
 Client::~Client( void )
@@ -36,6 +38,7 @@ void	Client::ReceiveInput()
 	int			bytes;
 	int			i;
 	std::string::size_type start_pos;
+	ACmd		*cmd;
 	
 	std::memset(buf, 0, sizeof(buf));
 	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
@@ -54,7 +57,7 @@ void	Client::ReceiveInput()
 		i = 0;
 		while (std::getline(ss, line)) 
 		{
-			//line = trim(line); //marc: function unknown, what is the intent?
+			line = this->_trim(line);
 			if (line.empty())
 				continue;
 			_args[i] = line.substr(start_pos, line.find(' '));
@@ -74,10 +77,14 @@ void	Client::ReceiveInput()
 			else
 				reply("Unknown command: " + cmd_name);*/
 		}
-		this->_cmd[_args[0]];
+
 	}
 }
 
+void	Client::launch_cmd( void )
+{
+	(this->*_memberPtr)(this->_args);
+}
 /* Commands handling */
 
 /** Command: JOIN
@@ -87,9 +94,9 @@ void	Client::ReceiveInput()
  * @param <channel>{,<channel>} [<key>]
  * @return Void;
  */
-void Client::handleJoin(const std::string &args) {
+/*void Client::handleJoin(const std::string &args) {
     // Parse args and join channel
-}
+}*/
 
 /** Command: PART
  * @brief The PART command removes the client from the given channel(s). 
@@ -99,9 +106,9 @@ void Client::handleJoin(const std::string &args) {
  * @param <channel>{,<channel>} [<reason>]
  * @return Void;
  */
-void Client::handlePart(const std::string &args) {
+/*void Client::handlePart(const std::string &args) {
 	// Parse args and part from channel
-}
+}*/
 
 /** Command: TOPIC
  * @brief The TOPIC command is used to change or view the topic 
@@ -112,9 +119,9 @@ void Client::handlePart(const std::string &args) {
  * @param <channel> [<topic>]
  * @return Void;
  */
-void Client::handleTopic(const std::string &args) {
+/*void Client::handleTopic(const std::string &args) {
 	// Parse args and set topic for channel
-}
+}*/
 
 /** Command: INVITE
  * @brief The INVITE command is used to invite a user to a channel.
@@ -123,22 +130,22 @@ void Client::handleTopic(const std::string &args) {
  * @param <nickname> <channel>
  * @return Void;
  */
-void Client::handleInvite(const std::string &args) {
+/*void Client::handleInvite(const std::string &args) {
 	// Parse args and invite user to channel
-}
+}*/
 
 
 /*
 ...
  */
 
-void Client::reply(const std::string& msg) {
+/*void Client::reply(const std::string& msg) {
     send(this->_clientfd, msg.c_str(), msg.length(), 0);
-}
+}*/
 
 /* Helpers */
 //Helper for trimming white spaces
-std::string Client::trim(const std::string &str) {
+std::string	Client::_trim(const std::string &str) {
 	const std::string WHITESPACE = " \n\r\t\f\v";
 	size_t start = str.find_first_not_of(WHITESPACE);
 	if (start == std::string::npos)

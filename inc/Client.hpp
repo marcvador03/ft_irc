@@ -6,13 +6,15 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/10 15:29:42 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/15 14:20:48 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 # include <iostream>
+# include <string>
+# include <iterator>
 # include <cerrno>
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -30,6 +32,7 @@
 */
 
 class Channel;
+typedef std::map<int, std::string> t_arg;
 
 class Client {
 	public:
@@ -41,21 +44,40 @@ class Client {
 
 		/* Method to receive bytes from client socket */
 		void	ReceiveInput();
-
-		/*IRC Commands */
-		void	Pass (const std::string password);
-		void	Nick (const std::string nickname);
-		void	User (const std::string username, const std::string realname);
 		
 		/* Setters & Getters */
 		int		getClientfd( void ) const;
 		int		getSlot( void ) const;
+
+		/* Commands handling */
+		void	launch_cmd( void );
+		void 	handleJoin(const std::string &args);
+		void 	handlePart(const std::string &args);
+		void 	handleTopic(const std::string &args);
+		void 	handleInvite(const std::string &args);
+		void 	handleKick(const std::string &args);
+		void 	handleCap(const std::string &args);
+		void 	handlePass(const std::string &args);
+		void 	handleNick(const std::string &args);
+		void 	handleUser(const std::string &args);
+//		void 	handleJoin(const std::string &args);
+		void 	handleOper(const std::string &args);
+		void 	handleQuit(const std::string &args);
+		void 	handleMode(const std::string &args);
+		void 	handlePrivmsg(const std::string &args);
+		void 	handleKill(const std::string &args);
+		void 	handlePingtest( std::map <int, std::string> args ) const;
 		
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
 			public:
 				virtual const char* what() const throw()
 				{ return std::strerror(errno); }
+	
+
+		/* Helpers */
+		void reply(const std::string &msg);
+
 		};
 
 	private:
@@ -64,6 +86,9 @@ class Client {
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
 
+		std::string _trim(const std::string &str);
+		void		_launch_cmd( void );
+		
 		int	_serverfd; //fd of server connected to
 		int	_clientfd; //fd of the client
 		int	_slot; //slot number [pollfd array position]
@@ -71,13 +96,13 @@ class Client {
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
+	
+		t_arg _args;
 		
-		bool		_pass; 			//true if correct pass was provided
-		bool		_isregistered; 	//registration status
+		void (Client::*_memberPtr)( std::map<int, std::string>);
+		//std::map <std::string, void (Client::*)( std::map <int, std::string>)> _cmd;
 
-		std::string	_nickname;			//nickname, MUST BE UNIQUE ON SERVER
-		std::string	_username;			//username, ~ to be added as it is user-set and not server set
-		std::string	_realname;			//realname
+		std::string			_name;			//client name
 };
 
 #endif

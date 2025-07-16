@@ -11,7 +11,11 @@ SRC_NAMES := main.cpp \
 			 Server.cpp \
 			 Client.cpp \
 			 Channel.cpp \
-			 ping.cpp
+			 Commands.cpp
+
+CMDS_NAMES := cmds_marc.cpp
+
+SRC_NAMES += $(addprefix $(SRC_DIR)/commands/, $(CMDS_NAMES))
 
 INC_NAMES := ft_irc.h 
 
@@ -43,6 +47,8 @@ $(NAME): Makefile $(INCLUDES) $(OBJECTS) | $(LIB_DIR)
 	$(CC) $(CFLAGS) -I $(INC_DIR) $(DEBUG) $(OBJECTS) -o $@ $(LIBS_TAG) $(LIBS_TAG)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -I $(INC_DIR) $(DEBUG) -c $<  -o $@ 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/commands/%.cpp Makefile | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -I $(INC_DIR) $(DEBUG) -c $<  -o $@ 
 
 $(OBJ_DIR):

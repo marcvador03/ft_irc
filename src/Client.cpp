@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/15 15:28:11 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 10:42:15 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,21 @@ void	Client::ReceiveInput()
 	int			bytes;
 	int			i;
 	std::string::size_type start_pos;
+	std::istringstream ss(buf);
 	
 	std::memset(buf, 0, sizeof(buf));
 	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
 	if (bytes == -1)
 		throw Client::ErrnoException(); 
 	else if (bytes == 0)
+	{
 		delete this;
+		return;
+	}
 	else
 	{
 		buf[bytes] = '\0';
 		std::cout << "Receiving input: " << buf;
-		//mpietrza_2025-07-10
-		std::istringstream ss(buf);
-		//allows treating strings as streams in c++ allowing to read data from sources
 		start_pos = 0;
 		i = 0;
 		while (std::getline(ss, line)) 
@@ -57,17 +58,20 @@ void	Client::ReceiveInput()
 			line = this->_trim(line);
 			if (line.empty())
 				continue;
-			_args[i] = line.substr(start_pos, line.find(' '));
+			_args[i++] = line.substr(start_pos, line.find(' '));
 			start_pos = line.find(' ');
 			if (start_pos == std::string::npos)
 				break;
-			this->_launch_cmd();
 		}
-
+		t_list::iterator it = cmdList.find(this->_args[0]);
+		if (it == cmdList.end())
+			return;
+		else 
+			it->second(*this);
 	}
 }
 
-void	Client::_launch_cmd( void )
+/*void	Client::_launch_cmd( void )
 {
 	if (this->_args[0] == "PING")
 		this->handlePing();
@@ -75,7 +79,8 @@ void	Client::_launch_cmd( void )
 		this->handleNick();
 	else
 		std::cout << "Unknown command: " + _args[0] << std::endl;
-}
+	
+}*/
 /* Commands handling */
 
 /** Command: JOIN

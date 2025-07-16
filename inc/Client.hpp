@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/15 15:26:18 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 10:42:15 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@
 # include <sys/types.h>
 # include <netinet/in.h>
 # include <bits/stdc++.h>
-# include <set>
+# include <map>
 # include "Channel.hpp"
+# include "Commands.hpp"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -31,8 +32,8 @@
 - Implement commands like `NICK`, `USER`, `JOIN`, `PRIVMSG`.  
 */
 
-class Channel;
 typedef std::map<int, std::string> t_arg;
+class Channel;
 
 class Client {
 	public:
@@ -49,7 +50,7 @@ class Client {
 		int		getClientfd( void ) const;
 		int		getSlot( void ) const;
 
-		/* Commands handling */
+		/* Commands handling 
 		void	launch_cmd( void );
 		void 	handleJoin(const std::string &args);
 		void 	handlePart(const std::string &args);
@@ -68,16 +69,16 @@ class Client {
 		void 	handleKill(const std::string &args);
 		
 		void 	handlePing( void ) const;
-		void 	handleNick( void );
+		void 	handleNick( void );*/
 		
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
 			public:
 				virtual const char* what() const throw()
 				{ return std::strerror(errno); }
-	
 
 		/* Helpers */
+void handlePing( Client &c ); 
 		void reply(const std::string &msg);
 
 		};
@@ -89,7 +90,7 @@ class Client {
 		Client &operator=( const Client &other);
 
 		std::string _trim(const std::string &str);
-		void		_launch_cmd( void );
+		//void		_launch_cmd( void );
 		
 		int	_serverfd; //fd of server connected to
 		int	_clientfd; //fd of the client
@@ -99,7 +100,7 @@ class Client {
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
 	
-		t_arg _args;
+		t_arg 	_args;
 		
 		std::string			_name;			//client name
 		std::string			_nickname;		

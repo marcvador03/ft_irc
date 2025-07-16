@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 09:31:13 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 10:49:35 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	main ( void )
 {
 	Server server;
 	signal(SIGINT, handle_signal);
+	init_command_list();
 	try {
 		server.launch();
 		server.listen_poll();

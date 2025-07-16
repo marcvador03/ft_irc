@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_irc.h                                           :+:      :+:    :+:   */
+/*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/04 19:25:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 10:49:05 by mfleury          ###   ########.fr       */
+/*   Created: 2025/07/16 10:40:27 by mfleury           #+#    #+#             */
+/*   Updated: 2025/07/16 10:48:00 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_IRC_H
-# define FT_IRC_H
-# include <iostream>
-# include <string>
-# include <csignal>
-# include "Server.hpp"
-# include "Commands.hpp"
+#include "../inc/Commands.hpp"
 
-
-#endif
+void init_command_list()
+{
+	cmdList["PING"] = handlePing;
+}

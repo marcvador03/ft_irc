@@ -1,14 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nick.cpp                                           :+:      :+:    :+:   */
+/*   cmds_marc.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 15:24:00 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/15 15:25:05 by mfleury          ###   ########.fr       */
+/*   Created: 2025/07/16 09:50:36 by mfleury           #+#    #+#             */
+/*   Updated: 2025/07/16 09:52:14 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/Client.hpp"
+#ifndef CMDS_MARC_HPP
+# define CMDS_MARC_HPP
+# include "../Client.hpp"
+
+#endif
 

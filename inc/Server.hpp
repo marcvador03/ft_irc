@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 13:51:32 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 14:02:55 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,19 +50,6 @@ class Server {
 		
 		static bool	signal;
 		//int		getTimeOut ( void ) const;
-
-		/* Exceptions messages */
-	/*	class ErrnoException: public std::exception {
-			public:
-				virtual const char* what() const throw()
-				{ return std::strerror(errno); }
-		};
-		
-		class ServerPortIncorrectRange: public std::exception {
-			public:
-				virtual const char* what() const throw()
-				{ return "Port xx cannot be used for IRC server"; }
-		};*/
 
 	private:
 		/* Coplien form - unauthorized constructors */	

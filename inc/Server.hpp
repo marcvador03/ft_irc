@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/06 15:46:10 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 13:51:32 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <bits/stdc++.h>
 # include <sys/poll.h>
 # include "Client.hpp"
+# include "Errors.hpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  
@@ -45,11 +46,13 @@ class Server {
 		/* Server launch sequences */
 		void	launch( void ); // initiate socket server and binds it to given port
 		void	listen_poll( void ); // sets the server in listening mode and keeps polling inputs
+		void	closefds( void ); // sweep function to properly close all sockets
 		
+		static bool	signal;
 		//int		getTimeOut ( void ) const;
 
 		/* Exceptions messages */
-		class ErrnoException: public std::exception {
+	/*	class ErrnoException: public std::exception {
 			public:
 				virtual const char* what() const throw()
 				{ return std::strerror(errno); }
@@ -59,7 +62,7 @@ class Server {
 			public:
 				virtual const char* what() const throw()
 				{ return "Port xx cannot be used for IRC server"; }
-		};
+		};*/
 
 	private:
 		/* Coplien form - unauthorized constructors */	

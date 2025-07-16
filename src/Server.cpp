@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/10 14:59:44 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 13:52:56 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,14 @@ Server::Server ( void )
 
 Server::~Server( void )
 {
-	close (this->_serverfd);
-	std::cout << "Server has been properly shutdown" << std::endl;
+	this->closefds();
 }
 
 void	Server::launch( void )
 {
 	this->_serverfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_serverfd == -1)
-		throw Server::ErrnoException(); 
+		throw Error::ErrnoException(); 
 	std::cout << "Launching Server..." << std::endl;
 	std::memset(&this->_server_addr, 0, sizeof(this->_server_addr));
 	this->_server_addr.sin_family = AF_INET;
@@ -35,14 +34,14 @@ void	Server::launch( void )
 	this->_socklen = sizeof(this->_server_addr);
 	std::cout << "Server launched" << std::endl;
 	if (bind(this->_serverfd, (const struct sockaddr *)&(this->_server_addr), sizeof(this->_server_addr)) == -1)
-		throw Server::ErrnoException(); 
+		throw Error::ErrnoException(); 
 	std::cout << "Server bound to address and port: " << PORT << std::endl;
 }
 
 void	Server::listen_poll( void )
 {
 	if (listen(this->_serverfd, MAX_CONNECTIONS) == -1)
-		throw Server::ErrnoException(); 
+		throw Error::ErrnoException(); 
 	std::cout << "Server is ready to listen" << std::endl;
 	for (int i = 0; i < MAX_CONNECTIONS; i++)
 		this->_slots[i] = false;
@@ -50,10 +49,10 @@ void	Server::listen_poll( void )
 	this->_pfd[0].events = POLLIN;
 	this->_slots[0] = true;
 	std::cout << "Server is listening and starts polling" << std::endl;
-	while (1)
+	while (Server::signal == false)
 	{
 		if (poll(this->_pfd, 200, -1) == -1)
-			throw Server::ErrnoException(); 
+			throw Error::ErrnoException(); 
 		for (long unsigned int i = 0; i <= this->_connections.size(); i++) // monitors all connected clients sockets for their commands
 		{
 			if (this->_pfd[i].revents & POLLIN)
@@ -65,6 +64,13 @@ void	Server::listen_poll( void )
 			}
 		}
 	}
+	this->closefds();
+}
+
+void	Server::closefds( void )
+{
+	close(this->_serverfd);
+	std::cout << "Server has been properly shutdown" << std::endl;
 }
 
 void	Server::addClient( void )

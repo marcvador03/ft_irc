@@ -6,15 +6,23 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/06 15:35:03 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 09:31:13 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_irc.h"
 
+void	handle_signal(int sig)
+{
+	(void) sig;	
+	std::cout << "Server interrupted by user Ctrl-C" << std::endl;
+	exit(0);
+}
+
 int	main ( void )
 {
 	Server server;
+	signal(SIGINT, handle_signal);
 	try {
 		server.launch();
 		server.listen_poll();

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 14:02:55 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 15:05:45 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 # include <bits/stdc++.h>
 # include <sys/poll.h>
 # include "Client.hpp"
-# include "Errors.hpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  
@@ -50,7 +49,17 @@ class Server {
 		
 		static bool	signal;
 		//int		getTimeOut ( void ) const;
+		
+		public:
+			class ErrnoException: public std::exception {
+				virtual const char* what() const throw() 
+				{return std::strerror(errno);}
+			};
 
+			class ServerPortIncorrectRange: public std::exception {
+				virtual const char* what() const throw()
+				{return "Port xx cannot be used for IRC server";} 
+			};
 	private:
 		/* Coplien form - unauthorized constructors */	
 		Server ( const Server &other );

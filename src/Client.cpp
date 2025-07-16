@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/16 14:42:24 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 15:13:00 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Client::Client (int serverfd, int slot):
 	this->_socklen = sizeof(this->_client_addr);
 	this->_clientfd = accept(this->_serverfd, (struct sockaddr *)&this->_client_addr, &this->_socklen);
 	if (this->_clientfd == -1)
-		throw Error::ErrnoException(); 
+		throw Client::ErrnoException();
 	std::cout << "Client connected" << std::endl;
 }
 
@@ -40,7 +40,7 @@ void	Client::ReceiveInput()
 	std::memset(buf, 0, sizeof(buf));
 	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
 	if (bytes == -1)
-		throw Error::ErrnoException(); 
+		throw Client::ErrnoException(); 
 	else if (bytes == 0)
 	{
 		delete this;
@@ -69,16 +69,10 @@ void	Client::ReceiveInput()
 
 void	Client::LaunchCmd()
 {
-	try {
-		if (args[0] == "PING")
-			handlePing(*this);
-		if (args[0] == "NICK")
-			handleNick(*this);
-	}
-	catch (const std::exception& e) {
-		std::cout << "Error: " << e.what() << std::endl;
-	}
-
+	if (args[0] == "PING")
+		handlePing(*this);
+	if (args[0] == "NICK")
+		handleNick(*this);
 }
 /* Helpers */
 //Helper for trimming white spaces
@@ -112,8 +106,8 @@ std::string	Client::getNickname( void ) const
 
 void		Client::setNickname( std::string &nick)
 {
-	if (nick.empty() == false)
-		throw Error::NoNickNameGiven();
+	if (nick.empty() == true)
+		std::cout << this->_clientfd << ": no nickname provided" << std::endl;
 	this->_nickname = nick;
 }
 

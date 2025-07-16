@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/16 14:39:18 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 15:12:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@
 # include <bits/stdc++.h>
 # include <map>
 # include "Channel.hpp"
-# include "Errors.hpp"
-# include "commands_list.h"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -56,7 +54,13 @@ class Client {
 		void		setNickname( std::string &nick);
 		std::string	getName( void ) const;
 		void		setName( std::string &name);
-
+		
+		public:
+			class ErrnoException: public std::exception {
+				virtual const char* what() const throw() 
+				{return std::strerror(errno);}
+			};
+	
 	private:
 		/* Coplien form - unauthorized constructors */	
 		Client ( void );
@@ -79,4 +83,6 @@ class Client {
 		
 };
 
+void handlePing( Client &c );
+void handleNick( Client &c ); 
 #endif

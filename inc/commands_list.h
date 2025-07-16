@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:50:36 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 14:36:29 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 15:04:47 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <iostream>
 # include <cerrno>
 # include <bits/stdc++.h>
-# include "Errors.hpp"
 
 class Client;
 

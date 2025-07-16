@@ -10,8 +10,7 @@ NAME := ircserv
 SRC_NAMES := main.cpp \
 			 Server.cpp \
 			 Client.cpp \
-			 Channel.cpp \
-			 Errors.cpp
+			 Channel.cpp
 
 CMDS_NAMES := cmds_marc.cpp
 

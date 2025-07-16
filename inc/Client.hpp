@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/16 10:42:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 14:39:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 # include <bits/stdc++.h>
 # include <map>
 # include "Channel.hpp"
-# include "Commands.hpp"
+# include "Errors.hpp"
+# include "commands_list.h"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -31,7 +32,6 @@
 - Handle raw input parsing (buffering, partial messages).  
 - Implement commands like `NICK`, `USER`, `JOIN`, `PRIVMSG`.  
 */
-
 typedef std::map<int, std::string> t_arg;
 class Channel;
 
@@ -45,43 +45,17 @@ class Client {
 
 		/* Method to receive bytes from client socket */
 		void	ReceiveInput();
+		void	LaunchCmd();
+		
+		t_arg 		args;
 		
 		/* Setters & Getters */
-		int		getClientfd( void ) const;
-		int		getSlot( void ) const;
-
-		/* Commands handling 
-		void	launch_cmd( void );
-		void 	handleJoin(const std::string &args);
-		void 	handlePart(const std::string &args);
-		void 	handleTopic(const std::string &args);
-		void 	handleInvite(const std::string &args);
-		void 	handleKick(const std::string &args);
-		void 	handleCap(const std::string &args);
-		void 	handlePass(const std::string &args);
-		void 	handleNick(const std::string &args);
-		void 	handleUser(const std::string &args);
-//		void 	handleJoin(const std::string &args);
-		void 	handleOper(const std::string &args);
-		void 	handleQuit(const std::string &args);
-		void 	handleMode(const std::string &args);
-		void 	handlePrivmsg(const std::string &args);
-		void 	handleKill(const std::string &args);
-		
-		void 	handlePing( void ) const;
-		void 	handleNick( void );*/
-		
-		/* Exceptions messages */
-		class ErrnoException: public std::exception {
-			public:
-				virtual const char* what() const throw()
-				{ return std::strerror(errno); }
-
-		/* Helpers */
-void handlePing( Client &c ); 
-		void reply(const std::string &msg);
-
-		};
+		int			getClientfd( void ) const;
+		int			getSlot( void ) const;
+		std::string	getNickname( void ) const;
+		void		setNickname( std::string &nick);
+		std::string	getName( void ) const;
+		void		setName( std::string &name);
 
 	private:
 		/* Coplien form - unauthorized constructors */	
@@ -89,21 +63,20 @@ void handlePing( Client &c );
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
 
+		/* Helpers */
 		std::string _trim(const std::string &str);
-		//void		_launch_cmd( void );
 		
-		int	_serverfd; //fd of server connected to
-		int	_clientfd; //fd of the client
-		int	_slot; //slot number [pollfd array position]
+		int			_serverfd; //fd of server connected to
+		int			_clientfd; //fd of the client
+		int			_slot; //slot number [pollfd array position]
+		std::string	_name;			//client name
+		std::string	_nickname;		
   
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
 	
-		t_arg 	_args;
 		
-		std::string			_name;			//client name
-		std::string			_nickname;		
 };
 
 #endif

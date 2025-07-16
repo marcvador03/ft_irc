@@ -6,30 +6,40 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 10:49:35 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 14:34:27 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_irc.h"
 
+bool	Server::signal = false;
+
 void	handle_signal(int sig)
 {
-	(void) sig;	
+	(void) sig;
+		
 	std::cout << "Server interrupted by user Ctrl-C" << std::endl;
-	exit(0);
+	Server::signal = true;
 }
 
 int	main ( void )
 {
 	Server server;
 	signal(SIGINT, handle_signal);
-	init_command_list();
 	try {
 		server.launch();
 		server.listen_poll();
 	}
 	catch (const std::exception& e) {
-		std::cout << "Caugh error: " << e.what() << std::endl;
+		std::cout << "Caught error: " << e.what() << std::endl;
 	}
 	return (0);
 }
+
+
+
+
+
+
+
+

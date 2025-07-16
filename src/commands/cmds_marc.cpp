@@ -6,12 +6,12 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 09:53:02 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/16 14:39:59 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "../../inc/commands/cmds_marc.hpp"
+#include "../../inc/commands_list.h"
 
 void handlePing( Client &c ) 
 {
@@ -19,10 +19,10 @@ void handlePing( Client &c )
 	std::cout << "ping sent" << std::endl;
 }
 
-/*void handleNick( Client &c ) 
+void handleNick( Client &c ) 
 {
-	this->_nickname = this->_args[1];
+	c.setNickname (c.args[1]);
 	std::cout << "nickname updated" << std::endl;
-}*/
+}
 
 

@@ -11,7 +11,7 @@ SRC_NAMES := main.cpp \
 			 Server.cpp \
 			 Client.cpp \
 			 Channel.cpp \
-			 Commands.cpp
+			 Errors.cpp
 
 CMDS_NAMES := cmds_marc.cpp
 

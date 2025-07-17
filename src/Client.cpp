@@ -6,11 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/16 15:13:00 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/17 16:34:10 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
+#include "../inc/utils.hpp"
+
 
 Client::Client (int serverfd, int slot): 
 		_serverfd(serverfd),
@@ -55,7 +57,7 @@ void	Client::ReceiveInput()
 		i = 0;
 		while (std::getline(ss, line)) 
 		{
-			line = this->_trim(line);
+			line = trim(line);
 			if (line.empty())
 				continue;
 			args[i++] = line.substr(start_pos, line.find(' '));
@@ -71,20 +73,8 @@ void	Client::LaunchCmd()
 {
 	if (args[0] == "PING")
 		handlePing(*this);
-	if (args[0] == "NICK")
+	else if (args[0] == "NICK")
 		handleNick(*this);
-}
-/* Helpers */
-//Helper for trimming white spaces
-std::string	Client::_trim(const std::string &str) {
-	const std::string WHITESPACE = " \n\r\t\f\v";
-	size_t start = str.find_first_not_of(WHITESPACE);
-	if (start == std::string::npos)
-		//find_first_not_of() - C++ `std::string` class; this function is used to search a string (`str`) for the first character that does **not** match any of the characters specified in its argument
-		// It returns the index of that character, or `std::string::npos` if all characters match the set
-		return "";
-	size_t end = str.find_last_not_of(WHITESPACE);
-	return str.substr(start, end - start + 1);
 }
 
 /* Getters and setters */
@@ -120,4 +110,7 @@ void		Client::setName( std::string &name)
 {
 	this->_name = name;
 }
-
+void Client::reply(const std::string& msg) 
+{
+	send(this->_clientfd, msg.c_str(), msg.length(), 0);
+}

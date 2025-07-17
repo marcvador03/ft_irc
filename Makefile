@@ -10,11 +10,13 @@ NAME := ircserv
 SRC_NAMES := main.cpp \
 			 Server.cpp \
 			 Client.cpp \
-			 Channel.cpp
+			 Channel.cpp \
+			 utils.cpp \
+			 commands.cpp
 
-CMDS_NAMES := cmds_marc.cpp
+#CMDS_NAMES := cmds_marc.cpp
 
-SRC_NAMES += $(addprefix $(SRC_DIR)/commands/, $(CMDS_NAMES))
+#SRC_NAMES += $(addprefix $(SRC_DIR)/commands/, $(CMDS_NAMES))
 
 INC_NAMES := ft_irc.h 
 

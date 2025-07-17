@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/16 15:12:18 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/17 16:36:55 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,11 @@
 - Handle raw input parsing (buffering, partial messages).  
 - Implement commands like `NICK`, `USER`, `JOIN`, `PRIVMSG`.  
 */
+
+//`t_arg` is a type alias for a map that associates an integer (slot) with
+//a string (argument). This is used to store command arguments for the client.
 typedef std::map<int, std::string> t_arg;
+
 class Channel;
 
 class Client {
@@ -55,6 +59,9 @@ class Client {
 		std::string	getName( void ) const;
 		void		setName( std::string &name);
 		
+		/*helpers*/
+		void reply(const std::string& msg);
+
 		public:
 			class ErrnoException: public std::exception {
 				virtual const char* what() const throw() 
@@ -66,9 +73,6 @@ class Client {
 		Client ( void );
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
-
-		/* Helpers */
-		std::string _trim(const std::string &str);
 		
 		int			_serverfd; //fd of server connected to
 		int			_clientfd; //fd of the client
@@ -83,6 +87,8 @@ class Client {
 		
 };
 
+// Command handlers
+void handleJoin( Client &c );
 void handlePing( Client &c );
 void handleNick( Client &c ); 
 #endif

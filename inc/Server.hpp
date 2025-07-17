@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 15:05:45 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/17 17:34:09 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ class Server {
 		void	addClient ( void );
 		void	removeClient ( const Client *client );
 		
+		/* Server variables */
+		std::string				_password; // server password
 		int						_serverfd; // fd of the server
 		std::map<int, bool>		_slots; // list slots for pollfd and status
 										// false: free to accept new client

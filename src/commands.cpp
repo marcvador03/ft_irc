@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/17 18:20:10 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:33:13 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,14 +241,51 @@ void handleJoin( Client &c )
 
 void handlePing( Client &c ) 
 {
-	send(c.getClientfd(), "test", 4, 0);
-	std::cout << "ping sent" << std::endl;
+	//check if the token is present and non-empty
+	if (c.args.size() < 2 || c.args[1].empty()) 
+	{
+		c.reply("409 PING :No originn specified\r\n"); //ERR_NOORIGIN
+		return ;
+	}
+	std::string token = c.args[1];
+	c.reply("PONG :" + token + "\r\n");
+	std::cout << "PONG sent with token: " << token << std::endl;
 }
 
-void handleNick( Client &c ) 
+void handleNick(Server &s, Client &c ) 
 {
-	c.setNickname (c.args[1]);
-	std::cout << "nickname updated" << std::endl;
+	//check if nickname is provided
+	if (c.args.size() < 2 || c.args[1].empty())
+	{
+		c.reply("431 NICK :No nickname given\r\n");
+		return ;
+	}
+
+	std::string newNick = c.args[1];
+
+	//validate nickname format
+	if (!isValidNickname(newNick))
+	{
+		c.reply("432 NICK :Erroneous nickname\r\n");
+		return ;
+	}
+
+	/* TODO: need a new server function : "bool isNickcnameInUse( const std::string &newNick) const"*/
+	//check if nickname is not already in use
+	/*if (s.isNickcnameInUse(newNick))
+	{
+		c.reply("433 NICK :Nickname is already in use\r\n");
+		std::cout << "Nickname '" << newNick << "'is already in use." << std::endl;
+		return ;
+	}*/
+
+	//set the new nickname
+	std::string oldNick = c.getNickname();
+	c.setNickname (newNick);
+
+	//acknowledge the client and print to server log
+	c.reply(":" + oldNick + " NICK " + newNick + "\r\n");
+	std::cout << "Nickname changed from '" << oldNick << "' to '" << newNick << "'." << std::endl;
 }
 
 

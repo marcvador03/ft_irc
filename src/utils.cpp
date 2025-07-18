@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:18:27 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/16 12:55:29 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/18 14:09:30 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,3 +35,4 @@ std::vector<std::string> split(const std::string &s, char delimiter) {
 	}
 	return tokens;
 }
+

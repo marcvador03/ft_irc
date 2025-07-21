@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/09 15:36:47 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:16:36 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@
 # include <map>
 # include <iterator>
 # include "Client.hpp"
-
-#include <string>
-#include <set>
-#include "Client.hpp"
+# include <string>
+# include <set>
+# include "Client.hpp"
 
 /*
 **`Channel.hpp` / `Channel.cpp`**  

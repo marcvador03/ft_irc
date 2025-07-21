@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 15:06:19 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:26:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	Server::addClient( void )
 	Client	*c;
 
 	int	slot = this->getFirstSlot();
-	c = new Client(this->_serverfd, slot);
+	c = new Client(this, slot);
 	this->_pfd[slot].fd = c->getClientfd();
 	this->_pfd[slot].events = POLLIN;
 	this->_connections.insert(std::make_pair(slot, c));
@@ -123,4 +123,8 @@ void	Server::setBusySlot( const int i)
 {
 	this->_slots[i] = true;
 	//if i > max connections?
+}
+int	Server::get_Fd() const
+{
+	return (this->_serverfd);
 }

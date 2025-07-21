@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 15:02:35 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:24:37 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 #include "../inc/utils.hpp"
 
 
-Client::Client (int serverfd, int slot): 
-		_serverfd(serverfd),
+Client::Client (Server *s, int slot): 
+		_server(s),
 		_slot(slot)
 {
 	this->_socklen = sizeof(this->_client_addr);
-	this->_clientfd = accept(this->_serverfd, (struct sockaddr *)&this->_client_addr, &this->_socklen);
+	this->_clientfd = accept(_server->get_Fd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
 	if (this->_clientfd == -1)
 		throw Client::ErrnoException();
 	std::cout << "Client connected" << std::endl;

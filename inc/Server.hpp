@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/17 17:34:09 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/21 15:25:07 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # define MAX_CONNECTIONS 1000
 # include <iostream>
 # include <map>
+# include <set>
 # include <iterator>
 # include <cerrno>
 # include <sys/socket.h>
@@ -46,9 +47,11 @@ class Server {
 		void	launch( void ); // initiate socket server and binds it to given port
 		void	listen_poll( void ); // sets the server in listening mode and keeps polling inputs
 		void	closefds( void ); // sweep function to properly close all sockets
-		
+	
+
+		/*Getters & Setters */
+		int	get_Fd() const;	
 		static bool	signal;
-		//int		getTimeOut ( void ) const;
 		
 		public:
 			class ErrnoException: public std::exception {
@@ -83,6 +86,7 @@ class Server {
 		
 		/* List of connections and pollfd structure array */
 		std::map<int, Client *> 	_connections;
+		std::set<std::string>		_nicknames;
 		struct pollfd				_pfd[MAX_CONNECTIONS];
 		
 		/* Internal variables for socket client management */

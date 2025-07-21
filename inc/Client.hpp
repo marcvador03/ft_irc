@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/17 16:36:55 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/21 15:23:21 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <bits/stdc++.h>
 # include <map>
 # include "Channel.hpp"
+# include "Server.hpp"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -36,11 +37,12 @@
 typedef std::map<int, std::string> t_arg;
 
 class Channel;
+class Server;
 
 class Client {
 	public:
 		/* Coplien form */	
-		Client ( int serverfd, int slot );
+		Client ( Server *s, int slot );
 		~Client ( void );
 		
 		std::set<Channel *> _channels; //channels which client is member of
@@ -73,8 +75,9 @@ class Client {
 		Client ( void );
 		Client ( const Client &other );
 		Client &operator=( const Client &other);
+
+		Server		*_server;
 		
-		int			_serverfd; //fd of server connected to
 		int			_clientfd; //fd of the client
 		int			_slot; //slot number [pollfd array position]
 		std::string	_name;			//client name

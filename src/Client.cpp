@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 13:09:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:02:35 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,10 @@ void	Client::ReceiveInput()
 			if (line.empty())
 				continue;
 			std::istringstream sub_line(line);
+			sub_line >> std::ws; //to remove leading WS
 			for (int i = 0; std::getline(sub_line, args[i], ' '); i++);
 			this->LaunchCmd();
-			/*{
-				args[i++] = line.substr(s_pos, line.find(' ') - s_pos);
-				s_pos = line.find(' ') + 1;
-			}*/
+			args.erase(args.begin(), args.end());
 		}
 	}
 }
@@ -110,5 +108,8 @@ void		Client::setName( std::string &name)
 }
 void Client::reply(const std::string& msg) 
 {
-	send(this->_clientfd, msg.c_str(), msg.length(), 0);
+	ssize_t	bytes;
+
+	bytes = send(this->_clientfd, msg.c_str(), msg.length(), 0);
+	std::cout << bytes << " bytes have been sent to " << this->_nickname << std::endl;
 }

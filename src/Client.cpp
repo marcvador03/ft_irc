@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/17 16:34:10 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/21 13:09:16 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,7 @@ Client::~Client( void )
 void	Client::ReceiveInput()
 {
 	char		buf[2048];
-	std::string line;
 	int			bytes;
-	int			i;
-	std::string::size_type start_pos;
 	
 	std::memset(buf, 0, sizeof(buf));
 	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
@@ -53,19 +50,20 @@ void	Client::ReceiveInput()
 		buf[bytes] = '\0';
 		std::cout << "Receiving input: " << buf;
 		std::istringstream ss(buf);
-		start_pos = 0;
-		i = 0;
-		while (std::getline(ss, line)) 
+		//ss >> std::ws; //to remove leading WS
+		for (std::string line; std::getline(ss, line);) 
 		{
 			line = trim(line);
 			if (line.empty())
 				continue;
-			args[i++] = line.substr(start_pos, line.find(' '));
-			start_pos = line.find(' ');
-			if (start_pos == std::string::npos)
-				break;
+			std::istringstream sub_line(line);
+			for (int i = 0; std::getline(sub_line, args[i], ' '); i++);
+			this->LaunchCmd();
+			/*{
+				args[i++] = line.substr(s_pos, line.find(' ') - s_pos);
+				s_pos = line.find(' ') + 1;
+			}*/
 		}
-		this->LaunchCmd();
 	}
 }
 

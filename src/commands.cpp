@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/18 14:33:13 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/21 15:52:19 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,23 +117,6 @@ void handlePass( Client &c )
 	*/
 }
 
-
-//helper function for nickname validation
-static bool isValidNickname(const std::string &nick)
-{
-	if (nick.empty())
-		return false;
-	if (nick[0] == '#' || nick[0] == ':' || std::isspace(nick[0]))
-		return false;
-	for (size_t i = 0; i < nick.size(); ++i)
-	{
-		char c = nick[i];
-		if (!std::isalnum(c) && std::string("[]{}\\|").find(c) == std::string::npos)
-			return false;
-	}
-	return true;
-}
-
 /* TODO: Client list in Server Class:
 class Server {
 public:
@@ -151,46 +134,6 @@ bool Server::isNicknameInUse(const std::string& nickname) const {
     return false;
 }
 */
-
-/** Command: NICK
- * @brief The NICK command is used to give the client a nickname or change
- * the previous one.
- * The <nickname> parameter is the new nickname that the client wants to use.
- * If the nickname is already in use, the server will respond with an error.
- * @param <nickname>
- * @return Void;
- */
-void handleNick( Server &s, Client &c )
-{
-	(void)s; // Unused parameter, but required by the function signature
-	if (c.args.size() < 2 || c.args[1].empty())
-	{
-		c.reply("431 NICK :No nickname given\r\n");
-		return ;
-	}
-	
-	std::string newNick = c.args[1];
-
-	if (!isValidNickname(newNick))
-	{
-		c.reply("432 NICK :Erroneous nickname\r\n");
-		return ;
-	}
-
-/*	if (s.isNicknameInUse(NewNick))
-	{
-		c.reply("433 NICK :Nickname is already in use\r\n");
-		std::cout << "Nickname '" << newNick << "' is already in use." << std::endl;
-		return ;
-	}*/
-	
-	std::string oldNick = c.getNickname();
-	c.setNickname(newNick);
-
-	c.reply(":" + oldNick + " NICK " + newNick + "\r\n");
-	std::cout << "Nickname changed from '" << oldNick << "' to '" << newNick << "'." << std::endl;
-}
-
 
 /** Command: JOIN
  * @brief The JOIN command is used to join a channel.
@@ -252,40 +195,24 @@ void handlePing( Client &c )
 	std::cout << "PONG sent with token: " << token << std::endl;
 }
 
-void handleNick(Server &s, Client &c ) 
+void handleNick( Client &c ) 
 {
-	//check if nickname is provided
-	if (c.args.size() < 2 || c.args[1].empty())
-	{
-		c.reply("431 NICK :No nickname given\r\n");
-		return ;
-	}
-
-	std::string newNick = c.args[1];
-
-	//validate nickname format
-	if (!isValidNickname(newNick))
-	{
-		c.reply("432 NICK :Erroneous nickname\r\n");
-		return ;
-	}
-
-	/* TODO: need a new server function : "bool isNickcnameInUse( const std::string &newNick) const"*/
-	//check if nickname is not already in use
-	/*if (s.isNickcnameInUse(newNick))
-	{
-		c.reply("433 NICK :Nickname is already in use\r\n");
-		std::cout << "Nickname '" << newNick << "'is already in use." << std::endl;
-		return ;
-	}*/
-
-	//set the new nickname
 	std::string oldNick = c.getNickname();
-	c.setNickname (newNick);
-
-	//acknowledge the client and print to server log
-	c.reply(":" + oldNick + " NICK " + newNick + "\r\n");
-	std::cout << "Nickname changed from '" << oldNick << "' to '" << newNick << "'." << std::endl;
+	switch (c.setNickname(c.args[1])) {
+		case 431:
+			c.reply("431 NICK :No nickname given\r\n");
+			break;
+		case 432:
+			c.reply("432 NICK :Erroneous nickname\r\n");
+			break;
+		case 433:
+			c.reply("433 NICK :Nickname is already in use\r\n");
+			std::cout << "Nickname '" << c.args[1] << "'is already in use." << std::endl;
+			break;
+		case 0:
+			c.reply(":" + oldNick + " NICK " + c.args[1] + "\r\n");
+			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
+	}
 }
 
 

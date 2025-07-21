@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/21 15:25:07 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:43:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,11 @@ class Server {
 		void	listen_poll( void ); // sets the server in listening mode and keeps polling inputs
 		void	closefds( void ); // sweep function to properly close all sockets
 	
+		static bool	signal;
 
 		/*Getters & Setters */
 		int	get_Fd() const;	
-		static bool	signal;
+		bool insert_nickname(std::string &nick);
 		
 		public:
 			class ErrnoException: public std::exception {

@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/21 15:26:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:50:37 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,3 +128,12 @@ int	Server::get_Fd() const
 {
 	return (this->_serverfd);
 }
+
+bool Server::insert_nickname(std::string &nick)
+{
+	//insert in std::set return a std::pair, with first element pointing to the
+	//new element inserted or the duplicate element. The second element of the
+	//pair is false if it was a duplicate or true if it was inserted.
+	return (this->_nicknames.insert(nick).second);
+}
+

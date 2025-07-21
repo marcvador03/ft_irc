@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 15:24:37 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:44:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,24 @@ std::string	Client::getNickname( void ) const
 	return this->_nickname;
 }
 
-void		Client::setNickname( std::string &nick)
+int	Client::setNickname( std::string &nick)
 {
-	if (nick.empty() == true)
-		std::cout << this->_clientfd << ": no nickname provided" << std::endl;
+	//check if nickname is provided
+	if (nick.empty())
+		return 431;
+	//validate nickname format
+	if (nick[0] == '#' || nick[0] == ':' || std::isspace(nick[0]))
+		return 432;
+	for (size_t i = 0; i < nick.size(); ++i)
+	{
+		char c = nick[i];
+		if (!std::isalnum(c) && std::string("[]{}\\|").find(c) == std::string::npos)
+			return 432;
+	}
+	if (this->_server->insert_nickname(nick) == false)
+		return 433;
 	this->_nickname = nick;
+	return 0;
 }
 
 std::string	Client::getName( void ) const

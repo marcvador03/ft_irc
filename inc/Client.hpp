@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 15:23:21 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:33:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class Client {
 		int			getClientfd( void ) const;
 		int			getSlot( void ) const;
 		std::string	getNickname( void ) const;
-		void		setNickname( std::string &nick);
+		int			setNickname( std::string &nick);
 		std::string	getName( void ) const;
 		void		setName( std::string &name);
 		

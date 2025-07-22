@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/21 15:43:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 15:50:53 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,10 @@ class Server {
 		/*Getters & Setters */
 		int	get_Fd() const;	
 		bool insert_nickname(std::string &nick);
-		
+	
+		std::vector<Channel*> getChannelsForClient(const Client *client) const;
+		void removeClient(Client *client);
+
 		public:
 			class ErrnoException: public std::exception {
 				virtual const char* what() const throw() 

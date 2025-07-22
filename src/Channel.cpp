@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/09 16:05:27 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 16:11:49 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,13 @@ std::string	Channel::getName( void ) const
 std::string	Channel::getTopic( void ) const
 {
 	return this->_topic;
+}
+
+void Channel::broadcast(const std::string &message, const Client *exclude)
+{
+	for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (it->second != exclude)
+			it->second->reply(message);
+	}
 }

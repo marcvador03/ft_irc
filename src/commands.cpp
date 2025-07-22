@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/21 15:52:19 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 15:43:37 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,4 +215,33 @@ void handleNick( Client &c )
 	}
 }
 
+/**
 
+### **Summary of steps in code for handleQuit**
+
+1. Parse the reason (if any) from the QUIT command.
+2. Notify all other clients in the same channels with the formatted QUIT message.
+3. Optionally send an ERROR message to the quitting client.
+4. Remove the client from all channels and close the connection.
+
+---
+
+**Example flow:**
+
+- Client sends: `QUIT :Bye for now!`
+- Server sends to other clients: `:dan-!d@localhost QUIT :Quit: Bye for now!`
+- Server sends to quitting client: `ERROR :Closing Link: Quit: Bye for now!`
+- Server closes the connection and removes the client.
+
+--- */
+void handleQuit(Server &s, Client &c)
+{
+	std::string reason = (c.args.size() > 1) ? c.args[1] : "";
+	std::string quitMsg = ":Quit " + reason;
+	std::string prefix = ":" + c.getNickname() + "!" + c.getName() + "@localhost QUIT " + quitMsg + "\r\n";
+	std::vector<Channel *> channels = s.getChannelsForClient(&c);
+	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); ++it)
+		(*it)->broadcast(prefix, &c);
+	c.reply("ERROR :Closing Link: " + quitMsg + "\r\n");
+	s.removeClient(&c);
+}

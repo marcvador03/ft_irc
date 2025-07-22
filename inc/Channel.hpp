@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 15:16:36 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 16:11:54 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ class Channel {
 		bool removeOperator(Client *client);
 		bool isOperator(Client *client);
 		
+		//quit related
+		void broadcast(const::std::string &message, const Client *exclude);
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
 			public:

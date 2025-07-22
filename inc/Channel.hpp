@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 15:16:36 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 16:47:36 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include "Client.hpp"
 # include <string>
 # include <set>
-# include "Client.hpp"
 
 /*
 **`Channel.hpp` / `Channel.cpp`**  
@@ -33,38 +32,36 @@ class Client;
 class Channel {
 	public:
 		/* Coplien form */	
-		Channel ( std::string name, std::string topic );
+		Channel ( std::string name );
 		virtual ~Channel ( void );
 
-		void	addClient( int slot, Client *c);
-		void	removeClient( int slot );
-		
 		/*Getters and setters */
 		std::string	getName( void ) const;
 		
-		//*************to revist***********************//
+		//membership management
+		void addMember( Client * );
+		void removeMember( Client * );
+		bool isMember( Client * );
+		
+		//key (password) related
+		void setKey(const std::string &key);
+		bool checkKey(const std::string &key) const;
+		
+		//limit related
+		void setLimit(unsigned int limit);
+		bool hasReachedLimit() const;
+		
 		//invite only related
 		void setInviteOnly(bool isInviteOnly);
 		bool isInviteOnly() const;
+		
+		//*************to revist***********************//
 
 		//topic related
 		std::string getTopic() const;
 		void setTopic(const std::string &topic);
 		void setTopicLocked(bool isLocked);
 		bool isTopicLocked() const;
-
-		//key (password) related
-		void setKey(const std::string &key);
-		bool checkKey(const std::string &key) const;
-
-		//limit related
-		void setLimit(unsigned int limit);
-		unsigned int getLimit() const;
-
-		//membership management
-		bool addMember(Client *client);
-		bool removeMember(Client *client);
-		bool isMember(Client *client) const;
 
 		//operator management
 		bool addOperator(Client *client);
@@ -84,6 +81,7 @@ class Channel {
 		
 		std::map <int, Client *>	_clients;
 		std::map <int, Client *>	_operators;		//channel operators (for mode 'o')
+														//to check that all clients counts contain both clients & operators
 
 		std::string			_name;			//channel name
 		std::string			_topic;			//channel topic
@@ -91,6 +89,7 @@ class Channel {
 		bool				_topicLocked;	//mode 't' - topic of the channel can (false) or cannot be changed (true)
 		bool				_hasKey;		//mode 'k' - the channel has key (password) (true) or doesn't have it (false)
 		std::string			_key;			//mode 'k''s key (password) storage
+		bool				_hasLimit;		//mode 'l' - flag for the limit - false = no limit set on the channel
 		unsigned int		_limit;			//mode 'l' - the channel doesn't have any limit of users (0) or has a limit of users within the range of unsigned int (1 - 4,294,967,295)
 };
 

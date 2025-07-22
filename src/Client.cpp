@@ -6,20 +6,20 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 15:44:18 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 16:50:45 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
 #include "../inc/utils.hpp"
 
-
-Client::Client (Server *s, int slot): 
+Client::Client (Server *s, int slot): //we will need to revisit all Server parameters set at start!!//
 		_server(s),
-		_slot(slot)
+		_slot(slot),
+		_chanlim(10)
 {
 	this->_socklen = sizeof(this->_client_addr);
-	this->_clientfd = accept(_server->get_Fd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
+	this->_clientfd = accept(_server->getFd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
 	if (this->_clientfd == -1)
 		throw Client::ErrnoException();
 	std::cout << "Client connected" << std::endl;
@@ -73,6 +73,16 @@ void	Client::LaunchCmd()
 		handleNick(*this);
 }
 
+void 	Client::reply(const std::string& msg) 
+{
+	ssize_t		bytes;
+	std::string	str;
+
+	if (msg[msg.size() - 1] != '\n')
+		str = msg + "\n";
+	bytes = send(this->_clientfd, str.c_str(), str.length(), 0);
+	std::cout << bytes << " bytes have been sent to " << this->_nickname << std::endl;
+}
 /* Getters and setters */
 		
 int		Client::getClientfd( void ) const
@@ -104,7 +114,7 @@ int	Client::setNickname( std::string &nick)
 		if (!std::isalnum(c) && std::string("[]{}\\|").find(c) == std::string::npos)
 			return 432;
 	}
-	if (this->_server->insert_nickname(nick) == false)
+	if (this->_server->InsertNick(nick) == false)
 		return 433;
 	this->_nickname = nick;
 	return 0;
@@ -115,14 +125,51 @@ std::string	Client::getName( void ) const
 	return this->_name;
 }
 
-void		Client::setName( std::string &name)
+void	Client::setName( std::string &name)
 {
 	this->_name = name;
 }
-void Client::reply(const std::string& msg) 
-{
-	ssize_t	bytes;
 
-	bytes = send(this->_clientfd, msg.c_str(), msg.length(), 0);
-	std::cout << bytes << " bytes have been sent to " << this->_nickname << std::endl;
+void	Client::leaveChannel( std::string &name)
+{
+	Channel *ch;
+	
+	if (_server->isChannelExist(name) == true)
+	{
+		ch = _server->getChannel(name);
+		ch->removeMember(this);
+		_channels.erase(ch);
+	}
+}
+	
+int		Client::joinChannel( std::string name, std::string key )
+{
+	Channel *ch;
+	
+	if (_channels.size() >= _chanlim)
+		return 405;
+	if (name[0] != '&' && name[0] != '#')
+		return 476;
+	if (	name.find(' ') != std::string::npos \
+			|| name.find(0x07) != std::string::npos \
+			|| name.find(',') != std::string::npos)
+		return 476;
+	ch = _server->getChannel(name);
+	if (ch->checkKey(key) == false)
+		return 475;
+	if (ch->isInviteOnly() == true)
+		return 473;
+	if (ch->hasReachedLimit() == true)
+		return 471;
+	ch->addMember(this);
+	_channels.insert(ch);
+	return 0;
+}
+
+bool	Client::isPartofChannel( std::string &name ) 
+{
+	Channel *ch;
+	
+	ch = _server->getChannel(name);
+	return (ch->isMember(this));
 }

@@ -6,13 +6,13 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/21 15:50:37 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 15:43:38 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 
-Server::Server ( void )
+Server::Server ( void ) 
 {
 }
 
@@ -73,6 +73,7 @@ void	Server::closefds( void )
 	std::cout << "Server has been properly shutdown" << std::endl;
 }
 
+/* Internal Functions to add/remove clients within the list of connections */
 void	Server::addClient( void )
 {
 	Client	*c;
@@ -98,7 +99,6 @@ void	Server::removeClient( const Client *client )
 }
 
 /* Setters, Getters and private functions to manage available slot list */
-
 int	Server::getFirstSlot( void )
 {
 	for (int i = 0; i < MAX_CONNECTIONS; i++)
@@ -124,12 +124,15 @@ void	Server::setBusySlot( const int i)
 	this->_slots[i] = true;
 	//if i > max connections?
 }
-int	Server::get_Fd() const
+
+/*Getters & Setters */
+int	Server::getFd() const
 {
 	return (this->_serverfd);
 }
 
-bool Server::insert_nickname(std::string &nick)
+/* Management of nickname list on server */
+bool Server::InsertNick(std::string &nick)
 {
 	//insert in std::set return a std::pair, with first element pointing to the
 	//new element inserted or the duplicate element. The second element of the
@@ -137,3 +140,42 @@ bool Server::insert_nickname(std::string &nick)
 	return (this->_nicknames.insert(nick).second);
 }
 
+/* Management of channel list on server */
+bool	Server::isChannelExist(std::string &name)
+{
+	std::map<std::string, Channel *>::iterator it;
+	it = _channels.find(name);
+	if (it == this->_channels.end())
+		return false;
+	return true;
+}
+
+/*Channel	*Server::createChannel(std::string &name)
+{
+	Channel *c = nullptr;
+	if (this->isChannelExist(name) == false)
+	{
+		c = new Channel(name);
+		this->_channels.insert(std::make_pair(name, c));
+	}
+	return c;			
+}*/
+
+Channel	*Server::getChannel(std::string &name)
+{
+	/*checks if the channel is already listed on the server list
+	 * and it not, creates it - are there cases where it should not be created? */
+
+	Channel *c;
+
+	std::map<std::string, Channel *>::iterator it;
+	it = _channels.find(name);
+	if (it != this->_channels.end())
+		return it->second;
+	else
+	{
+		c = new Channel(name);
+		this->_channels.insert(std::make_pair(name, c));
+	}
+	return c;			
+}

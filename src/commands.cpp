@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/21 15:52:19 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 16:40:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,41 +144,51 @@ bool Server::isNicknameInUse(const std::string& nickname) const {
  */
 void handleJoin( Client &c ) 
 {
-	//check if channel argument is present
+	
+	t_list	list;
+	t_list::iterator it;
+	std::string	chan, key;
+	
+	std::istringstream chan_s(c.args[1]);
+	std::istringstream key_s(c.args[2]);
+	
+	//special case: "JOIN 0" means leave all channels
+	if (c.args[1] == "0" && c.args.size() == 2)
+	{
+		c.reply(":JOIN 0 not implemented yet\r\n");
+		return ;
+	}
 	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
 		c.reply("461 JOIN :Not enough parameters\r\n"); // ERR_NEEDMOREPARAMS
 		return ;
 	}
-
-	//special case: "JOIN 0" means leave all channels
-	if (c.args[1] == "0")
+	for (int j = 0; std::getline(chan_s, chan, ','); j++)
 	{
-		c.reply(":JOIN 0 not implemented yet\r\n");
-		return ;
+		std::getline(key_s, key, ',');
+		list.insert(std::make_pair(chan, key));
 	}
-//  the input looks like: "JOIN #foo,#bar,#baz key1,key2,key3"
-// but at this point is already split into:
-// args[0] = "JOIN"
-// args[1] = "#foo,#bar,#baz" -channels
-// args[2] = "key1,key2,key3" -keys
-
-	//split channels and keys (if present)
-	std::string channelStr = c.args[1];
-	std::string keyStr = (c.args.size() > 2) ? c.args[2] : "";
-	//if the user hasn't provided the key it will be changed to empty string
-	
-	std::vector<std::string> channels = split(channelStr, ',');
-	std::vector<std::string> keys = split(keyStr, ',');
-
-	for (std::size_t i = 0; i < channels.size(); ++i)
+	for (it = list.begin(); it!= list.end();it++)
 	{
-		std::string channel = channels[i];
-		std::string key = (i < keys.size()) ? keys[i] : "";
-
-	// TODO: Channel management, key checking, etc.
-	
-	c.reply(":" + c.getNickname() + " JOIN " + channel + "\r\n");
+		switch (c.joinChannel(it->first, it->second)) {
+			case 405:
+				c.reply(": You have joined too many channels");
+				break ;
+			case 475:
+				c.reply(": Cannot join channel (+k)");
+				break ;
+			case 471:
+				c.reply(": Cannot join channel (+l)");
+				break ;
+			case 473:
+				c.reply(": Cannot join channel (+i)");
+				break ;
+			case 476:
+				c.reply(": Bad Channel Mask");
+				break ;
+			case 0:
+				c.reply(":" + c.getNickname() + " JOIN " + it->first);
+		}
 	}
 }
 

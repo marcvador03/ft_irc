@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/21 15:43:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 15:42:16 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <bits/stdc++.h>
 # include <sys/poll.h>
 # include "Client.hpp"
+# include "Channel.hpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  
@@ -35,6 +36,7 @@
 */
 
 class Client;
+class Channel;
 
 class Server {
 	public:
@@ -51,8 +53,15 @@ class Server {
 		static bool	signal;
 
 		/*Getters & Setters */
-		int	get_Fd() const;	
-		bool insert_nickname(std::string &nick);
+		int		getFd() const;	
+		
+		/* Management of nickname list on server */
+		bool 	InsertNick(std::string &nick);
+
+		/* Management of channel list on server */
+		bool	isChannelExist(std::string &name);
+		//Channel	*createChannel(std::string &name);	
+		Channel	*getChannel(std::string &name);	
 		
 		public:
 			class ErrnoException: public std::exception {
@@ -89,6 +98,9 @@ class Server {
 		std::map<int, Client *> 	_connections;
 		std::set<std::string>		_nicknames;
 		struct pollfd				_pfd[MAX_CONNECTIONS];
+		
+		/* List of channels live in server */
+		std::map<std::string, Channel *> 	_channels;
 		
 		/* Internal variables for socket client management */
 		socklen_t				_socklen;

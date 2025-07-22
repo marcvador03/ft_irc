@@ -6,15 +6,18 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/09 16:05:27 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 16:51:14 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Channel.hpp"
 
-Channel::Channel ( std::string name, std::string topic ):
+Channel::Channel ( std::string name ):
 	_name(name),
-	_topic(topic)	
+	_inviteOnly(false),
+	_topicLocked(false),
+	_hasKey(false),
+	_hasLimit(false)
 {
 	std::cout << "Channel created" << std::endl;
 }
@@ -23,24 +26,72 @@ Channel::~Channel( void )
 {
 	std::cout << "Channel has been closed" << std::endl;
 }
-void	Channel::addClient( int slot, Client *c )
+
+//membership management
+void	Channel::addMember( Client *c )
 {
-	std::map<int, Client *>::iterator it = this->_clients.find(slot);
+	std::map<int, Client *>::iterator it = this->_clients.find(c->getSlot());
 	if (it == this->_clients.end())
-	{
-		c->_channels.insert(this);
-		this->_clients.insert(std::pair<int, Client *>(slot, c));
-	}
+		this->_clients.insert(std::pair<int, Client *>(c->getSlot(), c));
 }
 
-void	Channel::removeClient( int slot )
+void	Channel::removeMember( Client *c )
 {
-	std::map<int, Client *>::iterator it = this->_clients.find(slot);
+	std::map<int, Client *>::iterator it = this->_clients.find(c->getSlot());
 	if (it != this->_clients.end())
-	{
-		it->second->_channels.erase(this);
 		this->_clients.erase(it);
-	}
+}
+
+bool 	Channel::isMember( Client *c )
+{
+	std::map<int, Client *>::iterator it;
+	it = _clients.find(c->getSlot());
+	if (it == _clients.end())
+		return false;
+	return true;
+}
+
+//key (password) related
+void Channel::setKey(const std::string &key)
+{
+	this->_hasKey = true;
+	this->_key = key;
+
+}
+
+bool Channel::checkKey(const std::string &key) const
+{
+	
+	if (_hasKey == true && key.compare(this->_key) == 0)
+		return true;
+	else if (_hasKey == false)
+		return true;
+	return  false;
+}
+
+//limit related
+void Channel::setLimit(unsigned int limit)
+{
+	this->_hasLimit = true;
+	this->_limit = limit;
+}
+
+bool Channel::hasReachedLimit() const
+{
+	if (this->_hasLimit == true && this->_clients.size() >= this->_limit)
+		return true;
+	return false;
+}
+
+//invite only related
+void Channel::setInviteOnly(bool isInviteOnly)
+{
+	this->_inviteOnly = isInviteOnly;
+}
+
+bool Channel::isInviteOnly() const
+{
+	return (this->_inviteOnly);
 }
 
 /*Getters and setters */
@@ -53,3 +104,4 @@ std::string	Channel::getTopic( void ) const
 {
 	return this->_topic;
 }
+

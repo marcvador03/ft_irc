@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/21 15:33:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 16:49:20 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 //`t_arg` is a type alias for a map that associates an integer (slot) with
 //a string (argument). This is used to store command arguments for the client.
 typedef std::map<int, std::string> t_arg;
+typedef std::map<std::string, std::string> t_list;
 
 class Channel;
 class Server;
@@ -45,11 +46,11 @@ class Client {
 		Client ( Server *s, int slot );
 		~Client ( void );
 		
-		std::set<Channel *> _channels; //channels which client is member of
-
 		/* Method to receive bytes from client socket */
 		void	ReceiveInput();
 		void	LaunchCmd();
+		void 	reply(const std::string& msg);
+
 		
 		t_arg 		args;
 		
@@ -60,9 +61,9 @@ class Client {
 		int			setNickname( std::string &nick);
 		std::string	getName( void ) const;
 		void		setName( std::string &name);
-		
-		/*helpers*/
-		void reply(const std::string& msg);
+		void		leaveChannel( std::string &name);
+		int			joinChannel( std::string, std::string );
+		bool		isPartofChannel( std::string &name);
 
 		public:
 			class ErrnoException: public std::exception {
@@ -82,12 +83,13 @@ class Client {
 		int			_slot; //slot number [pollfd array position]
 		std::string	_name;			//client name
 		std::string	_nickname;		
+		size_t		_chanlim;
   
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
 	
-		
+		std::set<Channel *> _channels; //channels which client is member of
 };
 
 // Command handlers

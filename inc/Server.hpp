@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 15:42:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 21:13:38 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ class Server {
 		static bool	signal;
 
 		/*Getters & Setters */
-		int		getFd() const;	
+		int			getFd() const;	
+		std::string	getName() const;	
 		
 		/* Management of nickname list on server */
 		bool 	InsertNick(std::string &nick);
@@ -88,6 +89,7 @@ class Server {
 		void	removeClient ( const Client *client );
 		
 		/* Server variables */
+		std::string				_name; //server name, handpicked: .irc42
 		std::string				_password; // server password
 		int						_serverfd; // fd of the server
 		std::map<int, bool>		_slots; // list slots for pollfd and status

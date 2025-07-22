@@ -6,13 +6,14 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 15:43:38 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 21:13:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 
-Server::Server ( void ) 
+Server::Server ( void ):
+	  _name(".irc42")	
 {
 }
 
@@ -126,9 +127,14 @@ void	Server::setBusySlot( const int i)
 }
 
 /*Getters & Setters */
-int	Server::getFd() const
+int			Server::getFd() const
 {
 	return (this->_serverfd);
+}
+
+std::string	Server::getName() const
+{
+	return (this->_name);
 }
 
 /* Management of nickname list on server */

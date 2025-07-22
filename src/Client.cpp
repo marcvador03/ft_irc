@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/22 16:50:45 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 19:16:07 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ void	Client::LaunchCmd()
 		handlePing(*this);
 	else if (args[0] == "NICK")
 		handleNick(*this);
+	else if (args[0] == "JOIN")
+		handleJoin(*this);
 }
 
 void 	Client::reply(const std::string& msg) 
@@ -130,16 +132,33 @@ void	Client::setName( std::string &name)
 	this->_name = name;
 }
 
-void	Client::leaveChannel( std::string &name)
+int		Client::leaveChannel( std::string name)
 {
 	Channel *ch;
 	
-	if (_server->isChannelExist(name) == true)
+	if (_server->isChannelExist(name) == false)
+		return 403;
+	else if (isPartofChannel(name) == false)
+		return 442;
+	ch = _server->getChannel(name);
+	ch->removeMember(this);
+	_channels.erase(ch);
+	return 0;
+}
+int		Client::leaveAllChannels( void )
+{
+	std::set<Channel *>::iterator it;
+	Channel *ch;
+	std::string name;
+	
+	for (it = this->_channels.begin(); it != this->_channels.end() ; it++)
 	{
+		name = (*it)->getName();
 		ch = _server->getChannel(name);
 		ch->removeMember(this);
 		_channels.erase(ch);
 	}
+	return (0);
 }
 	
 int		Client::joinChannel( std::string name, std::string key )

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 16:40:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 19:18:46 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,9 +153,9 @@ void handleJoin( Client &c )
 	std::istringstream key_s(c.args[2]);
 	
 	//special case: "JOIN 0" means leave all channels
-	if (c.args[1] == "0" && c.args.size() == 2)
+	if (c.args[1] == "0")
 	{
-		c.reply(":JOIN 0 not implemented yet\r\n");
+		c.leaveAllChannels();	
 		return ;
 	}
 	if (c.args.size() < 2 || c.args[1].empty()) 
@@ -168,7 +168,7 @@ void handleJoin( Client &c )
 		std::getline(key_s, key, ',');
 		list.insert(std::make_pair(chan, key));
 	}
-	for (it = list.begin(); it!= list.end();it++)
+	for (it = list.begin(); it!= list.end(); it++)
 	{
 		switch (c.joinChannel(it->first, it->second)) {
 			case 405:
@@ -188,6 +188,35 @@ void handleJoin( Client &c )
 				break ;
 			case 0:
 				c.reply(":" + c.getNickname() + " JOIN " + it->first);
+		}
+	}
+}
+
+void handlePart( Client &c ) 
+{
+	t_list	list;
+	t_list::iterator it;
+	std::istringstream chan_s(c.args[1]);
+	std::string	chan;
+	
+	if (c.args.size() < 2 || c.args[1].empty()) 
+	{
+		c.reply("461 PART :Not enough parameters"); // ERR_NEEDMOREPARAMS
+		return ;
+	}
+	for (int j = 0; std::getline(chan_s, chan, ','); j++)
+		list.insert(std::make_pair(chan, c.args[2]));
+	for (it = list.begin(); it!= list.end(); it++)
+	{
+		switch (c.leaveChannel(it->first)) {
+			case 403:
+				c.reply(": No such channel");
+				break ;
+			case 442:
+				c.reply(": You're not on that channel");
+				break ;
+			case 0:
+				c.reply(":" + c.getNickname() + " PART " + it->first);
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/22 16:49:20 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 19:10:16 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,22 +46,22 @@ class Client {
 		Client ( Server *s, int slot );
 		~Client ( void );
 		
+		t_arg 		args;
+		
 		/* Method to receive bytes from client socket */
 		void	ReceiveInput();
 		void	LaunchCmd();
 		void 	reply(const std::string& msg);
-
-		
-		t_arg 		args;
 		
 		/* Setters & Getters */
 		int			getClientfd( void ) const;
 		int			getSlot( void ) const;
 		std::string	getNickname( void ) const;
-		int			setNickname( std::string &nick);
+		int			setNickname( std::string & );
 		std::string	getName( void ) const;
 		void		setName( std::string &name);
-		void		leaveChannel( std::string &name);
+		int			leaveChannel( std::string );
+		int			leaveAllChannels( void );
 		int			joinChannel( std::string, std::string );
 		bool		isPartofChannel( std::string &name);
 

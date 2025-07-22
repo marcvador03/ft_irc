@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/22 19:16:07 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 20:31:08 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ int		Client::leaveChannel( std::string name)
 	_channels.erase(ch);
 	return 0;
 }
+
 int		Client::leaveAllChannels( void )
 {
 	std::set<Channel *>::iterator it;
@@ -157,6 +158,8 @@ int		Client::leaveAllChannels( void )
 		ch = _server->getChannel(name);
 		ch->removeMember(this);
 		_channels.erase(ch);
+		if (_channels.empty() == true)
+			return (0);
 	}
 	return (0);
 }

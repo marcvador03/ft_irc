@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 19:18:46 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/22 20:37:21 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,7 @@ void handleJoin( Client &c )
 				break ;
 			case 0:
 				c.reply(":" + c.getNickname() + " JOIN " + it->first);
+				c.reply(c.getNickname() + " joined " + it->first);
 		}
 	}
 }

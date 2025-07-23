@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 15:50:53 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:09:23 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 */
 
 class Client;
+class Channel;
 
 class Server {
 	public:
@@ -90,6 +91,7 @@ class Server {
 		
 		/* List of connections and pollfd structure array */
 		std::map<int, Client *> 	_connections;
+		std::map<std::string, Channel*> _channels; // channels available on the server
 		std::set<std::string>		_nicknames;
 		struct pollfd				_pfd[MAX_CONNECTIONS];
 		

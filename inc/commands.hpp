@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:50:36 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 15:39:27 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/23 12:49:35 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ class Client;
 class Server;
 
 void handlePass( Client &c );
-void handleNick( Server &s, Client &c );
 void handleJoin( Client &c );
 void handlePing( Client &c );
 void handleNick( Client &c ); 

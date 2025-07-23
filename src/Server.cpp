@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 16:06:58 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:08:44 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,12 +137,12 @@ bool Server::insert_nickname(std::string &nick)
 	return (this->_nicknames.insert(nick).second);
 }
 
-std::vector<Channel*> Server::getChanelsForClient(const Client *client) const;
+std::vector<Channel*> Server::getChannelsForClient(const Client *client) const
 {
-	std::vector<Channel*> resut;
+	std::vector<Channel*> result;
 	for (std::map<std::string, Channel*>::const_iterator it = _channels.begin(); it !=_channels.end(); ++it)
 	{
-		if (it->second->hasUser(const_cast<Client*>(client)))
+		if (it->second->isMember(const_cast<Client*>(client)))
 			result.push_back(it->second);
 	}
 	return result;

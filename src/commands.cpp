@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 15:43:37 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/23 13:16:51 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,4 +244,5 @@ void handleQuit(Server &s, Client &c)
 		(*it)->broadcast(prefix, &c);
 	c.reply("ERROR :Closing Link: " + quitMsg + "\r\n");
 	s.removeClient(&c);
+	close(c.getClientfd());
 }

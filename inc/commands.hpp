@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:50:36 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 12:49:35 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:10:10 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <cerrno>
 # include <bits/stdc++.h>
+# include <unistd.h>
 
 class Client;
 class Server;

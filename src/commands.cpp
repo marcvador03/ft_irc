@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 11:54:27 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 12:21:25 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,13 +263,13 @@ void handlePass( Client &c )
 {
 	t_cmd_reply			cmd_reply;
 	
-	switch (c.registerUser(c.args[1])) {
+	switch (c.registerPass(c.args[1])) {
 		case 461:
 			c.reply(461);
 			break;
-		/*case 462: missing checking user already registered
+		case 462:
 			c.reply(462);
-			break;*/
+			break;
 		case 464:
 			c.reply(464);
 			break;

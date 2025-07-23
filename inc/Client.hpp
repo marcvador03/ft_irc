@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 12:15:41 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 12:19:25 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class Client {
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
 		int			setUser( std::string &, std::string &);
-		int			registerUser( std::string &);
+		int			registerPass( std::string &);
 		std::string	getName( void ) const;
 		std::string	getHost( void ) const;
 		void		setName( std::string &);
@@ -97,6 +97,7 @@ class Client {
 		
 		int			_clientfd; //fd of the client
 		int			_slot; //slot number [pollfd array position]
+		bool		_isPassAccepted; // flag if client has provided correct password
 		bool		_isRegistered; // flag if client is registered
 								  
 		std::string	_realname;

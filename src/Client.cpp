@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 12:10:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 12:21:29 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 Client::Client (Server *s, int slot): //we will need to revisit all Server parameters set at start!!//
 		_server(s),
 		_slot(slot),
+		_isPassAccepted(false),
+		_isRegistered(false),
 		_chanlim(10)
 {
 	this->_socklen = sizeof(this->_client_addr);
@@ -308,13 +310,14 @@ bool	Client::isPartofChannel( std::string &name )
 	return (ch->isMember(this));
 }
 		
-int		Client::registerUser( std::string &pass)
+int		Client::registerPass( std::string &pass)
 {
-	if (pass.empty() == true)
+	if (pass.empty() == true && _server->checkPass(pass) == false)
 		return 461;
+	if (this->_isRegistered == true)
+		return 462;
 	if (_server->checkPass(pass) == false)
 		return 464;
-	//missing checking registered user - what is the key for user??
 	return 0;
 }
 

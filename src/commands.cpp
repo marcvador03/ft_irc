@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 15:48:56 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 15:55:50 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,7 +346,7 @@ void handleQuit(Server &s, Client &c)
 {
 	std::string reason = (c.args.size() > 1) ? c.args[1] : "";
 	std::string quitMsg = ":Quit " + reason;
-	std::string prefix = ":" + c.getNickname() + "!" + c.getName() + "@localhost QUIT " + quitMsg + "\r\n";
+	std::string prefix = ":" + c.getNickname() + "!" + c.getUser() + "@localhost QUIT " + quitMsg + "\r\n";
 	std::vector<Channel *> channels = s.getChannelsForClient(&c);
 	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); ++it)
 		(*it)->broadcast(prefix, &c);

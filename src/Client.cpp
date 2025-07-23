@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 17:17:01 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 19:41:37 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,11 @@ std::string	Client::getServerLaunchTime( void ) const
 std::string	Client::getServerVersion( void ) const
 {
 	return (_server->getVersion());
+}
+
+t_set		Client::getServerSettings( void ) const
+{
+	return (_server->getSettings());
 }
 
 std::string	Client::getNickname( void ) const

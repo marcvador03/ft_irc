@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 09:32:41 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:03:08 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ class Client {
 		int			getSlot( void ) const;
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
+		int			setUser( std::string &, std::string &);
 		std::string	getName( void ) const;
 		std::string	getHost( void ) const;
 		void		setName( std::string &);
@@ -95,7 +96,8 @@ class Client {
 		
 		int			_clientfd; //fd of the client
 		int			_slot; //slot number [pollfd array position]
-		std::string	_username;			//client name
+		std::string	_realname;
+		std::string	_username;
 		std::string	_nickname;		
 		size_t		_chanlim;
 		std::string	_host;
@@ -114,4 +116,5 @@ class Client {
 void handleJoin( Client &c );
 void handlePing( Client &c );
 void handleNick( Client &c ); 
+void handleUser( Client &c ); 
 #endif

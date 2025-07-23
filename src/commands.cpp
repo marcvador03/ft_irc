@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 10:22:02 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:02:20 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,23 +287,12 @@ void handleUser( Client &c )
 {
 	t_cmd_reply			cmd_reply;
 	
-	switch (c.setNickname(c.args[1])) {
+	switch (c.setUser(c.args[1], c.args[4])) {
 		case 431:
-			//c.reply("431 NICK :No nickname given\r\n");
-			break;
-		case 432:
-			//c.reply("432 NICK :Erroneous nickname\r\n");
-			break;
-		case 433:
-			//c.reply("433 NICK :Nickname is already in use\r\n");
-			std::cout << "Nickname '" << c.args[1] << "'is already in use." << std::endl;
+			c.reply(431);
 			break;
 		case 0:
-			cmd_reply.push_back(c.args[0]);
-			cmd_reply.push_back(c.args[1]);
-			c.reply(cmd_reply);
-			//c.reply(":" + oldNick + " NICK " + c.args[1] + "\r\n");
-			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
+			std::cout << "Username and Realname changed" << std::endl;
 	}
 }
 

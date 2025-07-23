@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 10:49:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:02:49 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ void	Client::LaunchCmd()
 		handleNick(*this);
 	else if (args[0] == "JOIN")
 		handleJoin(*this);
+	else if (args[0] == "USER")
+		handleUser(*this);
 }
 
 /* Methods to send back replies to Client, source default servername */
@@ -205,6 +207,16 @@ int	Client::setNickname( std::string &nick)
 	if (this->_server->InsertNick(nick) == false)
 		return 433;
 	this->_nickname = nick;
+	return 0;
+}
+
+int	Client::setUser( std::string &user, std::string &real)
+{
+	if (user.empty() == true|| real.empty() == true)
+		return 431;
+	//missing validating user length
+	this->_username = user;
+	this->_realname = real;
 	return 0;
 }
 

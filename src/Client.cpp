@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 23:10:22 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 23:20:30 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ void	Client::LaunchCmd()
 			handlePass(*this);
 		else if (args[0] == "PING")
 			handlePing(*this);
+		else if (args[0] == "QUIT")
+			handlePing(*this);
 		return ;
 	}
 	if (_isPassAccepted == true && _isRegistered == false)
@@ -94,6 +96,8 @@ void	Client::LaunchCmd()
 		else if (args[0] == "USER")
 			handleUser(*this);
 		else if (args[0] == "PING")
+			handlePing(*this);
+		else if (args[0] == "QUIT")
 			handlePing(*this);
 		return ;
 	}
@@ -105,6 +109,8 @@ void	Client::LaunchCmd()
 		handleJoin(*this);
 	else if (args[0] == "USER")
 		handleUser(*this);
+	else if (args[0] == "QUIT")
+		handlePing(*this);
 }
 
 /* Methods to send back replies to Client, source default servername */

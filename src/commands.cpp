@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 23:09:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/24 00:15:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,15 +353,36 @@ void handlePass( Client &c )
 - Server closes the connection and removes the client.
 
 --- */
-void handleQuit(Server &s, Client &c)
+//void handleQuit(Server &s, Client &c)
+/*I'm trying to keep consistent passing only the Client class. 
+ * However you can get server variables through c._server (which is the link of the Server Class into the Client
+ * and even have getters from Client Class which fetch a specific server variable. */
+void handleQuit( Client &c) 
 {
+	t_cmd_reply			cmd_reply; // marc: basic vector to store each argument and parameter
 	std::string reason = (c.args.size() > 1) ? c.args[1] : "";
-	std::string quitMsg = ":Quit " + reason;
-	std::string prefix = ":" + c.getNickname() + "!" + c.getUser() + "@localhost QUIT " + quitMsg + "\r\n";
-	std::vector<Channel *> channels = s.getChannelsForClient(&c);
+	
+	//marc: moving to new cmd_reply model
+	/*std::string quitMsg = ":Quit " + reason;
+	std::string prefix = ":" + c.getNickname() + "!" + c.getUser() + "@localhost QUIT " + quitMsg + "\r\n";*/
+
+	/* marc: actually there is already container in Client Class :) containing 
+	 * all Channels to which the Client has joined (and is maintained through
+	 * leaveChannel / joinChannel existing methods. And there is already a method
+	 * called leaveAllChannels which just removes client from all channels */ 
+	
+	/*std::vector<Channel *> channels = s.getChannelsForClient(&c);
 	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); ++it)
-		(*it)->broadcast(prefix, &c);
-	c.reply("ERROR :Closing Link: " + quitMsg + "\r\n");
-	s.removeClient(&c);
-	close(c.getClientfd());
+		(*it)->broadcast(prefix, &c);*/
+	c.leaveAllChannels();
+	//marc: put your arguments / parameters in your cmd_reply as below
+	cmd_reply.push_back("ERROR");
+	cmd_reply.push_back("Client has disconnected");
+	//marc: then just call the reply method with the vector cmd_reply
+	c.reply(cmd_reply);
+	//c.reply("ERROR :Closing Link: " + quitMsg + "\r\n");
+	
+	/*marc: for now stuck... I don't know how to delete the Client since
+	 * then we come back to the ReceiveInput function from that same client :D */ 
+	//s.removeClient(&c);
 }

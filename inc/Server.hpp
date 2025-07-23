@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 22:48:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/24 00:01:58 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,12 @@ class Server {
 		
 		/* Management of nickname list on server */
 		bool 	InsertNick(std::string &nick);
-		void removeClient(Client *client);
+		void 	removeClient(Client *client);
 
 		/* Management of channel list on server */
 		bool	isChannelExist(std::string &name);
 		Channel	*getChannel(std::string &name);	
-		std::vector<Channel*> getChannelsForClient(const Client *client) const;
+		//std::vector<Channel*> getChannelsForClient(const Client *client) const;
 		
 		/* Password check */
 		bool	checkPass(const std::string &) const;

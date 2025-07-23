@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 11:02:49 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:23:47 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,12 @@ void 	Client::reply(const std::string &src, t_cmd_reply &cmd)
 	//str = ":" + this->_server->getName() + " ";
 	it = cmd.begin();
 	for (it = cmd.begin(); it != cmd.end(); it++)
-		str += *it + " ";
+	{
+		if ((it + 1) == cmd.end())
+			str += ":" + *it + " ";
+		else
+			str += *it + " ";
+	}
 	str += "\n";
 	_send(str);
 }
@@ -153,7 +158,7 @@ void 	Client::reply(const std::string &src, const int num)
 
 	str = ":" + src + " ";
 	ss << num;
-	str += ss.str();
+	str += ss.str() + " ";
 	str += "\r\n";
 	_send(str);
 }
@@ -166,10 +171,15 @@ void 	Client::reply(const std::string &src, const int num, t_cmd_reply &cmd)
 
 	str = ":" + src + " ";
 	ss << num;
-	str += ss.str();
+	str += ss.str() + " ";
 	it = cmd.begin();
 	for (it = cmd.begin(); it != cmd.end(); it++)
-		str += *it + " ";
+	{	
+		if ((it + 1) == cmd.end())
+			str += ":" + *it + " ";
+		else
+			str += *it + " ";
+	}
 	str += "\r\n";
 	_send(str);
 }

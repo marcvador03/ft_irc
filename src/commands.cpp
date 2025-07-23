@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 11:02:20 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:14:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,12 +265,18 @@ void handleNick( Client &c )
 	
 	switch (c.setNickname(c.args[1])) {
 		case 431:
+			cmd_reply.push_back("No Niickname given");
+			c.reply(431, cmd_reply);
 			//c.reply("431 NICK :No nickname given\r\n");
 			break;
 		case 432:
+			c.reply(432);
 			//c.reply("432 NICK :Erroneous nickname\r\n");
 			break;
 		case 433:
+			cmd_reply.push_back(c.args[1]);
+			cmd_reply.push_back("Nickname already in use");
+			c.reply(433, cmd_reply);
 			//c.reply("433 NICK :Nickname is already in use\r\n");
 			std::cout << "Nickname '" << c.args[1] << "'is already in use." << std::endl;
 			break;

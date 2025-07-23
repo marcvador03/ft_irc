@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 22:49:11 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 23:09:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,13 +206,11 @@ void handlePing( Client &c )
 	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
 		c.reply(409);
-		//c.reply("409 PING :No originn specified\r\n"); //ERR_NOORIGIN
 		return ;
 	}
-	cmd_reply.push_back(c.args[0]);
+	cmd_reply.push_back("PONG");
 	cmd_reply.push_back(c.args[1]);
 	c.reply(cmd_reply);
-	//c.reply("PONG :" + token + "\r\n");
 	std::cout << "PONG sent with token: " << c.args[1] << std::endl;
 }
 

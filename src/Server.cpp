@@ -6,16 +6,44 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 15:47:55 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 22:47:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 
-Server::Server ( void ): // we will need to update default inputs with program argv!!
-	_name(".irc42"),
-	_password("pass")  	
+Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!!
+	_name(servername),
+	_password(pass),
+	_version("1.0")	
 {
+	std::time_t now = std::time(NULL);
+	std::strftime(_launchtime, sizeof(_launchtime), "%A %c", std::localtime(&now));
+
+	std::ifstream	config;
+	std::vector<std::string> tmp;
+	std::string 	line;
+
+	config.open("irc_config");
+	if (config.is_open() == true)
+	{
+		for (int i = 0, j = 0; std::getline(config, line) ; i++, j++)
+		{
+			tmp.push_back(line);
+			if (j == 13)
+			{	
+				_settings.push_back(tmp);
+				j = 0;
+				tmp.clear();
+			}
+		}
+		if (tmp.size() > 0)
+			_settings.push_back(tmp);
+		tmp.clear();
+	}
+	else
+		std::cout << "Unrecoverable error while opening config file" << std::endl;
+	return;
 }
 
 Server::~Server( void )
@@ -136,6 +164,24 @@ int			Server::getFd() const
 std::string	Server::getName() const
 {
 	return (this->_name);
+}
+
+std::string	Server::getLaunchTime() const
+{
+	std::string str;
+
+	str = _launchtime;
+	return (str);
+}
+
+std::string	Server::getVersion() const
+{
+	return (this->_version);
+}
+
+t_set		Server::getSettings() const
+{
+	return (this->_settings);
 }
 
 /* Management of nickname list on server */

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 15:55:50 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 22:49:11 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,24 +229,37 @@ static	void welcomeSequence( Client &c )
 	cmd_reply.clear();
 	//2. RPL_YOURHOST
 	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("Your host is XXX");
+	cmd_reply.push_back("Your host is ");
+	cmd_reply.push_back(c.getServername());
 	c.reply(2, cmd_reply);
 	cmd_reply.clear();
 	//3. RPL_CREATED
 	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("The server was created DATETIME");
+	cmd_reply.push_back("The server was created ");
+	cmd_reply.push_back(c.getServerLaunchTime());
+	cmd_reply.push_back(", running version ");
+	cmd_reply.push_back(c.getServerVersion());
 	c.reply(3, cmd_reply);
 	cmd_reply.clear();
 	//4. RPL_MYINFO
-	cmd_reply.push_back("TEST INFO");
+	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+	cmd_reply.push_back(c.getServername());
+	cmd_reply.push_back(c.getServerVersion());
+	cmd_reply.push_back("oi");
+	cmd_reply.push_back("bkl");
 	c.reply(4, cmd_reply);
 	cmd_reply.clear();
 	//5. RPL_ISUPORT
-	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("1-CHANLIMIT=#:10");
-	cmd_reply.push_back("are supported by this server");
-	c.reply(5, cmd_reply);
-	cmd_reply.clear();
+	t_set	settings = c.getServerSettings();
+	for (size_t i = 0; i < settings.size(); i++)
+	{
+			cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+			for (size_t j = 0; j < settings[i].size(); j++)
+				cmd_reply.push_back(settings[i].at(j));
+			cmd_reply.push_back("are supported by this server");
+			c.reply(5, cmd_reply);
+			cmd_reply.clear();
+	}
 	return;
 }
 

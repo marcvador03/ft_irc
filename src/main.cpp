@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/16 15:05:31 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 17:01:23 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	handle_signal(int sig)
 
 int	main ( void )
 {
-	Server server;
+	
+	Server server(".ft_irc", "pass");
 	signal(SIGINT, handle_signal);
 	try {
 		server.launch();

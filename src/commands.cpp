@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 11:14:18 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:32:30 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,7 @@ void handleNick( Client &c )
 	
 	switch (c.setNickname(c.args[1])) {
 		case 431:
-			cmd_reply.push_back("No Niickname given");
+			cmd_reply.push_back("No Nickname provided");
 			c.reply(431, cmd_reply);
 			//c.reply("431 NICK :No nickname given\r\n");
 			break;
@@ -283,7 +283,7 @@ void handleNick( Client &c )
 		case 0:
 			cmd_reply.push_back(c.args[0]);
 			cmd_reply.push_back(c.args[1]);
-			c.reply(cmd_reply);
+			c.reply(c.args[1], cmd_reply);
 			//c.reply(":" + oldNick + " NICK " + c.args[1] + "\r\n");
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
 	}

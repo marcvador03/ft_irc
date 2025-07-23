@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 12:05:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 12:15:41 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ class Client {
 		
 		int			_clientfd; //fd of the client
 		int			_slot; //slot number [pollfd array position]
+		bool		_isRegistered; // flag if client is registered
+								  
 		std::string	_realname;
 		std::string	_username;
 		std::string	_nickname;		

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 12:05:04 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 12:10:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	Client::ReceiveInput()
 	char		buf[2048];
 	int			bytes;
 
-	//last parameter may start with : / see documentation	
 	std::memset(buf, 0, sizeof(buf));
 	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
 	if (bytes == -1)
@@ -51,7 +50,6 @@ void	Client::ReceiveInput()
 		buf[bytes] = '\0';
 		std::cout << "Receiving input: " << buf;
 		std::istringstream ss(buf);
-		//ss >> std::ws; //to remove leading WS
 		for (std::string line; std::getline(ss, line);) 
 		{
 			line = trim(line);
@@ -66,7 +64,6 @@ void	Client::ReceiveInput()
 				else
 					std::getline(sub_line, args[i], ' ');
 			}
-			//for (int i = 0; std::getline(sub_line, args[i], ' '); i++);
 			this->LaunchCmd();
 			args.erase(args.begin(), args.end());
 		}

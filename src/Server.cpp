@@ -6,14 +6,15 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 21:13:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:48:56 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 
-Server::Server ( void ):
-	  _name(".irc42")	
+Server::Server ( void ): // we will need to update default inputs with program argv!!
+	_name(".irc42"),
+	_password("pass")  	
 {
 }
 
@@ -184,4 +185,12 @@ Channel	*Server::getChannel(std::string &name)
 		this->_channels.insert(std::make_pair(name, c));
 	}
 	return c;			
+}
+
+/* Password check */
+bool	Server::checkPass(const std::string &pass) const
+{
+	if (pass.compare(this->_password) == 0)
+		return true;
+	return false;
 }

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 21:13:38 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:47:28 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,9 @@ class Server {
 		bool	isChannelExist(std::string &name);
 		//Channel	*createChannel(std::string &name);	
 		Channel	*getChannel(std::string &name);	
+		
+		/* Password check */
+		bool	checkPass(const std::string &) const;
 		
 		public:
 			class ErrnoException: public std::exception {

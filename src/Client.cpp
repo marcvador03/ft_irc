@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 11:23:47 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 12:05:04 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ void	Client::LaunchCmd()
 		handleJoin(*this);
 	else if (args[0] == "USER")
 		handleUser(*this);
+	else if (args[0] == "PASS")
+		handlePass(*this);
 }
 
 /* Methods to send back replies to Client, source default servername */
@@ -308,3 +310,14 @@ bool	Client::isPartofChannel( std::string &name )
 	ch = _server->getChannel(name);
 	return (ch->isMember(this));
 }
+		
+int		Client::registerUser( std::string &pass)
+{
+	if (pass.empty() == true)
+		return 461;
+	if (_server->checkPass(pass) == false)
+		return 464;
+	//missing checking registered user - what is the key for user??
+	return 0;
+}
+

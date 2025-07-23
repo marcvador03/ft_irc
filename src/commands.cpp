@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 11:32:30 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 11:54:27 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,49 +74,6 @@
 - Handle channel operator commands and modes.
 
 */
-
-/** Command: PASS
- * @brief The PASS command is used to set the password for the connection.
- * If set, the password must be set before any attempt to register the
- * connection is made. This requires that clients send a PASS command before
- * sending the NICK / USER combination.
- * @param <password>
- * @return Void;
- */
-void handlePass( Client &c ) 
-{
-	if (c.args.size() < 2 || c.args[1].empty()) 
-	{
-		c.reply(461);
-		//c.reply("461 PASS :Not enough parameters\r\n"); // ERR_NEEDMOREPARAMS
-		return ;
-	}
-	/* TODO: the rest */
-	/* need changes in Server class to store the password : 
-		class Server {
-	public:
-		Server(const std::string& password);
-		const std::string& getPassword() const;
-		// ... other server methods ...
-	private:
-		std::string _password;
-		// ... other members ...
-	}; */
-	/*
-	// Check if the client is already registered
-    if (c.isRegistered()) {
-        c.reply("462 PASS :You may not reregister\r\n");
-        return;
-    }
-	// Set the password for the client
-    c.setPassword(c.args[1]);
-    if (server.getPassword() != c.args[1]) {
-        c.reply("464 PASS :Password incorrect\r\n");
-        // Optionally close connection here
-        return;
-    }
-	*/
-}
 
 /* TODO: Client list in Server Class:
 class Server {
@@ -302,4 +259,22 @@ void handleUser( Client &c )
 	}
 }
 
+void handlePass( Client &c ) 
+{
+	t_cmd_reply			cmd_reply;
+	
+	switch (c.registerUser(c.args[1])) {
+		case 461:
+			c.reply(461);
+			break;
+		/*case 462: missing checking user already registered
+			c.reply(462);
+			break;*/
+		case 464:
+			c.reply(464);
+			break;
+		case 0:
+			std::cout << "Password accepted" << std::endl;
+	}
+}
 

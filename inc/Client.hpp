@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 11:03:08 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 12:05:15 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ class Client {
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
 		int			setUser( std::string &, std::string &);
+		int			registerUser( std::string &);
 		std::string	getName( void ) const;
 		std::string	getHost( void ) const;
 		void		setName( std::string &);
@@ -117,4 +118,5 @@ void handleJoin( Client &c );
 void handlePing( Client &c );
 void handleNick( Client &c ); 
 void handleUser( Client &c ); 
+void handlePass( Client &c ); 
 #endif

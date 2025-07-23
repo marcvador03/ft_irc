@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 12:21:29 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 13:47:14 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 		_slot(slot),
 		_isPassAccepted(false),
 		_isRegistered(false),
+		_hasNick(false),
+		_hasUser(false),
 		_chanlim(10)
 {
 	this->_socklen = sizeof(this->_client_addr);
@@ -62,7 +64,10 @@ void	Client::ReceiveInput()
 			for (int i = 0; sub_line.peek() != EOF; i++)
 			{
 				if ( i > 0 && sub_line.peek() == ':')
+				{
+					sub_line.seekg(1, std::ios::cur);
 					std::getline(sub_line, args[i]);
+				}
 				else
 					std::getline(sub_line, args[i], ' ');
 			}
@@ -74,6 +79,24 @@ void	Client::ReceiveInput()
 
 void	Client::LaunchCmd()
 {
+	if (_isPassAccepted == false)
+	{
+		if (args[0] == "PASS")
+			handlePass(*this);
+		else if (args[0] == "PING")
+			handlePing(*this);
+		return ;
+	}
+	if (_isPassAccepted == true && _isRegistered == false)
+	{
+		if (args[0] == "NICK")
+			handleNick(*this);
+		else if (args[0] == "USER")
+			handleUser(*this);
+		else if (args[0] == "PING")
+			handlePing(*this);
+		return ;
+	}
 	if (args[0] == "PING")
 		handlePing(*this);
 	else if (args[0] == "NICK")
@@ -82,8 +105,6 @@ void	Client::LaunchCmd()
 		handleJoin(*this);
 	else if (args[0] == "USER")
 		handleUser(*this);
-	else if (args[0] == "PASS")
-		handlePass(*this);
 }
 
 /* Methods to send back replies to Client, source default servername */
@@ -156,9 +177,24 @@ void 	Client::reply(const std::string &src, const int num)
 {
 	std::string	str;
 	std::stringstream ss;
+	int	i;
 
 	str = ":" + src + " ";
 	ss << num;
+	for (i = 0; ss.get() != EOF; i++);
+	if (i == 0 || i > 3)
+	{
+		std::cout << "Error in reply command, too many numeric" << std::endl;
+		return;
+	}
+	else if (i == 1)
+	{
+		ss.putback('0');
+		ss.putback('0');
+	}
+	else if (i == 2)
+		ss.putback('0');
+	ss.seekg(0);
 	str += ss.str() + " ";
 	str += "\r\n";
 	_send(str);
@@ -169,9 +205,24 @@ void 	Client::reply(const std::string &src, const int num, t_cmd_reply &cmd)
 	std::string	str;
 	std::stringstream ss;
 	t_cmd_reply::iterator it;
+	int	i;
 
 	str = ":" + src + " ";
 	ss << num;
+	for (i = 0; ss.get() != EOF; i++);
+	if (i == 0 || i > 3)
+	{
+		std::cout << "Error in reply command, too many numeric" << std::endl;
+		return;
+	}
+	else if (i == 1)
+	{
+		ss.putback('0');
+		ss.putback('0');
+	}
+	else if (i == 2)
+		ss.putback('0');
+	ss.seekg(0);
 	str += ss.str() + " ";
 	it = cmd.begin();
 	for (it = cmd.begin(); it != cmd.end(); it++)
@@ -218,7 +269,8 @@ int	Client::setNickname( std::string &nick)
 	if (this->_server->InsertNick(nick) == false)
 		return 433;
 	this->_nickname = nick;
-	return 0;
+	_hasNick = true;
+	return _completeReg();
 }
 
 int	Client::setUser( std::string &user, std::string &real)
@@ -228,7 +280,8 @@ int	Client::setUser( std::string &user, std::string &real)
 	//missing validating user length
 	this->_username = user;
 	this->_realname = real;
-	return 0;
+	_hasUser = true;
+	return _completeReg();
 }
 
 std::string	Client::getHost( void ) const
@@ -236,14 +289,9 @@ std::string	Client::getHost( void ) const
 	return this->_host;
 }
 
-std::string	Client::getName( void ) const
+std::string	Client::getUser( void ) const
 {
 	return this->_username;
-}
-
-void	Client::setName( std::string &name)
-{
-	this->_username = name;
 }
 
 int		Client::leaveChannel( std::string name)
@@ -318,6 +366,16 @@ int		Client::registerPass( std::string &pass)
 		return 462;
 	if (_server->checkPass(pass) == false)
 		return 464;
+	_isPassAccepted = true;
 	return 0;
 }
 
+int		Client::_completeReg( void )
+{
+	if (_isRegistered == false && _isPassAccepted == true && _hasNick == true && _hasUser == true)
+	{
+		_isRegistered = true;
+		return 1;
+	}
+	return 0;
+}

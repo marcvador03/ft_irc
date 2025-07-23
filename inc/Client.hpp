@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 12:19:25 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 13:44:48 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,9 @@ class Client {
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
 		int			setUser( std::string &, std::string &);
+		std::string	getUser( void ) const;
 		int			registerPass( std::string &);
-		std::string	getName( void ) const;
 		std::string	getHost( void ) const;
-		void		setName( std::string &);
 		int			leaveChannel( std::string );
 		int			leaveAllChannels( void );
 		int			joinChannel( std::string, std::string );
@@ -99,7 +98,9 @@ class Client {
 		int			_slot; //slot number [pollfd array position]
 		bool		_isPassAccepted; // flag if client has provided correct password
 		bool		_isRegistered; // flag if client is registered
-								  
+		bool		_hasNick;
+		bool		_hasUser;
+
 		std::string	_realname;
 		std::string	_username;
 		std::string	_nickname;		
@@ -112,6 +113,7 @@ class Client {
 
 		/* Internal helpers */
 		void	_send(std::string &);
+		int		_completeReg( void );
 	
 		std::set<Channel *> _channels; //channels which client is member of
 };

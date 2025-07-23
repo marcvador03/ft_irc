@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 12:21:25 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 13:19:43 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,40 @@ void handlePing( Client &c )
 	std::cout << "PONG sent with token: " << c.args[1] << std::endl;
 }
 
+static	void welcomeSequence( Client &c )
+{
+	t_cmd_reply			cmd_reply;
+
+	//several parameters to implement
+
+	//1. RPL WELCOME
+	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+	cmd_reply.push_back("Welcome to the network, " + c.getNickname() + "!" + c.getUser() + "@" + c.getHost());
+	c.reply(1, cmd_reply);
+	cmd_reply.clear();
+	//2. RPL_YOURHOST
+	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+	cmd_reply.push_back("Your host is XXX");
+	c.reply(2, cmd_reply);
+	cmd_reply.clear();
+	//3. RPL_CREATED
+	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+	cmd_reply.push_back("The server was created DATETIME");
+	c.reply(3, cmd_reply);
+	cmd_reply.clear();
+	//4. RPL_MYINFO
+	cmd_reply.push_back("TEST INFO");
+	c.reply(4, cmd_reply);
+	cmd_reply.clear();
+	//5. RPL_ISUPORT
+	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+	cmd_reply.push_back("1-CHANLIMIT=#:10");
+	cmd_reply.push_back("are supported by this server");
+	c.reply(5, cmd_reply);
+	cmd_reply.clear();
+	return;
+}
+
 void handleNick( Client &c ) 
 {
 	t_cmd_reply			cmd_reply;
@@ -237,11 +271,17 @@ void handleNick( Client &c )
 			//c.reply("433 NICK :Nickname is already in use\r\n");
 			std::cout << "Nickname '" << c.args[1] << "'is already in use." << std::endl;
 			break;
+		case 1:
+			cmd_reply.push_back(c.args[0]);
+			cmd_reply.push_back(c.args[1]);
+			c.reply(c.args[1], cmd_reply);
+			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
+			welcomeSequence(c);
+			break;
 		case 0:
 			cmd_reply.push_back(c.args[0]);
 			cmd_reply.push_back(c.args[1]);
 			c.reply(c.args[1], cmd_reply);
-			//c.reply(":" + oldNick + " NICK " + c.args[1] + "\r\n");
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
 	}
 }
@@ -253,6 +293,10 @@ void handleUser( Client &c )
 	switch (c.setUser(c.args[1], c.args[4])) {
 		case 431:
 			c.reply(431);
+			break;
+		case 1:
+			std::cout << "Username and Realname changed" << std::endl;
+			welcomeSequence(c);
 			break;
 		case 0:
 			std::cout << "Username and Realname changed" << std::endl;

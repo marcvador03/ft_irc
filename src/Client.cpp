@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 09:42:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 10:49:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,14 @@ void	Client::ReceiveInput()
 				continue;
 			std::istringstream sub_line(line);
 			sub_line >> std::ws; //to remove leading WS
-			for (int i = 0; std::getline(sub_line, args[i], ' '); i++);
+			for (int i = 0; sub_line.peek() != EOF; i++)
+			{
+				if ( i > 0 && sub_line.peek() == ':')
+					std::getline(sub_line, args[i]);
+				else
+					std::getline(sub_line, args[i], ' ');
+			}
+			//for (int i = 0; std::getline(sub_line, args[i], ' '); i++);
 			this->LaunchCmd();
 			args.erase(args.begin(), args.end());
 		}

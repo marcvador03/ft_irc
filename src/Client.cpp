@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 14:18:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 14:24:03 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,25 +177,20 @@ void 	Client::reply(const std::string &src, const int num)
 {
 	std::string	str;
 	std::stringstream ss;
-	int	i;
 
 	str = ":" + src + " ";
 	ss << num;
-	for (i = 0; ss.get() != EOF; i++);
-	if (i == 0 || i > 3)
+	if (num < 0 || num > 999)
 	{
 		std::cout << "Error in reply command, too many numeric" << std::endl;
 		return;
 	}
-	else if (i == 1)
-	{
-		ss.putback('0');
-		ss.putback('0');
-	}
-	else if (i == 2)
-		ss.putback('0');
-	ss.seekg(0);
-	str += ss.str() + " ";
+	else if (num < 10)
+		str += "00" + ss.str() + " ";
+	else if (num < 100)
+		str += "0" + ss.str() + " ";
+	else
+		str += ss.str() + " ";
 	str += "\r\n";
 	_send(str);
 }

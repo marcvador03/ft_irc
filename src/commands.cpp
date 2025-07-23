@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 13:19:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 18:01:12 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,12 +228,16 @@ static	void welcomeSequence( Client &c )
 	cmd_reply.clear();
 	//2. RPL_YOURHOST
 	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("Your host is XXX");
+	cmd_reply.push_back("Your host is ");
+	cmd_reply.push_back(c.getServername());
 	c.reply(2, cmd_reply);
 	cmd_reply.clear();
 	//3. RPL_CREATED
 	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("The server was created DATETIME");
+	cmd_reply.push_back("The server was created ");
+	cmd_reply.push_back(c.getServerLaunchTime());
+	cmd_reply.push_back(", running version ");
+	cmd_reply.push_back(c.getServerVersion());
 	c.reply(3, cmd_reply);
 	cmd_reply.clear();
 	//4. RPL_MYINFO
@@ -242,7 +246,33 @@ static	void welcomeSequence( Client &c )
 	cmd_reply.clear();
 	//5. RPL_ISUPORT
 	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("1-CHANLIMIT=#:10");
+	cmd_reply.push_back("AWAYLEN=200");
+	cmd_reply.push_back("CASEMAPPING=ascii");
+	cmd_reply.push_back("CHANLIMIT=#:10");
+	cmd_reply.push_back("CHANMODES=b,k,l,imnpst");
+	cmd_reply.push_back("CHANNELLEN=32");
+	cmd_reply.push_back("CHANTYPES=#");
+	cmd_reply.push_back("ELIST=CMNTU");
+	cmd_reply.push_back("EXCEPTS");
+	cmd_reply.push_back("EXTBAN=");
+	cmd_reply.push_back("HOSTLEN=64");
+	cmd_reply.push_back("INVEX");
+	cmd_reply.push_back("KICKLEN=255");
+	cmd_reply.push_back("MAXLIST=b:25");
+	cmd_reply.push_back("are supported by this server");
+	c.reply(5, cmd_reply);
+	cmd_reply.clear();
+	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+	cmd_reply.push_back("MAXTARGETS=20");
+	cmd_reply.push_back("MODES");
+	cmd_reply.push_back("NETWORK=42");
+	cmd_reply.push_back("NICKLEN=30");
+	cmd_reply.push_back("PREFIX=(ov)@+");
+	cmd_reply.push_back("SAFELIST");
+	cmd_reply.push_back("SILENCE");
+	cmd_reply.push_back("STATUSMSG=~&@%+");
+	cmd_reply.push_back("TOPICLEN=307");
+	cmd_reply.push_back("USERLEN=12");
 	cmd_reply.push_back("are supported by this server");
 	c.reply(5, cmd_reply);
 	cmd_reply.clear();

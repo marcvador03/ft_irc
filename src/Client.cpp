@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 14:18:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 17:17:01 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,6 +240,21 @@ int		Client::getClientfd( void ) const
 int		Client::getSlot( void ) const
 {
 	return this->_slot;
+}
+
+std::string	Client::getServername( void ) const
+{
+	return (_server->getName());
+}
+
+std::string	Client::getServerLaunchTime( void ) const
+{
+	return (_server->getLaunchTime());
+}
+
+std::string	Client::getServerVersion( void ) const
+{
+	return (_server->getVersion());
 }
 
 std::string	Client::getNickname( void ) const

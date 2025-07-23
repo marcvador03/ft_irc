@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 11:47:28 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 17:17:29 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <set>
 # include <iterator>
 # include <cerrno>
+# include <ctime>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <sys/types.h>
@@ -41,9 +42,8 @@ class Channel;
 class Server {
 	public:
 		/* Coplien form */	
-		Server ( void );
+		Server ( const std::string &servername, const std::string &pass );
 		virtual ~Server( void );
-		
 
 		/* Server launch sequences */
 		void	launch( void ); // initiate socket server and binds it to given port
@@ -55,6 +55,8 @@ class Server {
 		/*Getters & Setters */
 		int			getFd() const;	
 		std::string	getName() const;	
+		std::string	getLaunchTime() const;	
+		std::string	getVersion() const;	
 		
 		/* Management of nickname list on server */
 		bool 	InsertNick(std::string &nick);
@@ -79,6 +81,7 @@ class Server {
 			};
 	private:
 		/* Coplien form - unauthorized constructors */	
+		Server ( void );
 		Server ( const Server &other );
 		Server &operator-( const Server &other );
 
@@ -95,9 +98,9 @@ class Server {
 		std::string				_name; //server name, handpicked: .irc42
 		std::string				_password; // server password
 		int						_serverfd; // fd of the server
-		std::map<int, bool>		_slots; // list slots for pollfd and status
-										// false: free to accept new client
-										// true: occupied by a client
+		std::map<int, bool>		_slots; // list slots for pollfd and status false: free to accept new client true: occupied by a client
+		char					_launchtime[100];
+		std::string				_version;
 		
 		/* List of connections and pollfd structure array */
 		std::map<int, Client *> 	_connections;

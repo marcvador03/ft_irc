@@ -6,16 +6,19 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 11:48:56 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 17:18:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 
-Server::Server ( void ): // we will need to update default inputs with program argv!!
-	_name(".irc42"),
-	_password("pass")  	
+Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!!
+	_name(servername),
+	_password(pass),
+	_version("1.0")	
 {
+	std::time_t now = std::time(NULL);
+	std::strftime(_launchtime, sizeof(_launchtime), "%A %c", std::localtime(&now)); 
 }
 
 Server::~Server( void )
@@ -136,6 +139,19 @@ int			Server::getFd() const
 std::string	Server::getName() const
 {
 	return (this->_name);
+}
+
+std::string	Server::getLaunchTime() const
+{
+	std::string str;
+
+	str = _launchtime;
+	return (str);
+}
+
+std::string	Server::getVersion() const
+{
+	return (this->_version);
 }
 
 /* Management of nickname list on server */

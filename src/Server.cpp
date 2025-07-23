@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 11:48:56 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 15:47:55 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,4 +193,33 @@ bool	Server::checkPass(const std::string &pass) const
 	if (pass.compare(this->_password) == 0)
 		return true;
 	return false;
+}
+
+std::vector<Channel*> Server::getChannelsForClient(const Client *client) const
+{
+	std::vector<Channel*> result;
+	for (std::map<std::string, Channel*>::const_iterator it = _channels.begin(); it !=_channels.end(); ++it)
+	{
+		if (it->second->isMember(const_cast<Client*>(client)))
+			result.push_back(it->second);
+	}
+	return result;
+}
+
+void Server::removeClient(Client *client)
+{
+	//remove from all channels
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+		it->second->removeMember(client);
+
+	//remove from connections map
+	for (std::map<int, Client*>::iterator it = _connections.begin(); it != _connections.end(); ++it)
+	{
+		if (it->second == client)
+		{
+			_connections.erase(it);
+			break;
+		}
+	}
+	delete client; //check if it doesn't cause segfault/double free
 }

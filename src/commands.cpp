@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/23 13:19:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 15:48:56 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "../inc/Server.hpp"
 #include "../inc/commands.hpp"
 #include "../inc/utils.hpp"
+
 
 /*Based on the **ft_irc project requirements** and your code, you need to implement the following IRC commands:
 
@@ -321,4 +322,35 @@ void handlePass( Client &c )
 			std::cout << "Password accepted" << std::endl;
 	}
 }
+/**
+>>>>>>> 17c17313d81fd0254ccaff77446c2179fc7b70f8
 
+### **Summary of steps in code for handleQuit**
+
+1. Parse the reason (if any) from the QUIT command.
+2. Notify all other clients in the same channels with the formatted QUIT message.
+3. Optionally send an ERROR message to the quitting client.
+4. Remove the client from all channels and close the connection.
+
+---
+
+**Example flow:**
+
+- Client sends: `QUIT :Bye for now!`
+- Server sends to other clients: `:dan-!d@localhost QUIT :Quit: Bye for now!`
+- Server sends to quitting client: `ERROR :Closing Link: Quit: Bye for now!`
+- Server closes the connection and removes the client.
+
+--- */
+void handleQuit(Server &s, Client &c)
+{
+	std::string reason = (c.args.size() > 1) ? c.args[1] : "";
+	std::string quitMsg = ":Quit " + reason;
+	std::string prefix = ":" + c.getNickname() + "!" + c.getName() + "@localhost QUIT " + quitMsg + "\r\n";
+	std::vector<Channel *> channels = s.getChannelsForClient(&c);
+	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); ++it)
+		(*it)->broadcast(prefix, &c);
+	c.reply("ERROR :Closing Link: " + quitMsg + "\r\n");
+	s.removeClient(&c);
+	close(c.getClientfd());
+}

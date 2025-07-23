@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/22 16:51:14 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 15:45:16 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,3 +105,36 @@ std::string	Channel::getTopic( void ) const
 	return this->_topic;
 }
 
+void Channel::broadcast(const std::string &message, const Client *exclude)
+{
+	for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (it->second != exclude)
+			it->second->reply(message);
+	}
+}
+
+/* membership management*/
+bool Channel::isMember(Client *client) const
+{
+    for (std::map<int, Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (it->second == client)
+            return true;
+    }
+    return false;
+}
+
+bool Channel::removeMember(Client *client)
+{
+    for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (it->second == client)
+        {
+            it->second->_channels.erase(this); // Remove channel from client's set if you track it
+            _clients.erase(it);
+            return true;
+        }
+    }
+    return false;
+}

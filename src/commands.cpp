@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/22 20:37:21 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 10:22:02 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,8 @@ void handlePass( Client &c )
 {
 	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
-		c.reply("461 PASS :Not enough parameters\r\n"); // ERR_NEEDMOREPARAMS
+		c.reply(461);
+		//c.reply("461 PASS :Not enough parameters\r\n"); // ERR_NEEDMOREPARAMS
 		return ;
 	}
 	/* TODO: the rest */
@@ -145,9 +146,10 @@ bool Server::isNicknameInUse(const std::string& nickname) const {
 void handleJoin( Client &c ) 
 {
 	
-	t_list	list;
-	t_list::iterator it;
-	std::string	chan, key;
+	t_cmd_reply			cmd_reply;
+	t_list				list;
+	t_list::iterator	it;
+	std::string			chan, key;
 	
 	std::istringstream chan_s(c.args[1]);
 	std::istringstream key_s(c.args[2]);
@@ -160,7 +162,8 @@ void handleJoin( Client &c )
 	}
 	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
-		c.reply("461 JOIN :Not enough parameters\r\n"); // ERR_NEEDMOREPARAMS
+		c.reply(461);
+		//c.replyMsg("461 JOIN :Not enough parameters\r\n"); // ERR_NEEDMOREPARAMS
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
@@ -170,39 +173,49 @@ void handleJoin( Client &c )
 	}
 	for (it = list.begin(); it!= list.end(); it++)
 	{
+		cmd_reply.push_back(c.args[0]);
+		cmd_reply.push_back(it->first);
 		switch (c.joinChannel(it->first, it->second)) {
 			case 405:
-				c.reply(": You have joined too many channels");
+				c.reply(405);
+				//c.reply(": You have joined too many channels");
 				break ;
 			case 475:
-				c.reply(": Cannot join channel (+k)");
+				c.reply(475);
+				//c.reply(": Cannot join channel (+k)");
 				break ;
 			case 471:
-				c.reply(": Cannot join channel (+l)");
+				c.reply(471);
+				//c.reply(": Cannot join channel (+l)");
 				break ;
 			case 473:
-				c.reply(": Cannot join channel (+i)");
+				c.reply(473);
+				//c.reply(": Cannot join channel (+i)");
 				break ;
 			case 476:
-				c.reply(": Bad Channel Mask");
+				c.reply(476);
+				//c.reply(": Bad Channel Mask");
 				break ;
 			case 0:
-				c.reply(":" + c.getNickname() + " JOIN " + it->first);
-				c.reply(c.getNickname() + " joined " + it->first);
+				//c.reply(":" + c.getNickname() + " JOIN " + it->first);
+				c.reply(cmd_reply);
+				//c.reply(c.getNickname() + " joined " + it->first);
 		}
 	}
 }
 
 void handlePart( Client &c ) 
 {
-	t_list	list;
-	t_list::iterator it;
-	std::istringstream chan_s(c.args[1]);
-	std::string	chan;
+	t_cmd_reply			cmd_reply;
+	t_list				list;
+	t_list::iterator 	it;
+	std::istringstream	chan_s(c.args[1]);
+	std::string			chan;
 	
 	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
-		c.reply("461 PART :Not enough parameters"); // ERR_NEEDMOREPARAMS
+		c.reply(461);
+		//c.reply("461 PART :Not enough parameters"); // ERR_NEEDMOREPARAMS
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
@@ -211,46 +224,85 @@ void handlePart( Client &c )
 	{
 		switch (c.leaveChannel(it->first)) {
 			case 403:
-				c.reply(": No such channel");
+				c.reply(403);
+				//c.reply(": No such channel");
 				break ;
 			case 442:
-				c.reply(": You're not on that channel");
+				c.reply(442);
+				//c.reply(": You're not on that channel");
 				break ;
 			case 0:
-				c.reply(":" + c.getNickname() + " PART " + it->first);
+				cmd_reply.push_back(c.args[0]);
+				cmd_reply.push_back(it->first);
+				c.reply(cmd_reply);
+				//c.reply(":" + c.getNickname() + " PART " + it->first);
 		}
 	}
 }
 
 void handlePing( Client &c ) 
 {
+	t_cmd_reply			cmd_reply;
+	
 	//check if the token is present and non-empty
 	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
-		c.reply("409 PING :No originn specified\r\n"); //ERR_NOORIGIN
+		c.reply(409);
+		//c.reply("409 PING :No originn specified\r\n"); //ERR_NOORIGIN
 		return ;
 	}
-	std::string token = c.args[1];
-	c.reply("PONG :" + token + "\r\n");
-	std::cout << "PONG sent with token: " << token << std::endl;
+	cmd_reply.push_back(c.args[0]);
+	cmd_reply.push_back(c.args[1]);
+	c.reply(cmd_reply);
+	//c.reply("PONG :" + token + "\r\n");
+	std::cout << "PONG sent with token: " << c.args[1] << std::endl;
 }
 
 void handleNick( Client &c ) 
 {
+	t_cmd_reply			cmd_reply;
 	std::string oldNick = c.getNickname();
+	
 	switch (c.setNickname(c.args[1])) {
 		case 431:
-			c.reply("431 NICK :No nickname given\r\n");
+			//c.reply("431 NICK :No nickname given\r\n");
 			break;
 		case 432:
-			c.reply("432 NICK :Erroneous nickname\r\n");
+			//c.reply("432 NICK :Erroneous nickname\r\n");
 			break;
 		case 433:
-			c.reply("433 NICK :Nickname is already in use\r\n");
+			//c.reply("433 NICK :Nickname is already in use\r\n");
 			std::cout << "Nickname '" << c.args[1] << "'is already in use." << std::endl;
 			break;
 		case 0:
-			c.reply(":" + oldNick + " NICK " + c.args[1] + "\r\n");
+			cmd_reply.push_back(c.args[0]);
+			cmd_reply.push_back(c.args[1]);
+			c.reply(cmd_reply);
+			//c.reply(":" + oldNick + " NICK " + c.args[1] + "\r\n");
+			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
+	}
+}
+
+void handleUser( Client &c ) 
+{
+	t_cmd_reply			cmd_reply;
+	
+	switch (c.setNickname(c.args[1])) {
+		case 431:
+			//c.reply("431 NICK :No nickname given\r\n");
+			break;
+		case 432:
+			//c.reply("432 NICK :Erroneous nickname\r\n");
+			break;
+		case 433:
+			//c.reply("433 NICK :Nickname is already in use\r\n");
+			std::cout << "Nickname '" << c.args[1] << "'is already in use." << std::endl;
+			break;
+		case 0:
+			cmd_reply.push_back(c.args[0]);
+			cmd_reply.push_back(c.args[1]);
+			c.reply(cmd_reply);
+			//c.reply(":" + oldNick + " NICK " + c.args[1] + "\r\n");
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
 	}
 }

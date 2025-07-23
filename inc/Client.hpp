@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/22 19:10:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 09:32:41 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <netinet/in.h>
 # include <bits/stdc++.h>
 # include <map>
+# include <vector>
 # include "Channel.hpp"
 # include "Server.hpp"
 
@@ -34,6 +35,7 @@
 
 //`t_arg` is a type alias for a map that associates an integer (slot) with
 //a string (argument). This is used to store command arguments for the client.
+typedef std::vector<std::string> t_cmd_reply;
 typedef std::map<int, std::string> t_arg;
 typedef std::map<std::string, std::string> t_list;
 
@@ -51,7 +53,18 @@ class Client {
 		/* Method to receive bytes from client socket */
 		void	ReceiveInput();
 		void	LaunchCmd();
-		void 	reply(const std::string& msg);
+
+		/* Methods to send back replies to Client, source default servername */
+		void 	reply(const std::string&); //send a string
+		void 	reply(t_cmd_reply &); //send a command + parameters
+		void 	reply(const int); // send a numeric reply
+		void 	reply(const int, t_cmd_reply &); // send a numeric reply + parameters
+		
+		/* Methods to send back replies to Client, override source*/
+		void 	reply(const std::string&, const std::string&); //send a string
+		void 	reply(const std::string&, t_cmd_reply &); //send a command + parameters
+		void 	reply(const std::string&, const int); // send a numeric reply
+		void 	reply(const std::string&, const int, t_cmd_reply &); // send a numeric reply + parameters
 		
 		/* Setters & Getters */
 		int			getClientfd( void ) const;
@@ -59,7 +72,8 @@ class Client {
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
 		std::string	getName( void ) const;
-		void		setName( std::string &name);
+		std::string	getHost( void ) const;
+		void		setName( std::string &);
 		int			leaveChannel( std::string );
 		int			leaveAllChannels( void );
 		int			joinChannel( std::string, std::string );
@@ -81,13 +95,17 @@ class Client {
 		
 		int			_clientfd; //fd of the client
 		int			_slot; //slot number [pollfd array position]
-		std::string	_name;			//client name
+		std::string	_username;			//client name
 		std::string	_nickname;		
 		size_t		_chanlim;
+		std::string	_host;
   
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
+
+		/* Internal helpers */
+		void	_send(std::string &);
 	
 		std::set<Channel *> _channels; //channels which client is member of
 };

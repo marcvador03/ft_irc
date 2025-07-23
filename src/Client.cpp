@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/22 20:31:08 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/23 09:42:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ void	Client::ReceiveInput()
 {
 	char		buf[2048];
 	int			bytes;
-	
+
+	//last parameter may start with : / see documentation	
 	std::memset(buf, 0, sizeof(buf));
 	bytes = recv(this->_clientfd, buf, sizeof(buf) - 1, 0);
 	if (bytes == -1)
@@ -75,18 +76,96 @@ void	Client::LaunchCmd()
 		handleJoin(*this);
 }
 
-void 	Client::reply(const std::string& msg) 
+/* Methods to send back replies to Client, source default servername */
+void	Client::_send(std::string &str)
 {
 	ssize_t		bytes;
-	std::string	str;
-
-	if (msg[msg.size() - 1] != '\n')
-		str = msg + "\n";
+	
 	bytes = send(this->_clientfd, str.c_str(), str.length(), 0);
 	std::cout << bytes << " bytes have been sent to " << this->_nickname << std::endl;
 }
+
+void 	Client::reply(const std::string &msg) 
+{
+	this->reply(".servername", msg);
+}
+
+void 	Client::reply(t_cmd_reply &cmd) 
+{
+	this->reply(".servername", cmd);
+}
+
+void 	Client::reply(const int num) 
+{
+	this->reply(".servername", num);
+}
+
+void 	Client::reply(const int num, t_cmd_reply &cmd) 
+{
+	this->reply(".servername", num, cmd);
+}
+
+/* Methods to send back replies to Client, override source*/
+void 	Client::reply(const std::string &src, const std::string &msg) 
+{
+	std::string	str;
+
+	str = ":" + src + " ";
+	if (msg[msg.size() - 1] != '\n')
+	{
+		if (msg[msg.size() - 2] != '\r')
+			str = msg + "\r\n";
+		else
+			str = msg + "\n";
+	}
+	else
+		str += msg;
+	_send(str);
+}
+
+void 	Client::reply(const std::string &src, t_cmd_reply &cmd) 
+{
+	std::string	str;
+	t_cmd_reply::iterator it;
+
+	str = ":" + src + " ";
+	//str = ":" + this->_server->getName() + " ";
+	it = cmd.begin();
+	for (it = cmd.begin(); it != cmd.end(); it++)
+		str += *it + " ";
+	str += "\n";
+	_send(str);
+}
+
+void 	Client::reply(const std::string &src, const int num) 
+{
+	std::string	str;
+	std::stringstream ss;
+
+	str = ":" + src + " ";
+	ss << num;
+	str += ss.str();
+	str += "\r\n";
+	_send(str);
+}
+
+void 	Client::reply(const std::string &src, const int num, t_cmd_reply &cmd) 
+{
+	std::string	str;
+	std::stringstream ss;
+	t_cmd_reply::iterator it;
+
+	str = ":" + src + " ";
+	ss << num;
+	str += ss.str();
+	it = cmd.begin();
+	for (it = cmd.begin(); it != cmd.end(); it++)
+		str += *it + " ";
+	str += "\r\n";
+	_send(str);
+}
+
 /* Getters and setters */
-		
 int		Client::getClientfd( void ) const
 {
 	return this->_clientfd;
@@ -122,14 +201,19 @@ int	Client::setNickname( std::string &nick)
 	return 0;
 }
 
+std::string	Client::getHost( void ) const
+{
+	return this->_host;
+}
+
 std::string	Client::getName( void ) const
 {
-	return this->_name;
+	return this->_username;
 }
 
 void	Client::setName( std::string &name)
 {
-	this->_name = name;
+	this->_username = name;
 }
 
 int		Client::leaveChannel( std::string name)

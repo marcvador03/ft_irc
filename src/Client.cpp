@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 23:20:30 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/24 12:46:31 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Client::~Client( void )
 	std::cout << "Client has been closed" << std::endl;
 }
 
-void	Client::ReceiveInput()
+/*void	Client::ReceiveInput()
 {
 	char		buf[2048];
 	int			bytes;
@@ -111,7 +111,7 @@ void	Client::LaunchCmd()
 		handleUser(*this);
 	else if (args[0] == "QUIT")
 		handlePing(*this);
-}
+}*/
 
 /* Methods to send back replies to Client, source default servername */
 void	Client::_send(std::string &str)
@@ -394,4 +394,14 @@ int		Client::_completeReg( void )
 		return 1;
 	}
 	return 0;
+}
+bool		Client::isPasswordAccepted( void ) const
+{
+	return (_isPassAccepted);
+}
+
+bool		Client::isRegistered( void ) const
+{
+	return (_isRegistered);
+
 }

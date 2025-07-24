@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 23:19:49 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/24 12:56:25 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <vector>
 # include "Channel.hpp"
 # include "Server.hpp"
+# include "Containers.tpp"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -32,13 +33,6 @@
 - Handle raw input parsing (buffering, partial messages).  
 - Implement commands like `NICK`, `USER`, `JOIN`, `PRIVMSG`.  
 */
-
-//`t_arg` is a type alias for a map that associates an integer (slot) with
-//a string (argument). This is used to store command arguments for the client.
-typedef std::vector<std::string> t_cmd_reply;
-typedef std::map<int, std::string> t_arg;
-typedef std::map<std::string, std::string> t_list;
-typedef std::vector<std::vector<std::string> > t_set;
 
 class Channel;
 class Server;
@@ -49,11 +43,9 @@ class Client {
 		Client ( Server *s, int slot );
 		~Client ( void );
 		
-		t_arg 		args;
-		
 		/* Method to receive bytes from client socket */
-		void	ReceiveInput();
-		void	LaunchCmd();
+		//void	ReceiveInput();
+		//void	LaunchCmd();
 
 		/* Methods to send back replies to Client, source default servername */
 		void 	reply(const std::string&); //send a string
@@ -84,7 +76,19 @@ class Client {
 		int			leaveAllChannels( void );
 		int			joinChannel( std::string, std::string );
 		bool		isPartofChannel( std::string &name);
+		bool		isPasswordAccepted( void ) const;
+		bool		isRegistered( void ) const;
 
+		
+		/*Commands handle */
+		void handleJoin( t_arg args );
+		void handlePing( t_arg args );
+		void handleNick( t_arg args ); 
+		void handleUser( t_arg args ); 
+		void handlePass( t_arg args ); 
+		void handlePart( t_arg args ); 
+		void handleQuit( t_arg args ); 
+	
 		public:
 			class ErrnoException: public std::exception {
 				virtual const char* what() const throw() 
@@ -124,10 +128,10 @@ class Client {
 };
 
 // Command handlers
-void handleJoin( Client &c );
+/*void handleJoin( Client &c );
 void handlePing( Client &c );
 void handleNick( Client &c ); 
 void handleUser( Client &c ); 
 void handlePass( Client &c ); 
-void handleQuit( Client &c ); 
+void handleQuit( Client &c ); */
 #endif

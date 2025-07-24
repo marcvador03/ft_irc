@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/24 00:01:58 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/24 13:00:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <sys/poll.h>
 # include "Client.hpp"
 # include "Channel.hpp"
+# include "Containers.tpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  
@@ -53,6 +54,11 @@ class Server {
 		void	closefds( void ); // sweep function to properly close all sockets
 	
 		static bool	signal;
+		t_arg 		args;
+		
+		/* Method to receive bytes from client socket */
+		void	ReceiveInput(Client *);
+		void	LaunchCmd(Client *);
 
 		/*Getters & Setters */
 		int			getFd() const;	
@@ -61,9 +67,12 @@ class Server {
 		std::string	getVersion() const;	
 		t_set		getSettings() const;	
 		
+		/* Functions to add/remove clients within the list of connections */
+		void	addClient ( void );
+		void	removeClient ( const Client *client );
+		
 		/* Management of nickname list on server */
 		bool 	InsertNick(std::string &nick);
-		void 	removeClient(Client *client);
 
 		/* Management of channel list on server */
 		bool	isChannelExist(std::string &name);
@@ -94,9 +103,7 @@ class Server {
 		void	setFreeSlot( const int i );
 		void	setBusySlot( const int i); // unused
 		
-		/* Internal Functions to add/remove clients within the list of connections */
-		void	addClient ( void );
-		void	removeClient ( const Client *client );
+		std::string _trim (const std::string &str);
 		
 		/* Server variables */
 		std::string			_name; //server name, handpicked: .irc42
@@ -109,7 +116,7 @@ class Server {
 		t_set				_settings; //RPL_ISUPORT parameters
 		
 		/* List of connections and pollfd structure array */
-		std::map<int, Client *> 	_connections;
+		std::map<int, Client *> 	_clients;
 		std::set<std::string>		_nicknames;
 		struct pollfd				_pfd[MAX_CONNECTIONS];
 		

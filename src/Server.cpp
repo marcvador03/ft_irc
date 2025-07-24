@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/24 00:13:24 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/24 15:13:48 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,18 +83,96 @@ void	Server::listen_poll( void )
 	{
 		if (poll(this->_pfd, 200, -1) == -1)
 			throw Server::ErrnoException(); 
-		for (long unsigned int i = 0; i <= this->_connections.size(); i++) // monitors all connected clients sockets for their commands
+		for (long unsigned int i = 0; i <= this->_clients.size(); i++) // monitors all connected clients sockets for their commands
 		{
 			if (this->_pfd[i].revents & POLLIN)
 			{
 				if (i == 0)
 					this->addClient();
 				else
-					this->_connections[i]->ReceiveInput();
+					this->ReceiveInput(_clients[i]);
 			}
 		}
 	}
 	this->closefds();
+}
+
+void	Server::ReceiveInput(Client *c)
+{
+	char		buf[2048];
+	int			bytes;
+
+	std::memset(buf, 0, sizeof(buf));
+	bytes = recv(c->getClientfd(), buf, sizeof(buf) - 1, 0);
+	if (bytes == -1)
+		throw Server::ErrnoException(); 
+	else if (bytes == 0)
+	{
+		delete this;
+		return;
+	}
+	else
+	{
+		buf[bytes] = '\0';
+		std::cout << "Receiving input: " << buf;
+		std::istringstream ss(buf);
+		for (std::string line; std::getline(ss, line);) 
+		{
+			line = this->_trim(line);
+			if (line.empty())
+				continue;
+			std::istringstream sub_line(line);
+			sub_line >> std::ws; //to remove leading WS
+			for (int i = 0; sub_line.peek() != EOF; i++)
+			{
+				if ( i > 0 && sub_line.peek() == ':')
+				{
+					sub_line.seekg(1, std::ios::cur);
+					std::getline(sub_line, args[i]);
+				}
+				else
+					std::getline(sub_line, args[i], ' ');
+			}
+			this->LaunchCmd(c);
+			args.erase(args.begin(), args.end());
+		}
+	}
+}
+
+void	Server::LaunchCmd(Client *c)
+{
+	if (c->isPasswordAccepted() == false)
+	{
+		if (args[0] == "PASS")
+			c->handlePass(args);
+		else if (args[0] == "PING")
+			c->handlePing(args);
+		else if (args[0] == "QUIT")
+			c->handleQuit(args);
+		return ;
+	}
+	if (c->isPasswordAccepted() == true && c->isRegistered() == false)
+	{
+		if (args[0] == "NICK")
+			c->handleNick(args);
+		else if (args[0] == "USER")
+			c->handleUser(args);
+		else if (args[0] == "PING")
+			c->handlePing(args);
+		else if (args[0] == "QUIT")
+			c->handleQuit(args);
+		return ;
+	}
+	if (args[0] == "PING")
+		c->handlePing(args);
+	else if (args[0] == "NICK")
+		c->handleNick(args);
+	else if (args[0] == "JOIN")
+		c->handleJoin(args);
+	else if (args[0] == "USER")
+		c->handleUser(args);
+	else if (args[0] == "QUIT")
+		c->handleQuit(args);
 }
 
 void	Server::closefds( void )
@@ -112,19 +190,19 @@ void	Server::addClient( void )
 	c = new Client(this, slot);
 	this->_pfd[slot].fd = c->getClientfd();
 	this->_pfd[slot].events = POLLIN;
-	this->_connections.insert(std::make_pair(slot, c));
+	this->_clients.insert(std::make_pair(slot, c));
 	std::cout << "A new Client was added" << std::endl;
 }
 
 void	Server::removeClient( const Client *client )
 {
 	std::map<int, Client *>::iterator it;
-	it = _connections.find(client->getSlot());
-	if (it != _connections.end())
+	it = _clients.find(client->getSlot());
+	if (it != _clients.end())
 	{
-		close(client->getClientfd());
+		//close(client->getClientfd());
 		delete it->second;
-		_connections.erase(it);
+		_clients.erase(it);
 		std::cout << "Client was disconnected" << std::endl;
 	}
 }
@@ -253,7 +331,7 @@ bool	Server::checkPass(const std::string &pass) const
 	return result;
 }*/
 
-void Server::removeClient(Client *client)
+/*void Server::_removeClient(Client *client)
 {
 	//remove from all channels
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
@@ -269,4 +347,14 @@ void Server::removeClient(Client *client)
 		}
 	}
 	delete client; //check if it doesn't cause segfault/double free
+}*/
+
+std::string Server::_trim (const std::string &str) 
+{
+	const std::string WHITESPACE = " \n\r\t\f\v";
+	size_t start = str.find_first_not_of(WHITESPACE);
+	if (start == std::string::npos)
+		return "";
+	size_t end = str.find_last_not_of(WHITESPACE);
+	return str.substr(start, end - start + 1);
 }

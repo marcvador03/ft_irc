@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/24 13:00:49 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/07/24 12:44:19 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,24 @@
 
 */
 
+/* TODO: Client list in Server Class:
+class Server {
+public:
+    // ... other methods ...
+    bool isNicknameInUse(const std::string& nickname) const;
+    std::vector<Client*> clients; // or std::map<int, Client*>
+};
+
+implementation of isNicknameInUse:
+bool Server::isNicknameInUse(const std::string& nickname) const {
+    for (std::vector<Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it) {
+        if ((*it)->getNickname() == nickname)
+            return true;
+    }
+    return false;
+}
+*/
+
 /** Command: JOIN
  * @brief The JOIN command is used to join a channel.
  * If the channel does not exist, it will be created.
@@ -83,7 +101,7 @@
  * @param <channel>{,<channel>} [<key>]
  * @return Void;
  */
-void Client::handleJoin( t_arg args ) 
+void handleJoin( Client &c ) 
 {
 	
 	t_cmd_reply			cmd_reply;
@@ -91,18 +109,19 @@ void Client::handleJoin( t_arg args )
 	t_list::iterator	it;
 	std::string			chan, key;
 	
-	std::istringstream chan_s(args[1]);
-	std::istringstream key_s(args[2]);
+	std::istringstream chan_s(c.args[1]);
+	std::istringstream key_s(c.args[2]);
 	
 	//special case: "JOIN 0" means leave all channels
-	if (args[1] == "0")
+	if (c.args[1] == "0")
 	{
-		leaveAllChannels();	
+		c.leaveAllChannels();	
 		return ;
 	}
-	if (args.size() < 2 || args[1].empty()) 
+	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
-		reply(461);
+		c.reply(461);
+		//c.replyMsg("461 JOIN :Not enough parameters\r\n"); // ERR_NEEDMOREPARAMS
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
@@ -112,76 +131,87 @@ void Client::handleJoin( t_arg args )
 	}
 	for (it = list.begin(); it!= list.end(); it++)
 	{
-		cmd_reply.push_back(args[0]);
+		cmd_reply.push_back(c.args[0]);
 		cmd_reply.push_back(it->first);
-		switch (joinChannel(it->first, it->second)) {
+		switch (c.joinChannel(it->first, it->second)) {
 			case 405:
-				reply(405);
+				c.reply(405);
+				//c.reply(": You have joined too many channels");
 				break ;
 			case 475:
-				reply(475);
+				c.reply(475);
+				//c.reply(": Cannot join channel (+k)");
 				break ;
 			case 471:
-				reply(471);
+				c.reply(471);
+				//c.reply(": Cannot join channel (+l)");
 				break ;
 			case 473:
-				reply(473);
+				c.reply(473);
+				//c.reply(": Cannot join channel (+i)");
 				break ;
 			case 476:
-				reply(476);
+				c.reply(476);
+				//c.reply(": Bad Channel Mask");
 				break ;
 			case 0:
-				reply(cmd_reply);
+				//c.reply(":" + c.getNickname() + " JOIN " + it->first);
+				c.reply(cmd_reply);
+				//c.reply(c.getNickname() + " joined " + it->first);
 		}
 	}
 }
 
-void Client::handlePart( t_arg args ) 
+void handlePart( Client &c ) 
 {
 	t_cmd_reply			cmd_reply;
 	t_list				list;
 	t_list::iterator 	it;
-	std::istringstream	chan_s(args[1]);
+	std::istringstream	chan_s(c.args[1]);
 	std::string			chan;
 	
-	if (args.size() < 2 || args[1].empty()) 
+	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
-		reply(461);
+		c.reply(461);
+		//c.reply("461 PART :Not enough parameters"); // ERR_NEEDMOREPARAMS
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
-		list.insert(std::make_pair(chan, args[2]));
+		list.insert(std::make_pair(chan, c.args[2]));
 	for (it = list.begin(); it!= list.end(); it++)
 	{
-		switch (leaveChannel(it->first)) {
+		switch (c.leaveChannel(it->first)) {
 			case 403:
-				reply(403);
+				c.reply(403);
+				//c.reply(": No such channel");
 				break ;
 			case 442:
-				reply(442);
+				c.reply(442);
+				//c.reply(": You're not on that channel");
 				break ;
 			case 0:
-				cmd_reply.push_back(args[0]);
+				cmd_reply.push_back(c.args[0]);
 				cmd_reply.push_back(it->first);
-				reply(cmd_reply);
+				c.reply(cmd_reply);
+				//c.reply(":" + c.getNickname() + " PART " + it->first);
 		}
 	}
 }
 
-void Client::handlePing( t_arg args ) 
+void handlePing( Client &c ) 
 {
 	t_cmd_reply			cmd_reply;
 	
 	//check if the token is present and non-empty
-	if (args.size() < 2 || args[1].empty()) 
+	if (c.args.size() < 2 || c.args[1].empty()) 
 	{
-		reply(409);
+		c.reply(409);
 		return ;
 	}
 	cmd_reply.push_back("PONG");
-	cmd_reply.push_back(args[1]);
-	reply(cmd_reply);
-	std::cout << "PONG sent with token: " << args[1] << std::endl;
+	cmd_reply.push_back(c.args[1]);
+	c.reply(cmd_reply);
+	std::cout << "PONG sent with token: " << c.args[1] << std::endl;
 }
 
 static	void welcomeSequence( Client &c )
@@ -231,58 +261,61 @@ static	void welcomeSequence( Client &c )
 	return;
 }
 
-void Client::handleNick( t_arg args ) 
+void handleNick( Client &c ) 
 {
 	t_cmd_reply			cmd_reply;
-	std::string oldNick = getNickname();
+	std::string oldNick = c.getNickname();
 	
-	switch (setNickname(args[1])) {
+	switch (c.setNickname(c.args[1])) {
 		case 431:
 			cmd_reply.push_back("No Nickname provided");
-			reply(431, cmd_reply);
+			c.reply(431, cmd_reply);
+			//c.reply("431 NICK :No nickname given\r\n");
 			break;
 		case 432:
-			reply(432);
+			c.reply(432);
+			//c.reply("432 NICK :Erroneous nickname\r\n");
 			break;
 		case 433:
-			cmd_reply.push_back(args[1]);
+			cmd_reply.push_back(c.args[1]);
 			cmd_reply.push_back("Nickname already in use");
-			reply(433, cmd_reply);
-			std::cout << "Nickname '" << args[1] << "'is already in use." << std::endl;
+			c.reply(433, cmd_reply);
+			//c.reply("433 NICK :Nickname is already in use\r\n");
+			std::cout << "Nickname '" << c.args[1] << "'is already in use." << std::endl;
 			break;
 		case 1:
-			cmd_reply.push_back(args[0]);
-			cmd_reply.push_back(args[1]);
-			reply(args[1], cmd_reply);
-			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
-			welcomeSequence(*this);
+			cmd_reply.push_back(c.args[0]);
+			cmd_reply.push_back(c.args[1]);
+			c.reply(c.args[1], cmd_reply);
+			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
+			welcomeSequence(c);
 			break;
 		case 0:
-			cmd_reply.push_back(args[0]);
-			cmd_reply.push_back(args[1]);
-			reply(args[1], cmd_reply);
-			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
+			cmd_reply.push_back(c.args[0]);
+			cmd_reply.push_back(c.args[1]);
+			c.reply(c.args[1], cmd_reply);
+			std::cout << "Nickname changed from '" << oldNick << "' to '" << c.args[1] << "'." << std::endl;
 	}
 }
 
-void Client::handleUser( t_arg args ) 
+void handleUser( Client &c ) 
 {
 	t_cmd_reply			cmd_reply;
 	
-	switch (setUser(args[1], args[4])) {
+	switch (c.setUser(c.args[1], c.args[4])) {
 		case 431:
-			reply(431);
+			c.reply(431);
 			break;
 		case 1:
 			std::cout << "Username and Realname changed" << std::endl;
-			welcomeSequence(*this);
+			welcomeSequence(c);
 			break;
 		case 0:
 			std::cout << "Username and Realname changed" << std::endl;
 	}
 }
 
-void Client::handlePass( t_arg args ) 
+void Client::handlePass( void ) 
 {
 	t_cmd_reply			cmd_reply;
 	
@@ -301,7 +334,26 @@ void Client::handlePass( t_arg args )
 	}
 }
 
+void handlePass( Client &c ) 
+{
+	t_cmd_reply			cmd_reply;
+	
+	switch (c.registerPass(c.args[1])) {
+		case 461:
+			c.reply(461);
+			break;
+		case 462:
+			c.reply(462);
+			break;
+		case 464:
+			c.reply(464);
+			break;
+		case 0:
+			std::cout << "Password accepted" << std::endl;
+	}
+}
 /**
+>>>>>>> 17c17313d81fd0254ccaff77446c2179fc7b70f8
 
 ### **Summary of steps in code for handleQuit**
 
@@ -324,10 +376,10 @@ void Client::handlePass( t_arg args )
 /*I'm trying to keep consistent passing only the Client class. 
  * However you can get server variables through c._server (which is the link of the Server Class into the Client
  * and even have getters from Client Class which fetch a specific server variable. */
-void Client::handleQuit( t_arg args ) 
+void handleQuit( Client &c) 
 {
 	t_cmd_reply			cmd_reply; // marc: basic vector to store each argument and parameter
-	std::string reason = (args.size() > 1) ? args[1] : "";
+	std::string reason = (c.args.size() > 1) ? c.args[1] : "";
 	
 	//marc: moving to new cmd_reply model
 	/*std::string quitMsg = ":Quit " + reason;
@@ -341,16 +393,15 @@ void Client::handleQuit( t_arg args )
 	/*std::vector<Channel *> channels = s.getChannelsForClient(&c);
 	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); ++it)
 		(*it)->broadcast(prefix, &c);*/
-	leaveAllChannels();
+	c.leaveAllChannels();
 	//marc: put your arguments / parameters in your cmd_reply as below
 	cmd_reply.push_back("ERROR");
 	cmd_reply.push_back("Client has disconnected");
 	//marc: then just call the reply method with the vector cmd_reply
-	reply(cmd_reply);
+	c.reply(cmd_reply);
 	//c.reply("ERROR :Closing Link: " + quitMsg + "\r\n");
 	
 	/*marc: for now stuck... I don't know how to delete the Client since
-	 * then we come back to the ReceiveInput function from that same client :D 
-	 * Update: solved by moving ReceiveInput and LaunchCmd to Server Class..... */ 
-	_server->removeClient(this);
+	 * then we come back to the ReceiveInput function from that same client :D */ 
+	//s.removeClient(&c);
 }

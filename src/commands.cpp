@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/10 17:47:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/10 18:09:02 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,8 +226,8 @@ static	void welcomeSequence( Client &c )
 	for (size_t i = 0; i < settings.size(); i++)
 	{
 			cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-			for (t_list::const_iterator it = settings[i].begin(); it != settings[i].end(); i++)	
-				cmd_reply.push_back(it->first + it->second);
+			for (t_list::const_iterator it = settings[i].begin(); it != settings[i].end(); it++)	
+				cmd_reply.push_back(it->first + "=" + it->second);
 			cmd_reply.push_back("are supported by this server");
 			c.reply(5, cmd_reply);
 			cmd_reply.clear();

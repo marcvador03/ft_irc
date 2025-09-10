@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/24 13:00:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/10 13:20:35 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@
 - Dispatch incoming data (commands) to the right handlers.  
 - Provide methods for channel creation/deletion.  
 */
-typedef std::vector<std::vector<std::string> > t_set;
 
 class Client;
 class Channel;
@@ -61,11 +60,12 @@ class Server {
 		void	LaunchCmd(Client *);
 
 		/*Getters & Setters */
-		int			getFd() const;	
-		std::string	getName() const;	
-		std::string	getLaunchTime() const;	
-		std::string	getVersion() const;	
-		t_set		getSettings() const;	
+		int				getFd() const;	
+		std::string		getName() const;	
+		std::string		getLaunchTime() const;	
+		std::string		getVersion() const;	
+		t_settings		getSettings() const;	
+		void			setSettings(const char *);
 		
 		/* Functions to add/remove clients within the list of connections */
 		void	addClient ( void );
@@ -113,7 +113,7 @@ class Server {
 		char				_launchtime[100];
 		std::string			_version;
 		
-		t_set				_settings; //RPL_ISUPORT parameters
+		t_settings			_settings; //RPL_ISUPORT parameters
 		
 		/* List of connections and pollfd structure array */
 		std::map<int, Client *> 	_clients;

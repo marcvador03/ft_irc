@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/24 13:00:49 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/10 13:28:36 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@
  * @param <channel>{,<channel>} [<key>]
  * @return Void;
  */
+
 void Client::handleJoin( t_arg args ) 
 {
 	
@@ -218,12 +219,12 @@ static	void welcomeSequence( Client &c )
 	c.reply(4, cmd_reply);
 	cmd_reply.clear();
 	//5. RPL_ISUPORT
-	t_set	settings = c.getServerSettings();
+	t_settings	settings = c.getServerSettings();
 	for (size_t i = 0; i < settings.size(); i++)
 	{
 			cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-			for (size_t j = 0; j < settings[i].size(); j++)
-				cmd_reply.push_back(settings[i].at(j));
+			for (t_list::const_iterator it = settings[i].begin(); it != settings[i].end(); i++)	
+				cmd_reply.push_back(it->first + it->second);
 			cmd_reply.push_back("are supported by this server");
 			c.reply(5, cmd_reply);
 			cmd_reply.clear();

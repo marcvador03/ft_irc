@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/07/24 15:13:48 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/10 13:20:44 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,40 @@ Server::Server ( const std::string &servername, const std::string &pass ): // we
 	std::time_t now = std::time(NULL);
 	std::strftime(_launchtime, sizeof(_launchtime), "%A %c", std::localtime(&now));
 
-	std::ifstream	config;
-	std::vector<std::string> tmp;
-	std::string 	line;
+	try {
+		this->setSettings("irc_config");
+	}
+	catch (std::exception &e) {
+		std::cout << e.what() << std::endl;
+	}
+	return;
+}
 
-	config.open("irc_config");
+Server::~Server( void )
+{
+	this->closefds();
+}
+
+void	Server::setSettings(const char *link)
+{
+	std::ifstream	config;
+	t_list			tmp;
+	std::string 	line, set, val;
+	
+	config.open(link);
 	if (config.is_open() == true)
 	{
 		for (int i = 0, j = 0; std::getline(config, line) ; i++, j++)
 		{
-			tmp.push_back(line);
+			
+			if (line.find("=") == line.npos)
+				tmp.insert(std::pair<std::string, std::string>(line, ""));
+			else
+			{	
+				set = line.substr(0, line.find("="));	
+				val = line.substr(line.find("=") + 1, line.size());	
+				tmp.insert(std::pair<std::string, std::string>(set, val));
+			}
 			if (j == 13)
 			{	
 				_settings.push_back(tmp);
@@ -42,13 +66,8 @@ Server::Server ( const std::string &servername, const std::string &pass ): // we
 		tmp.clear();
 	}
 	else
-		std::cout << "Unrecoverable error while opening config file" << std::endl;
-	return;
-}
+		throw std::runtime_error("Could not open setting file");
 
-Server::~Server( void )
-{
-	this->closefds();
 }
 
 void	Server::launch( void )
@@ -258,7 +277,7 @@ std::string	Server::getVersion() const
 	return (this->_version);
 }
 
-t_set		Server::getSettings() const
+t_settings	Server::getSettings() const
 {
 	return (this->_settings);
 }

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/24 12:56:25 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/10 13:19:04 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Client {
 		std::string	getServername( void ) const;
 		std::string	getServerLaunchTime( void ) const;
 		std::string	getServerVersion( void ) const;
-		t_set		getServerSettings( void ) const;
+		t_settings	getServerSettings( void ) const;
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
 		int			setUser( std::string &, std::string &);

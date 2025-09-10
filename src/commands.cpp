@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/10 13:28:36 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/10 17:47:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ void Client::handleJoin( t_arg args )
 				reply(cmd_reply);
 		}
 	}
+	return;
 }
 
 void Client::handlePart( t_arg args ) 
@@ -167,6 +168,7 @@ void Client::handlePart( t_arg args )
 				reply(cmd_reply);
 		}
 	}
+	return;
 }
 
 void Client::handlePing( t_arg args ) 
@@ -183,6 +185,7 @@ void Client::handlePing( t_arg args )
 	cmd_reply.push_back(args[1]);
 	reply(cmd_reply);
 	std::cout << "PONG sent with token: " << args[1] << std::endl;
+	return;
 }
 
 static	void welcomeSequence( Client &c )
@@ -264,6 +267,7 @@ void Client::handleNick( t_arg args )
 			reply(args[1], cmd_reply);
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
 	}
+	return;
 }
 
 void Client::handleUser( t_arg args ) 
@@ -281,6 +285,7 @@ void Client::handleUser( t_arg args )
 		case 0:
 			std::cout << "Username and Realname changed" << std::endl;
 	}
+	return;
 }
 
 void Client::handlePass( t_arg args ) 
@@ -300,6 +305,7 @@ void Client::handlePass( t_arg args )
 		case 0:
 			std::cout << "Password accepted" << std::endl;
 	}
+	return;
 }
 
 /**
@@ -354,4 +360,5 @@ void Client::handleQuit( t_arg args )
 	 * then we come back to the ReceiveInput function from that same client :D 
 	 * Update: solved by moving ReceiveInput and LaunchCmd to Server Class..... */ 
 	_server->removeClient(this);
+	return;
 }

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/10 13:20:44 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/10 17:00:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,6 @@ Server::Server ( const std::string &servername, const std::string &pass ): // we
 	std::time_t now = std::time(NULL);
 	std::strftime(_launchtime, sizeof(_launchtime), "%A %c", std::localtime(&now));
 
-	try {
-		this->setSettings("irc_config");
-	}
-	catch (std::exception &e) {
-		std::cout << e.what() << std::endl;
-	}
 	return;
 }
 

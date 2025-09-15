@@ -6,18 +6,14 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 15:49:11 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 10:33:40 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
-# include <iostream>
-# include <map>
-# include <iterator>
+# include "ft_irc.h"
 # include "Client.hpp"
-# include <string>
-# include <set>
 
 /*
 **`Channel.hpp` / `Channel.cpp`**  

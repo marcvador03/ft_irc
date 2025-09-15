@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/10 13:20:35 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 10:35:23 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,6 @@
 # define SERVER_HPP
 # define PORT 6667
 # define MAX_CONNECTIONS 1000
-# include <iostream>
-# include <map>
-# include <set>
-# include <iterator>
-# include <cerrno>
 # include <ctime>
 # include <fstream>
 # include <sys/socket.h>
@@ -26,9 +21,9 @@
 # include <sys/types.h>
 # include <bits/stdc++.h>
 # include <sys/poll.h>
+# include "ft_irc.h"
 # include "Client.hpp"
 # include "Channel.hpp"
-# include "Containers.tpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  

@@ -6,25 +6,19 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/10 13:19:04 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 10:35:23 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
-# include <iostream>
-# include <string>
-# include <iterator>
-# include <cerrno>
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <netinet/in.h>
 # include <bits/stdc++.h>
-# include <map>
-# include <vector>
+# include "ft_irc.h"
 # include "Channel.hpp"
 # include "Server.hpp"
-# include "Containers.tpp"
 
 /*
 **`Client.hpp` / `Client.cpp`**  

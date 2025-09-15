@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/10 18:22:40 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 15:46:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,33 @@ void	Server::setSettings(const char *link)
 		if (tmp.size() > 0)
 			_settings.push_back(tmp);
 		tmp.clear();
+		_setChanPrefix();
 	}
 	else
 		throw std::runtime_error("Could not open setting file");
 
+}
+
+std::string		Server::getSetting(const std::string str) const
+{
+	for (size_t i = 0; i < _settings.size();i++)
+	{
+		if (_settings[i].find(str) != _settings[i].end())
+			return _settings[i].find(str)->second;
+	}
+	return "";
+}
+
+void	Server::_setChanPrefix( void )
+{
+	std::string	str;
+
+	str = getSetting("STATUSMSG");
+	_chantags.erase(_chantags.begin(), _chantags.end());
+	if (str.empty() == true)
+		return;	
+	for (size_t i = 0; i < str.size();i++)
+		_chantags.push_back(str[0]);
 }
 
 void	Server::launch( void )
@@ -219,6 +242,18 @@ void	Server::removeClient( const Client *client )
 		std::cout << "Client was disconnected" << std::endl;
 	}
 }
+		
+bool	Server::isClientExist(std::string &name)
+{
+	std::map<int, Client *>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		if (name.compare(it->second->getNickname()) == 0)
+			return true;
+	}
+	return false;
+
+}
 
 /* Setters, Getters and private functions to manage available slot list */
 int	Server::getFirstSlot( void )
@@ -306,7 +341,7 @@ bool	Server::isChannelExist(std::string &name)
 	return c;			
 }*/
 
-Channel	*Server::getChannel(std::string &name)
+Channel	*Server::getChannel(const std::string &name)
 {
 	/*checks if the channel is already listed on the server list
 	 * and it not, creates it - are there cases where it should not be created? */

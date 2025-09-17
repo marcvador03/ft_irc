@@ -13,5 +13,6 @@
 template<typename T>
 void	log(T input)
 {
-	std::cout << "Log: " << input << std::endl; 
+	std::cout << "\033[0;36m" <<"<Log> \033[1;32m" << input;
+	std::cout << "\033[0;36m </log>" "\033[0;37m "<< std::endl; 
 }

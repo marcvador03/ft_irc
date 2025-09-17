@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/15 15:45:20 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/17 16:46:44 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ class Server {
 		std::string _trim (const std::string &str);
 		
 		/* Server variables */
-		std::string			_name; //server name, handpicked: .irc42
+		std::string			_name; //server name
 		std::string			_password; // server password
 		int					_serverfd; // fd of the server
 		std::map<int, bool>	_slots; // list slots for pollfd and status false: free to accept new client true: occupied by a client

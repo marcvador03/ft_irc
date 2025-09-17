@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/17 13:20:57 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/17 17:01:28 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,8 @@ void	Server::ReceiveInput(Client *c)
 	else
 	{
 		buf[bytes] = '\0';
-		std::cout << "Receiving input: " << buf;
+		log("Received input: ");
+	   	log(buf);
 		std::istringstream ss(buf);
 		for (std::string line; std::getline(ss, line);) 
 		{
@@ -209,6 +210,8 @@ void	Server::LaunchCmd(Client *c)
 		c->handleUser(args);
 	else if (args[0] == "QUIT")
 		c->handleQuit(args);
+	else if (args[0] == "PART")
+		c->handlePart(args);
 	else if (args[0] == "PRIVMSG")
 		c->handlePrivMsg(args);
 }

@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/17 13:42:34 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/17 14:46:49 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void Client::handleJoin( t_arg args )
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
 	{
 		std::getline(key_s, key, ',');
+		log("Channel:" + chan + " Key:" + key);
 		list.insert(std::make_pair(chan, key));
 	}
 	for (it = list.begin(); it!= list.end(); it++)
@@ -61,7 +62,9 @@ void Client::handleJoin( t_arg args )
 				reply(476);
 				break ;
 			case 0:
-				reply(cmd_reply);
+				reply(_nickname, cmd_reply);
+				reply(332);
+				reply(333);
 		}
 	}
 	return;
@@ -100,3 +103,9 @@ void Client::handlePart( t_arg args )
 	}
 	return;
 }
+
+/*void Client::handleTopic( t_args args )
+{
+
+	return ;
+}*/

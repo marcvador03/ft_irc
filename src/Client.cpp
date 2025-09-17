@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/15 15:21:32 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/17 16:48:34 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,27 +120,27 @@ void	Client::_send(std::string &str)
 	ssize_t		bytes;
 	
 	bytes = send(this->_clientfd, str.c_str(), str.length(), 0);
-	std::cout << bytes << " bytes have been sent to " << this->_nickname << std::endl;
+	log("Reply: " + str + " sent to "+ this->_nickname);
 }
 
 void 	Client::reply(const std::string &msg) 
 {
-	this->reply(".servername", msg);
+	this->reply(_server->getName(), msg);
 }
 
 void 	Client::reply(t_cmd_reply &cmd) 
 {
-	this->reply(".servername", cmd);
+	this->reply(_server->getName(), cmd);
 }
 
 void 	Client::reply(const int num) 
 {
-	this->reply(".servername", num);
+	this->reply(_server->getName(), num);
 }
 
 void 	Client::reply(const int num, t_cmd_reply &cmd) 
 {
-	this->reply(".servername", num, cmd);
+	this->reply(_server->getName(), num, cmd);
 }
 
 /* Methods to send back replies to Client, override source*/

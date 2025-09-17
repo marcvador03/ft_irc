@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:25:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/15 10:33:18 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/17 16:47:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <cerrno>
 # include <map>
 # include <vector>
+# include "utils.hpp"
 
 typedef std::vector<std::string> t_cmd_reply;
 typedef std::map<int, std::string> t_arg;

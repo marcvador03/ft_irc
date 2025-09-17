@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/15 10:35:23 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 15:21:11 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class Client {
 		std::string	getServerLaunchTime( void ) const;
 		std::string	getServerVersion( void ) const;
 		t_settings	getServerSettings( void ) const;
+		std::string	getServerSetting( const std::string ) const;
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
 		int			setUser( std::string &, std::string &);
@@ -82,6 +83,7 @@ class Client {
 		void handlePass( t_arg args ); 
 		void handlePart( t_arg args ); 
 		void handleQuit( t_arg args ); 
+		void handlePrivMsg( t_arg args ); 
 	
 		public:
 			class ErrnoException: public std::exception {
@@ -109,6 +111,7 @@ class Client {
 		std::string	_nickname;		
 		size_t		_chanlim;
 		std::string	_host;
+		bool		_away;
   
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;

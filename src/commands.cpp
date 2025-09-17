@@ -6,10 +6,9 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 09:49:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/15 10:43:22 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/17 13:35:33 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../inc/Client.hpp"
 #include "../inc/Server.hpp"
@@ -83,9 +82,70 @@
  * @return Void;
  */
 
+
+/*PRIVMSG*/
+void Client::handlePrivMsg( t_arg args )
+{
+	std::map<int, std::string>	targets;
+	std::vector<std::string>	tmp;	
+	
+	if (args.size() != 2) //needs at least a target and a message to send
+		reply(412);
+	tmp = split(args[0], ',');
+	for (size_t i = 0; i < tmp.size(); i++)
+	{
+		size_t j = tmp[i].find("#");
+		if (j != std::string::npos)
+		{
+			std::string chan = tmp[i].substr(j, tmp[i].size());
+			if (_server->isChannelExist(chan) == false)
+				reply(403);
+			else if (j > 1 && tmp[i][0] == '&')
+				targets.insert(std::pair<int, std::string>(2, chan));
+			else if (j > 1 && tmp[i][0] != '&')
+				reply(403);
+			else
+				targets.insert(std::pair<int, std::string>(1, chan));
+		}
+		else
+		{
+			if (_server->isClientExist(tmp[i]) == true)
+				targets.insert(std::pair<int, std::string>(0, tmp[i]));
+			else
+				reply(401);
+		}
+	}
+	
+	std::map<int, std::string>::const_iterator it;
+	for (it = targets.begin(); it != targets.end(); it++)
+	{
+		switch (it->first) {
+			case 0:
+			{
+				if (_away == true)
+					reply(301);
+				reply(args[1]);
+				break;
+			}
+			case 1:
+			{
+				_server->getChannel(it->second)->broadcast_all(args[1], getNickname());
+				break;
+			}
+			case 2:
+			{
+				_server->getChannel(it->second)->broadcast_ops(args[1], getNickname());
+				break;
+			}
+		}	
+	}
+	return;
+}
+
+
+/*JOIN*/
 void Client::handleJoin( t_arg args ) 
 {
-	
 	t_cmd_reply			cmd_reply;
 	t_list				list;
 	t_list::iterator	it;
@@ -137,6 +197,7 @@ void Client::handleJoin( t_arg args )
 	return;
 }
 
+/*PART*/
 void Client::handlePart( t_arg args ) 
 {
 	t_cmd_reply			cmd_reply;
@@ -170,6 +231,7 @@ void Client::handlePart( t_arg args )
 	return;
 }
 
+/*PING*/
 void Client::handlePing( t_arg args ) 
 {
 	t_cmd_reply			cmd_reply;
@@ -187,6 +249,7 @@ void Client::handlePing( t_arg args )
 	return;
 }
 
+/*Welcome Sequence*/
 static	void welcomeSequence( Client &c )
 {
 	t_cmd_reply			cmd_reply;
@@ -234,6 +297,7 @@ static	void welcomeSequence( Client &c )
 	return;
 }
 
+/*NICK*/
 void Client::handleNick( t_arg args ) 
 {
 	t_cmd_reply			cmd_reply;
@@ -269,6 +333,7 @@ void Client::handleNick( t_arg args )
 	return;
 }
 
+/*USER*/
 void Client::handleUser( t_arg args ) 
 {
 	t_cmd_reply			cmd_reply;
@@ -287,6 +352,7 @@ void Client::handleUser( t_arg args )
 	return;
 }
 
+/*PASS*/
 void Client::handlePass( t_arg args ) 
 {
 	t_cmd_reply			cmd_reply;

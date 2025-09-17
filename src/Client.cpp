@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/10 13:19:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 15:21:32 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 		_isRegistered(false),
 		_hasNick(false),
 		_hasUser(false),
-		_chanlim(10)
+		_chanlim(10),
+		_away(false)
 {
 	this->_socklen = sizeof(this->_client_addr);
 	this->_clientfd = accept(_server->getFd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
@@ -261,6 +262,11 @@ std::string	Client::getServerVersion( void ) const
 t_settings	Client::getServerSettings( void ) const
 {
 	return (_server->getSettings());
+}
+
+std::string	Client::getServerSetting( const std::string str ) const
+{
+	return (_server->getSetting(str));
 }
 
 std::string	Client::getNickname( void ) const

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/15 10:35:23 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 15:45:20 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,20 +58,24 @@ class Server {
 		int				getFd() const;	
 		std::string		getName() const;	
 		std::string		getLaunchTime() const;	
-		std::string		getVersion() const;	
+		std::string		getVersion() const;
+
+		/*Settings getters & setters*/	
 		t_settings		getSettings() const;	
 		void			setSettings(const char *);
+		std::string		getSetting(const std::string) const;
 		
 		/* Functions to add/remove clients within the list of connections */
 		void	addClient ( void );
 		void	removeClient ( const Client *client );
+		bool	isClientExist(std::string &name);
 		
 		/* Management of nickname list on server */
 		bool 	InsertNick(std::string &nick);
 
 		/* Management of channel list on server */
 		bool	isChannelExist(std::string &name);
-		Channel	*getChannel(std::string &name);	
+		Channel	*getChannel(const std::string &name);	
 		//std::vector<Channel*> getChannelsForClient(const Client *client) const;
 		
 		/* Password check */
@@ -107,8 +111,11 @@ class Server {
 		std::map<int, bool>	_slots; // list slots for pollfd and status false: free to accept new client true: occupied by a client
 		char				_launchtime[100];
 		std::string			_version;
-		
+	
+		/* Variables and methods related to Settings*/	
 		t_settings			_settings; //RPL_ISUPORT parameters
+		std::vector<char>	_chantags;
+		void				_setChanPrefix( void );
 		
 		/* List of connections and pollfd structure array */
 		std::map<int, Client *> 	_clients;

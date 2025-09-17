@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/23 15:55:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/15 15:41:13 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,20 @@ std::string	Channel::getTopic( void ) const
 	return this->_topic;
 }
 
-void Channel::broadcast(const std::string &message, const Client *exclude)
+void Channel::broadcast_all(const std::string &msg, const std::string src)
 {
 	for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
-		if (it->second != exclude)
-			it->second->reply(message);
+		if (it->second->getNickname() != src)
+			it->second->reply(src, msg);
+	}
+}
+
+void Channel::broadcast_ops(const std::string &msg, const std::string src)
+{
+	for (std::map<int, Client *>::iterator it = _operators.begin(); it != _operators.end(); ++it)
+	{
+		if (it->second->getNickname() != src)
+			it->second->reply(src, msg);
 	}
 }

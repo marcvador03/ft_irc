@@ -11,8 +11,11 @@ SRC_NAMES := main.cpp \
 			 Server.cpp \
 			 Client.cpp \
 			 Channel.cpp \
-			 utils.cpp \
-			 commands.cpp
+			 ChanOps.cpp \
+			 Messages.cpp \
+			 OtherCmds.cpp \
+			 Registration.cpp \
+			 utils.cpp 
 
 #CMDS_NAMES := cmds_marc.cpp
 

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/15 15:46:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/17 13:20:57 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,8 @@ void	Server::LaunchCmd(Client *c)
 		c->handleUser(args);
 	else if (args[0] == "QUIT")
 		c->handleQuit(args);
+	else if (args[0] == "PRIVMSG")
+		c->handlePrivMsg(args);
 }
 
 void	Server::closefds( void )

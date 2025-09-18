@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/17 13:43:12 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 13:04:51 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,12 @@
 /*PRIVMSG*/
 void Client::handlePrivMsg( t_arg args )
 {
+	Reply	privmsg(*this);
 	std::map<int, std::string>	targets;
 	std::vector<std::string>	tmp;	
 	
 	if (args.size() != 2) //needs at least a target and a message to send
-		reply(412);
+		privmsg.ship(412);
 	tmp = split(args[0], ',');
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
@@ -30,11 +31,11 @@ void Client::handlePrivMsg( t_arg args )
 		{
 			std::string chan = tmp[i].substr(j, tmp[i].size());
 			if (_server->isChannelExist(chan) == false)
-				reply(403);
+				privmsg.ship(403);
 			else if (j > 1 && tmp[i][0] == '&')
 				targets.insert(std::pair<int, std::string>(2, chan));
 			else if (j > 1 && tmp[i][0] != '&')
-				reply(403);
+				privmsg.ship(403);
 			else
 				targets.insert(std::pair<int, std::string>(1, chan));
 		}
@@ -43,7 +44,7 @@ void Client::handlePrivMsg( t_arg args )
 			if (_server->isClientExist(tmp[i]) == true)
 				targets.insert(std::pair<int, std::string>(0, tmp[i]));
 			else
-				reply(401);
+				privmsg.ship(401);
 		}
 	}
 	
@@ -54,8 +55,8 @@ void Client::handlePrivMsg( t_arg args )
 			case 0:
 			{
 				if (_away == true)
-					reply(301);
-				reply(args[1]);
+					privmsg.ship(301);
+				privmsg.ship(args[1]);
 				break;
 			}
 			case 1:

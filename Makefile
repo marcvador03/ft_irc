@@ -15,6 +15,7 @@ SRC_NAMES := main.cpp \
 			 Messages.cpp \
 			 OtherCmds.cpp \
 			 Registration.cpp \
+			 Reply.cpp \
 			 utils.cpp 
 
 #CMDS_NAMES := cmds_marc.cpp

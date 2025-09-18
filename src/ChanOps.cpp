@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/17 14:46:49 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 13:02:31 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /*JOIN*/
 void Client::handleJoin( t_arg args ) 
 {
-	t_cmd_reply			cmd_reply;
+	Reply				join(*this, _nickname);
 	t_list				list;
 	t_list::iterator	it;
 	std::string			chan, key;
@@ -32,7 +32,7 @@ void Client::handleJoin( t_arg args )
 	}
 	if (args.size() < 2 || args[1].empty()) 
 	{
-		reply(461);
+		join.ship(461);
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
@@ -43,28 +43,26 @@ void Client::handleJoin( t_arg args )
 	}
 	for (it = list.begin(); it!= list.end(); it++)
 	{
-		cmd_reply.push_back(args[0]);
-		cmd_reply.push_back(it->first);
+		join.list(args[0]);
+		join.list(it->first);
 		switch (joinChannel(it->first, it->second)) {
 			case 405:
-				reply(405);
+				join.ship(405);
 				break ;
 			case 475:
-				reply(475);
+				join.ship(475);
 				break ;
 			case 471:
-				reply(471);
+				join.ship(471);
 				break ;
 			case 473:
-				reply(473);
+				join.ship(473);
 				break ;
 			case 476:
-				reply(476);
+				join.ship(476);
 				break ;
 			case 0:
-				reply(_nickname, cmd_reply);
-				reply(332);
-				reply(333);
+				join.ship();
 		}
 	}
 	return;
@@ -73,7 +71,7 @@ void Client::handleJoin( t_arg args )
 /*PART*/
 void Client::handlePart( t_arg args ) 
 {
-	t_cmd_reply			cmd_reply;
+	Reply				part(*this);
 	t_list				list;
 	t_list::iterator 	it;
 	std::istringstream	chan_s(args[1]);
@@ -81,7 +79,7 @@ void Client::handlePart( t_arg args )
 	
 	if (args.size() < 2 || args[1].empty()) 
 	{
-		reply(461);
+		part.ship(461);
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
@@ -90,15 +88,15 @@ void Client::handlePart( t_arg args )
 	{
 		switch (leaveChannel(it->first)) {
 			case 403:
-				reply(403);
+				part.ship(403);
 				break ;
 			case 442:
-				reply(442);
+				part.ship(442);
 				break ;
 			case 0:
-				cmd_reply.push_back(args[0]);
-				cmd_reply.push_back(it->first);
-				reply(cmd_reply);
+				part.list(args[0]);
+				part.list(it->first);
+				part.ship();
 		}
 	}
 	return;

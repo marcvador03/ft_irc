@@ -6,15 +6,20 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:08:11 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 12:04:30 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 13:09:08 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/Reply.hpp"
+#include "../inc/Client.hpp"
 
-Reply::Reply ( const int fd, const std::string &src ): 
-	_clientfd(fd),
+Reply::Reply ( Client &c, const std::string &src ): 
+	_clientfd(c.getClientfd()),
 	_src(src)
+{}
+
+Reply::Reply ( Client &c ): 
+	_clientfd(c.getClientfd()),
+	_src(c.getServername())
 {}
 
 Reply::~Reply ( void )
@@ -65,9 +70,37 @@ void	Reply::list( const int num )
 	_cmdlist.push_back(str);
 }
 
-void	Reply::ship( void ) const
+void	Reply::ship( const int num )
 {
-	std::vector<std::string>::const_iterator it;
+	std::string	str;
+	std::stringstream ss;
+
+	ss << num;
+	if (num < 0 || num > 999)
+	{
+		std::cout << "Error in reply command, too many numeric" << std::endl;
+		return;
+	}
+	else if (num < 10)
+		str += "00" + ss.str();
+	else if (num < 100)
+		str += "0" + ss.str();
+	else
+		str += ss.str();
+	_cmdlist.push_front(str);
+	this->ship();
+}
+
+void	Reply::ship( const std::string &msg )
+{
+	_cmdlist.clear();
+	_cmdlist.push_back(msg);
+	this->ship();
+}
+
+void	Reply::ship( void )
+{
+	std::deque<std::string>::const_iterator it;
 	std::string	str;
 
 	str = ":" + _src + " ";
@@ -81,6 +114,7 @@ void	Reply::ship( void ) const
 	}
 	str += "\r\n";
 	send(_clientfd, str.c_str(), str.length(), 0);
+	_cmdlist.clear();
 	
 	std::stringstream ss;
 	ss << _clientfd;
@@ -92,7 +126,7 @@ int							Reply::getFd( void ) const
 	return _clientfd;
 }
 
-std::vector<std::string>	Reply::getCmdList( void ) const
+std::deque<std::string>	Reply::getCmdList( void ) const
 {
 	return _cmdlist;
 }

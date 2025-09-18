@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/17 14:15:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 13:19:15 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "ft_irc.h"
 # include "Channel.hpp"
 # include "Server.hpp"
+# include "Reply.hpp"
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -36,22 +37,6 @@ class Client {
 		/* Coplien form */	
 		Client ( Server *s, int slot );
 		~Client ( void );
-		
-		/* Method to receive bytes from client socket */
-		//void	ReceiveInput();
-		//void	LaunchCmd();
-
-		/* Methods to send back replies to Client, source default servername */
-		void 	reply(const std::string&); //send a string
-		void 	reply(t_cmd_reply &); //send a command + parameters
-		void 	reply(const int); // send a numeric reply
-		void 	reply(const int, t_cmd_reply &); // send a numeric reply + parameters
-		
-		/* Methods to send back replies to Client, override source*/
-		void 	reply(const std::string&, const std::string&); //send a string
-		void 	reply(const std::string&, t_cmd_reply &); //send a command + parameters
-		void 	reply(const std::string&, const int); // send a numeric reply
-		void 	reply(const std::string&, const int, t_cmd_reply &); // send a numeric reply + parameters
 		
 		/* Setters & Getters */
 		int			getClientfd( void ) const;
@@ -73,7 +58,6 @@ class Client {
 		bool		isPartofChannel( std::string &name);
 		bool		isPasswordAccepted( void ) const;
 		bool		isRegistered( void ) const;
-
 		
 		/*Commands handle */
 		void handleJoin( t_arg args );
@@ -90,7 +74,7 @@ class Client {
 				virtual const char* what() const throw() 
 				{return std::strerror(errno);}
 			};
-	
+
 	private:
 		/* Coplien form - unauthorized constructors */	
 		Client ( void );
@@ -123,12 +107,4 @@ class Client {
 	
 		std::set<Channel *> _channels; //channels which client is member of
 };
-
-// Command handlers
-/*void handleJoin( Client &c );
-void handlePing( Client &c );
-void handleNick( Client &c ); 
-void handleUser( Client &c ); 
-void handlePass( Client &c ); 
-void handleQuit( Client &c ); */
 #endif

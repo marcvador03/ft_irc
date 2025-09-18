@@ -6,57 +6,52 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/17 13:46:31 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 12:58:26 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
-#include "../inc/Server.hpp"
 
 /*Welcome Sequence*/
 static	void welcomeSequence( Client &c )
 {
-	t_cmd_reply			cmd_reply;
-
-	//several parameters to implement
-
 	//1. RPL WELCOME
-	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("Welcome to the network, " + c.getNickname() + "!" + c.getUser() + "@" + c.getHost());
-	c.reply(1, cmd_reply);
-	cmd_reply.clear();
+	Reply rpl_welcome(c);
+	rpl_welcome.list(c.getNickname()); // client is not nickname, to be checked
+	rpl_welcome.list("Welcome to the network, " + c.getNickname() + "!" + c.getUser() + "@" + c.getHost());
+	rpl_welcome.ship(1);
 	//2. RPL_YOURHOST
-	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("Your host is ");
-	cmd_reply.push_back(c.getServername());
-	c.reply(2, cmd_reply);
-	cmd_reply.clear();
+	Reply rpl_yourhost(c);
+	rpl_yourhost.list(c.getNickname()); // client is not nickname, to be checked
+	rpl_yourhost.list("Your host is ");
+	rpl_yourhost.list(c.getServername());
+	rpl_yourhost.ship(2);
 	//3. RPL_CREATED
-	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back("The server was created ");
-	cmd_reply.push_back(c.getServerLaunchTime());
-	cmd_reply.push_back(", running version ");
-	cmd_reply.push_back(c.getServerVersion());
-	c.reply(3, cmd_reply);
-	cmd_reply.clear();
+	Reply rpl_created(c);
+	rpl_created.list(c.getNickname()); // client is not nickname, to be checked
+	rpl_created.list("The server was created ");
+	rpl_created.list(c.getServerLaunchTime());
+	rpl_created.list(", running version ");
+	rpl_created.list(c.getServerVersion());
+	rpl_created.ship(3);
 	//4. RPL_MYINFO
-	cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
-	cmd_reply.push_back(c.getServername());
-	cmd_reply.push_back(c.getServerVersion());
-	cmd_reply.push_back("oi");
-	cmd_reply.push_back("bkl");
-	c.reply(4, cmd_reply);
-	cmd_reply.clear();
+	Reply rpl_myinfo(c);
+	rpl_myinfo.list(c.getNickname()); // client is not nickname, to be checked
+	rpl_myinfo.list(c.getServername());
+	rpl_myinfo.list(c.getServerVersion());
+	rpl_myinfo.list("oi");
+	rpl_myinfo.list("bkl");
+	rpl_myinfo.ship(4);
 	//5. RPL_ISUPORT
 	t_settings	settings = c.getServerSettings();
+	Reply rpl_isuport(c);
 	for (size_t i = 0; i < settings.size(); i++)
 	{
-			cmd_reply.push_back(c.getNickname()); // client is not nickname, to be checked
+			rpl_isuport.list(c.getNickname()); // client is not nickname, to be checked
 			for (t_list::const_iterator it = settings[i].begin(); it != settings[i].end(); it++)	
-				cmd_reply.push_back(it->first + "=" + it->second);
-			cmd_reply.push_back("are supported by this server");
-			c.reply(5, cmd_reply);
-			cmd_reply.clear();
+				rpl_isuport.list(it->first + "=" + it->second);
+			rpl_isuport.list("are supported by this server");
+			rpl_isuport.ship(5);
 	}
 	return;
 }
@@ -64,34 +59,33 @@ static	void welcomeSequence( Client &c )
 /*NICK*/
 void Client::handleNick( t_arg args ) 
 {
-	t_cmd_reply			cmd_reply;
+	Reply	nick(*this);
 	std::string oldNick = getNickname();
 	
 	switch (setNickname(args[1])) {
 		case 431:
-			cmd_reply.push_back("No Nickname provided");
-			reply(431, cmd_reply);
+			nick.list("No Nickname provided");
+			nick.ship(431);
 			break;
 		case 432:
-			reply(432);
+			nick.ship(432);
 			break;
 		case 433:
-			cmd_reply.push_back(args[1]);
-			cmd_reply.push_back("Nickname already in use");
-			reply(433, cmd_reply);
-			std::cout << "Nickname '" << args[1] << "'is already in use." << std::endl;
+			nick.list(args[1]);
+			nick.list("Nickname already in use");
+			nick.ship(433);
 			break;
 		case 1:
-			cmd_reply.push_back(args[0]);
-			cmd_reply.push_back(args[1]);
-			reply(args[1], cmd_reply);
+			nick.list(args[0]);
+			nick.list(args[1]);
+			nick.ship();
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
 			welcomeSequence(*this);
 			break;
 		case 0:
-			cmd_reply.push_back(args[0]);
-			cmd_reply.push_back(args[1]);
-			reply(args[1], cmd_reply);
+			nick.list(args[0]);
+			nick.list(args[1]);
+			nick.ship();
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
 	}
 	return;
@@ -100,11 +94,11 @@ void Client::handleNick( t_arg args )
 /*USER*/
 void Client::handleUser( t_arg args ) 
 {
-	t_cmd_reply			cmd_reply;
-	
+	Reply	user(*this);
+
 	switch (setUser(args[1], args[4])) {
 		case 431:
-			reply(431);
+			user.ship(431);
 			break;
 		case 1:
 			std::cout << "Username and Realname changed" << std::endl;
@@ -119,17 +113,17 @@ void Client::handleUser( t_arg args )
 /*PASS*/
 void Client::handlePass( t_arg args ) 
 {
-	t_cmd_reply			cmd_reply;
+	Reply	pass(*this);
 	
 	switch (registerPass(args[1])) {
 		case 461:
-			reply(461);
+			pass.ship(461);
 			break;
 		case 462:
-			reply(462);
+			pass.ship(462);
 			break;
 		case 464:
-			reply(464);
+			pass.ship(464);
 			break;
 		case 0:
 			std::cout << "Password accepted" << std::endl;
@@ -163,7 +157,7 @@ void Client::handlePass( t_arg args )
  * and even have getters from Client Class which fetch a specific server variable. */
 void Client::handleQuit( t_arg args ) 
 {
-	t_cmd_reply			cmd_reply; // marc: basic vector to store each argument and parameter
+	Reply	quit(*this);
 	std::string reason = (args.size() > 1) ? args[1] : "";
 	
 	//marc: moving to new cmd_reply model
@@ -180,10 +174,10 @@ void Client::handleQuit( t_arg args )
 		(*it)->broadcast(prefix, &c);*/
 	leaveAllChannels();
 	//marc: put your arguments / parameters in your cmd_reply as below
-	cmd_reply.push_back("ERROR");
-	cmd_reply.push_back("Client has disconnected");
+	quit.list("ERROR");
+	quit.list("Client has disconnected");
 	//marc: then just call the reply method with the vector cmd_reply
-	reply(cmd_reply);
+	quit.ship();
 	//c.reply("ERROR :Closing Link: " + quitMsg + "\r\n");
 	
 	/*marc: for now stuck... I don't know how to delete the Client since

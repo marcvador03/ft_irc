@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:08:11 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 13:09:08 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 16:58:07 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ Reply::Reply ( Client &c ):
 
 Reply::~Reply ( void )
 {
-	_cmdlist.clear();
+	_cmdlist.erase(_cmdlist.begin(), _cmdlist.end());
 }
 
 Reply::Reply ( const Reply &o ): 
@@ -47,6 +47,39 @@ Reply &Reply::operator=( const Reply &other )
 
 void	Reply::list( const std::string &str)
 {
+	_cmdlist.push_back(str);
+}
+
+void	Reply::list( const char *str)
+{
+	_cmdlist.push_back(static_cast<std::string>(str));
+}
+
+void	Reply::list( const bool b)
+{
+	std::string	str;
+
+	str = b ? "true" : "false";
+	_cmdlist.push_back(str);
+}
+
+void	Reply::list( const unsigned int num )
+{
+	std::string	str;
+	std::stringstream ss;
+
+	ss << num;
+	if (num > 999)
+	{
+		std::cout << "Error in reply command, too many numeric" << std::endl;
+		return;
+	}
+	else if (num < 10)
+		str += "00" + ss.str();
+	else if (num < 100)
+		str += "0" + ss.str();
+	else
+		str += ss.str();
 	_cmdlist.push_back(str);
 }
 
@@ -98,6 +131,13 @@ void	Reply::ship( const std::string &msg )
 	this->ship();
 }
 
+void	Reply::ship( const char *msg )
+{
+	_cmdlist.erase(_cmdlist.begin(), _cmdlist.end());
+	_cmdlist.push_back(static_cast<std::string>(msg));
+	this->ship();
+}
+
 void	Reply::ship( void )
 {
 	std::deque<std::string>::const_iterator it;
@@ -114,7 +154,7 @@ void	Reply::ship( void )
 	}
 	str += "\r\n";
 	send(_clientfd, str.c_str(), str.length(), 0);
-	_cmdlist.clear();
+	_cmdlist.erase(_cmdlist.begin(), _cmdlist.end());
 	
 	std::stringstream ss;
 	ss << _clientfd;

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/18 13:19:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 14:23:38 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ class Client {
 		void handlePart( t_arg args ); 
 		void handleQuit( t_arg args ); 
 		void handlePrivMsg( t_arg args ); 
+		void handleMode( t_arg args ); 
 	
 		public:
 			class ErrnoException: public std::exception {

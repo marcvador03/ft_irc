@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/18 13:14:48 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 16:49:43 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,21 @@ bool Channel::checkKey(const std::string &key) const
 	return  false;
 }
 
+bool Channel::hasKey(void) const
+{
+	return _hasKey;
+}
+
 //limit related
 void Channel::setLimit(unsigned int limit)
 {
 	this->_hasLimit = true;
 	this->_limit = limit;
+}
+
+unsigned int	Channel::getLimit(void) const
+{
+	return _limit;
 }
 
 bool Channel::hasReachedLimit() const
@@ -103,6 +113,11 @@ std::string	Channel::getName( void ) const
 std::string	Channel::getTopic( void ) const
 {
 	return this->_topic;
+}
+
+bool Channel::isTopicLocked() const
+{
+	return _topicLocked;
 }
 
 void Channel::broadcast_all(const std::string &msg, const std::string src)

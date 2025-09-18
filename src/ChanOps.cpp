@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 13:02:31 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/18 16:59:39 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,48 @@ void Client::handlePart( t_arg args )
 				part.list(it->first);
 				part.ship();
 		}
+	}
+	return;
+}
+
+/*MODE*/
+
+void Client::handleMode( t_arg args )
+{
+	Reply	mode(*this);
+	
+	if (args.size() == 1)
+		mode.ship(403);
+	else if (_server->isChannelExist(args[1]) == false)
+		mode.ship(403);
+	else 
+	{
+		if (args.size() == 2)
+		{
+			Reply	rpl_channelmodeis(*this, _nickname);
+			Channel	*chan = _server->getChannel(args[1]);;
+			
+			rpl_channelmodeis.list(args[1]);
+			rpl_channelmodeis.list("InviteOnly");
+			rpl_channelmodeis.list(chan->isInviteOnly());
+			rpl_channelmodeis.ship(324);
+			rpl_channelmodeis.list("Test");
+			rpl_channelmodeis.list("TopicLocked");
+			rpl_channelmodeis.list(chan->isTopicLocked());
+			rpl_channelmodeis.ship(324);
+			rpl_channelmodeis.list(args[1]);
+			rpl_channelmodeis.list("HasPassword");
+			rpl_channelmodeis.list(chan->hasKey());
+			rpl_channelmodeis.ship(324);
+			rpl_channelmodeis.list(args[1]);
+			rpl_channelmodeis.list("HasLimit");
+			rpl_channelmodeis.list(chan->getLimit());
+			rpl_channelmodeis.ship(324);
+		}
+		else
+		{
+		}
+
 	}
 	return;
 }

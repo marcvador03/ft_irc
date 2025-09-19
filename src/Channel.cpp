@@ -6,13 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/19 12:29:46 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 19:12:01 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Channel.hpp"
 
-Channel::Channel ( std::string name ):
+Channel::Channel ( const std::string name , Client *c):
 	_name(name),
 	_inviteOnly(false),
 	_topicLocked(false),
@@ -21,6 +21,8 @@ Channel::Channel ( std::string name ):
 	_creationtime(std::time(NULL))
 {
 	std::cout << "Channel created" << std::endl;
+	addMember(c);
+	addOperator(c);
 }
 
 Channel::~Channel( void )
@@ -152,6 +154,11 @@ bool Channel::isInviteOnly() const
 
 /*Getters and setters */
 std::string	Channel::getName( void ) const
+{
+	return _name;
+}
+
+std::string	Channel::getFullName( void ) const
 {
 	return this->_name;
 }

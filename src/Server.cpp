@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 16:02:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 18:59:44 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -348,12 +348,12 @@ bool	Server::isChannelExist(std::string &name)
 	return c;			
 }*/
 
-Channel	*Server::getChannel(const std::string &name)
+Channel	*Server::getChannel(const std::string &name, Client *c)
 {
 	/*checks if the channel is already listed on the server list
 	 * and it not, creates it - are there cases where it should not be created? */
 
-	Channel *c;
+	Channel *chan;
 
 	std::map<std::string, Channel *>::iterator it;
 	it = _channels.find(name);
@@ -361,10 +361,10 @@ Channel	*Server::getChannel(const std::string &name)
 		return it->second;
 	else
 	{
-		c = new Channel(name);
-		this->_channels.insert(std::make_pair(name, c));
+		chan = new Channel(name, c);
+		this->_channels.insert(std::make_pair(name, chan));
 	}
-	return c;			
+	return chan;			
 }
 
 /* Password check */

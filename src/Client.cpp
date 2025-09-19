@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/18 13:18:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 19:00:25 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int		Client::leaveChannel( std::string name)
 		return 403;
 	else if (isPartofChannel(name) == false)
 		return 442;
-	ch = _server->getChannel(name);
+	ch = _server->getChannel(name, this);
 	ch->removeMember(this);
 	_channels.erase(ch);
 	return 0;
@@ -142,7 +142,7 @@ int		Client::leaveAllChannels( void )
 	for (it = this->_channels.begin(); it != this->_channels.end() ; it++)
 	{
 		name = (*it)->getName();
-		ch = _server->getChannel(name);
+		ch = _server->getChannel(name, this);
 		ch->removeMember(this);
 		_channels.erase(ch);
 		if (_channels.empty() == true)
@@ -163,7 +163,7 @@ int		Client::joinChannel( std::string name, std::string key )
 			|| name.find(0x07) != std::string::npos \
 			|| name.find(',') != std::string::npos)
 		return 476;
-	ch = _server->getChannel(name);
+	ch = _server->getChannel(name, this);
 	if (ch->checkKey(key) == false)
 		return 475;
 	if (ch->isInviteOnly() == true)
@@ -179,7 +179,7 @@ bool	Client::isPartofChannel( std::string &name )
 {
 	Channel *ch;
 	
-	ch = _server->getChannel(name);
+	ch = _server->getChannel(name, this);
 	return (ch->isMember(this));
 }
 		

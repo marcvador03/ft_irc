@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 12:58:26 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 19:35:02 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ static	void welcomeSequence( Client &c )
 	rpl_myinfo.list(c.getNickname()); // client is not nickname, to be checked
 	rpl_myinfo.list(c.getServername());
 	rpl_myinfo.list(c.getServerVersion());
-	rpl_myinfo.list("oi");
-	rpl_myinfo.list("bkl");
+	rpl_myinfo.list("o");
+	rpl_myinfo.list("itlbk");
 	rpl_myinfo.ship(4);
 	//5. RPL_ISUPORT
 	t_settings	settings = c.getServerSettings();

@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:03:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/19 12:42:59 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 19:17:45 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,8 @@ static void	execute_modes(t_list &string, Channel *chan, Client *c)
 }
 void Client::handleMode( t_arg args )
 {
-	Reply	mode(*this, _nickname);
-	Reply	err(*this);
+	Reply	mode(*this);
+	Reply	err(*this, _nickname);
 	t_list	string;
 	Channel	*chan;
 	
@@ -144,7 +144,7 @@ void Client::handleMode( t_arg args )
 		err.ship(403);
 	else 
 	{
-		chan = _server->getChannel(args[1]);	
+		chan = _server->getChannel(args[1], this);	
 		if (args.size() == 2)
 		{
 			Reply	rpl_channelmodeis(*this, _nickname);

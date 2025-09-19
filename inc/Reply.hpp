@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 10:19:36 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 16:45:52 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 12:37:29 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Reply {
 		void	ship( const std::string &);
 		void	ship( const char *);
 		void	list( const int num );
-		void	list( const unsigned int num );
+		void	list( const size_t num );
 		void	list( const std::string &);
 		void	list( const bool b);
 		void	list( const char *);

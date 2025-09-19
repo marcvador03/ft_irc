@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/18 16:49:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 12:29:46 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ Channel::Channel ( std::string name ):
 	_inviteOnly(false),
 	_topicLocked(false),
 	_hasKey(false),
-	_hasLimit(false)
+	_hasLimit(false),
+	_creationtime(std::time(NULL))
 {
 	std::cout << "Channel created" << std::endl;
 }
@@ -37,9 +38,12 @@ void	Channel::addMember( Client *c )
 
 void	Channel::removeMember( Client *c )
 {
-	std::map<int, Client *>::iterator it = this->_clients.find(c->getSlot());
-	if (it != this->_clients.end())
-		this->_clients.erase(it);
+	std::map<int, Client *>::iterator it1 = this->_clients.find(c->getSlot());
+	std::map<int, Client *>::iterator it2 = this->_operators.find(c->getSlot());
+	if (it1 != this->_clients.end())
+		this->_clients.erase(it1);
+	if (it2 != this->_operators.end())
+		this->_operators.erase(it2);
 }
 
 bool 	Channel::isMember( Client *c )
@@ -50,13 +54,50 @@ bool 	Channel::isMember( Client *c )
 		return false;
 	return true;
 }
+//operator management
+void Channel::addOperator(Client * c)
+{
+	std::map<int, Client *>::iterator it = this->_operators.find(c->getSlot());
+	if (it == this->_operators.end())
+		this->_operators.insert(std::pair<int, Client *>(c->getSlot(), c));
+}
+
+void Channel::removeOperator(Client * c)
+{
+	std::map<int, Client *>::iterator it = this->_operators.find(c->getSlot());
+	if (it != this->_operators.end())
+		this->_operators.erase(it);
+}
+
+bool Channel::isOperator(Client * c)
+{
+	std::map<int, Client *>::iterator it;
+	it = _operators.find(c->getSlot());
+	if (it == _operators.end())
+		return false;
+	return true;
+}
 
 //key (password) related
-void Channel::setKey(const std::string &key)
+int Channel::setKey(const std::string &key)
 {
+	if (key.empty() == true)
+		return -1;
+	for (size_t i = 0; i < key.size(); i++)
+	{
+		if (key[i] == 32 || std::isalnum(key[i]) == false)
+			return -1;
+	}
 	this->_hasKey = true;
 	this->_key = key;
+	return 0;
+}
 
+void Channel::unsetKey( void )
+{
+	this->_hasKey = false;
+	this->_key = "";
+	return ;
 }
 
 bool Channel::checkKey(const std::string &key) const
@@ -75,18 +116,23 @@ bool Channel::hasKey(void) const
 }
 
 //limit related
-void Channel::setLimit(unsigned int limit)
+void 	Channel::unsetLimit( void )
+{
+	this->_hasLimit = false;
+	this->_limit = 0;
+}
+void 	Channel::setLimit( size_t limit )
 {
 	this->_hasLimit = true;
 	this->_limit = limit;
 }
 
-unsigned int	Channel::getLimit(void) const
+size_t	Channel::getLimit( void ) const
 {
 	return _limit;
 }
 
-bool Channel::hasReachedLimit() const
+bool 	Channel::hasReachedLimit( void ) const
 {
 	if (this->_hasLimit == true && this->_clients.size() >= this->_limit)
 		return true;
@@ -108,6 +154,24 @@ bool Channel::isInviteOnly() const
 std::string	Channel::getName( void ) const
 {
 	return this->_name;
+}
+	
+std::string	Channel::getCreationTime( void ) const
+{
+	std::stringstream ss;
+
+	ss << _creationtime;
+	return ss.str();
+}
+//topic related
+void 		Channel::setTopic( const std::string &topic )
+{
+	_topic = topic;
+}
+
+void 		Channel::setTopicLocked( bool b)
+{
+	_topicLocked = b;
 }
 
 std::string	Channel::getTopic( void ) const

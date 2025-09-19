@@ -13,6 +13,7 @@ SRC_NAMES := main.cpp \
 			 Channel.cpp \
 			 ChanOps.cpp \
 			 Messages.cpp \
+			 Modes.cpp \
 			 OtherCmds.cpp \
 			 Registration.cpp \
 			 Reply.cpp \

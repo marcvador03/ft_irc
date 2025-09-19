@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:08:11 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 16:58:07 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/19 12:37:43 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	Reply::list( const bool b)
 	_cmdlist.push_back(str);
 }
 
-void	Reply::list( const unsigned int num )
+void	Reply::list( const size_t num )
 {
 	std::string	str;
 	std::stringstream ss;

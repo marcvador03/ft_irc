@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:08:11 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/19 12:37:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/22 16:49:17 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ void	Reply::ship( void )
 	log("Reply: " + str + " sent to "+ ss.str());
 }
 
-int							Reply::getFd( void ) const
+int						Reply::getFd( void ) const
 {
 	return _clientfd;
 }
@@ -171,7 +171,7 @@ std::deque<std::string>	Reply::getCmdList( void ) const
 	return _cmdlist;
 }
 
-std::string					Reply::getSrc( void ) const
+std::string				Reply::getSrc( void ) const
 {
 	return _src;
 }

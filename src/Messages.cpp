@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/19 19:01:50 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/22 17:19:55 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,12 @@ void Client::handlePrivMsg( t_arg args )
 	std::vector<std::string>	tmp;	
 	
 	if (args.size() != 2) //needs at least a target and a message to send
+	{
+		privmsg.list(_nickname);
+		privmsg.list("no message to send");
 		privmsg.ship(412);
+		return;
+	}
 	tmp = split(args[0], ',');
 	for (size_t i = 0; i < tmp.size(); i++)
 	{

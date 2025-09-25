@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/23 17:58:50 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/25 14:05:00 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Channel {
 		std::string				getFullName( void ) const;
 		std::string				getCreationTime( void ) const;
 		std::map<int, Client *>	&getAllClients( void );
+		std::map<int, Client *>	&getOpsClients( void );
 		
 		//membership management
 		void addMember( Client * );
@@ -70,16 +71,17 @@ class Channel {
 		bool isOperator(Client * );
 		
 		//broadcast messages in channel
-		template <typename Param>
-		void broadcast_all(Client &c, void (Client::*f)(Param), Param P)
+		template<typename T>
+		void broadcast( const Reply &rpl, T val , bool ops_only )
 		{
-			for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+			std::map<int, Client *> &list = (ops_only = true) ? _operators: _clients;
+			for (std::map<int, Client *>::iterator it = list.begin(); it != list.end(); ++it)
 			{
-				c.*f(P);
+				if (it->second->getNickname() != rpl.getSrc())
+					rpl.ship(val);
 			}
+		};
 
-		}
-		//void broadcast_all(const::std::string &, const std::string );
 		void broadcast_ops(const::std::string &, const std::string );
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {

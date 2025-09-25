@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/23 17:47:37 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/25 14:05:41 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ Channel::~Channel( void )
 std::map<int, Client *>	&Channel::getAllClients( void )
 {
 	return _clients;
+}
+
+std::map<int, Client *>	&Channel::getOpsClients( void )
+{
+	return _operators;
 }
 
 void	Channel::addMember( Client *c )

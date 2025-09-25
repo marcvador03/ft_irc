@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/19 19:07:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/23 17:58:50 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,10 @@ class Channel {
 		~Channel ( void );
 
 		/*Getters and setters */
-		std::string	getName( void ) const;
-		std::string	getFullName( void ) const;
-		std::string	getCreationTime( void ) const;
+		std::string				getName( void ) const;
+		std::string				getFullName( void ) const;
+		std::string				getCreationTime( void ) const;
+		std::map<int, Client *>	&getAllClients( void );
 		
 		//membership management
 		void addMember( Client * );
@@ -57,8 +58,6 @@ class Channel {
 		void	setInviteOnly( bool );
 		bool 	isInviteOnly( void ) const;
 		
-		//*************to revist***********************//
-
 		//topic related
 		std::string	getTopic( void ) const;
 		void 		setTopic( const std::string & );
@@ -71,7 +70,16 @@ class Channel {
 		bool isOperator(Client * );
 		
 		//broadcast messages in channel
-		void broadcast_all(const::std::string &, const std::string );
+		template <typename Param>
+		void broadcast_all(Client &c, void (Client::*f)(Param), Param P)
+		{
+			for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+			{
+				c.*f(P);
+			}
+
+		}
+		//void broadcast_all(const::std::string &, const std::string );
 		void broadcast_ops(const::std::string &, const std::string );
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {

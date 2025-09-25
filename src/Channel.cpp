@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/19 19:12:01 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/23 17:47:37 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,11 @@ Channel::~Channel( void )
 }
 
 //membership management
+std::map<int, Client *>	&Channel::getAllClients( void )
+{
+	return _clients;
+}
+
 void	Channel::addMember( Client *c )
 {
 	std::map<int, Client *>::iterator it = this->_clients.find(c->getSlot());
@@ -191,7 +196,7 @@ bool Channel::isTopicLocked() const
 	return _topicLocked;
 }
 
-void Channel::broadcast_all(const std::string &msg, const std::string src)
+/*void Channel::broadcast_all(const std::string &msg, const std::string src)
 {
 	for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
@@ -199,7 +204,7 @@ void Channel::broadcast_all(const std::string &msg, const std::string src)
 		if (it->second->getNickname() != src)
 			broadcast.ship(msg);
 	}
-}
+}*/
 
 void Channel::broadcast_ops(const std::string &msg, const std::string src)
 {

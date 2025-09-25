@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/22 20:44:38 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/25 11:53:53 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,8 @@ void Client::handlePrivMsg( t_arg args )
 			}
 			case 1:
 			{
-				_server->getChannel(it->second, this)->broadcast_all(args[1], getNickname());
+				//_server->getChannel(it->second, this)->broadcast_all(args[1], getNickname());
+				_server->getChannel(it->second, this)->broadcast_all(*this, getNickname());
 				break;
 			}
 			case 2:

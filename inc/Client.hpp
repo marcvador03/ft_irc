@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/18 14:23:38 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/23 16:26:45 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,13 @@ class Client {
 		void handleQuit( t_arg args ); 
 		void handlePrivMsg( t_arg args ); 
 		void handleMode( t_arg args ); 
-	
+		
+		/* RPL functions */
+		void	rpl_Topic( Channel & );
+		void	rpl_noTopic( Channel & );
+		void	rpl_NamReply( Channel & );
+		void	rpl_EndOfNames( Channel & );
+
 		public:
 			class ErrnoException: public std::exception {
 				virtual const char* what() const throw() 

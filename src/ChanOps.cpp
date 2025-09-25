@@ -6,11 +6,63 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/18 19:03:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/23 18:04:26 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
+/*RPL_NAMES_REPLY*/
+void	Client::rpl_NamReply( Channel &chan )
+{
+	Reply	rpl(*this);
+	std::map<int, Client *>::const_iterator it;
+
+	for (it = chan.getAllClients().begin(); it != chan.getAllClients().end(); it++)
+	{
+		rpl.list(_nickname);
+		rpl.list("=");
+		rpl.list(chan.getName());
+		if (chan.isOperator(it->second) == true)
+			rpl.list("@" + it->second->getNickname());
+		else
+			rpl.list(it->second->getNickname());
+		rpl.ship(353);
+	}
+	rpl_EndOfNames(chan);	
+}
+
+void	Client::rpl_EndOfNames( Channel &chan )
+{
+	Reply	rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(chan.getName());
+	rpl.list("End of /NAMES list");
+	rpl.ship(366);
+}
+
+/*RPL_TOPIC*/
+void	Client::rpl_noTopic( Channel &chan )
+{
+	Reply	rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(chan.getName());
+	rpl.list("No topic is set");
+	rpl.ship(331);
+	return ;
+}
+
+void	Client::rpl_Topic( Channel &chan )
+{
+	Reply	rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(chan.getName());
+	rpl.list(chan.getTopic());
+	rpl.ship(332);
+	return;
+}
 
 /*JOIN*/
 void Client::handleJoin( t_arg args ) 
@@ -61,7 +113,13 @@ void Client::handleJoin( t_arg args )
 				join.ship(476);
 				break ;
 			case 0:
+			{
 				join.ship();
+				Channel *c = _server->getChannel(it->first, this);
+				if (c->getTopic().empty() == false)
+					rpl_Topic(*c);
+				c->broadcast_all(this, Client::rpl_NamReply(*c), *c);
+			}
 		}
 	}
 	return;

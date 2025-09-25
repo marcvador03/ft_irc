@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/23 18:00:06 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/25 11:53:53 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ void Client::handlePrivMsg( t_arg args )
 	std::map<int, std::string>	targets;
 	std::vector<std::string>	tmp;	
 	
-	if (args.size() != 2) //needs at least a target and a message to send
+	if (args.size() != 3) //needs at least a target and a message to send
 	{
 		privmsg.list(_nickname);
-		privmsg.list("no message to send");
+		privmsg.list("no text to send");
 		privmsg.ship(412);
 		return;
 	}
-	tmp = split(args[0], ',');
+	tmp = split(args[1], ',');
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
 		size_t j = tmp[i].find("#");
@@ -36,11 +36,19 @@ void Client::handlePrivMsg( t_arg args )
 		{
 			std::string chan = tmp[i].substr(j, tmp[i].size());
 			if (_server->isChannelExist(chan) == false)
+			{
+				privmsg.list(_nickname);
+				privmsg.list("no such nick/channel");
 				privmsg.ship(403);
+			}
 			else if (j > 1 && tmp[i][0] == '&')
 				targets.insert(std::pair<int, std::string>(2, chan));
 			else if (j > 1 && tmp[i][0] != '&')
+			{
+				privmsg.list(_nickname);
+				privmsg.list("no such nick/channel");
 				privmsg.ship(403);
+			}
 			else
 				targets.insert(std::pair<int, std::string>(1, chan));
 		}
@@ -49,7 +57,11 @@ void Client::handlePrivMsg( t_arg args )
 			if (_server->isClientExist(tmp[i]) == true)
 				targets.insert(std::pair<int, std::string>(0, tmp[i]));
 			else
+			{
+				privmsg.list(_nickname);
+				privmsg.list("no such nick/channel");
 				privmsg.ship(401);
+			}
 		}
 	}
 	

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/17 16:46:53 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/25 19:08:59 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,14 @@ void	handle_signal(int sig)
 	Server::signal = true;
 }
 
-int	main ( void )
+int	main ( int argc, char **argv )
 {
-	
+	if (argc != 3) {
+		std::cout << "Error! Wrong number of arguments!" << std::endl
+				  << "Please use this order:  \"./ircserv <port> <password>\"" << std::endl;
+		return (1);
+	}
+	//<-- TO DO: check validity of port number and password format
 	Server server(".irc42", "pass");
 	signal(SIGINT, handle_signal);
 	try {

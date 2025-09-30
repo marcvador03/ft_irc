@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/25 19:08:59 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/09/30 16:49:39 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ int	main ( int argc, char **argv )
 				  << "Please use this order:  \"./ircserv <port> <password>\"" << std::endl;
 		return (1);
 	}
+	char *endptr;
+	int port = static_cast<int>strtol(argv[1]);
+	if (endptr != argv[1]) ||  
 	//<-- TO DO: check validity of port number and password format
 	Server server(".irc42", "pass");
 	signal(SIGINT, handle_signal);

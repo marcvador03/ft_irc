@@ -12,11 +12,13 @@ SRC_NAMES := main.cpp \
 			 Client.cpp \
 			 Channel.cpp \
 			 ChanOps.cpp \
+			 Errors.cpp \
 			 Messages.cpp \
 			 Modes.cpp \
 			 OtherCmds.cpp \
 			 Registration.cpp \
 			 Reply.cpp \
+			 Rpl.cpp \
 			 utils.cpp 
 
 #CMDS_NAMES := cmds_marc.cpp

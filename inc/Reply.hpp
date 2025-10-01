@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 10:19:36 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/25 15:23:15 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 17:40:35 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,11 @@ class Reply {
 	public:
 		Reply ( Client & );
 		Reply ( Client &, const std::string &src );
-		Reply ( Client &, Channel &, const char ops_only, const char skip);
-		Reply ( Client &, Channel &, const char ops_only, const std::string &src, const char skip );
+		Reply ( Client &, Client & );
+		Reply ( Client &, const std::string &src, Client & );
+		Reply ( Client &, Channel &, const char audience, const char skip);
+		Reply ( Client &, const std::string &, const char audience, const char skip);
+		Reply ( Client &, const std::string &src, Channel &,  const char audience, const char skip );
 		~Reply ( void );
 		Reply ( const Reply & );
 		Reply &operator=( const Reply & );
@@ -45,6 +48,7 @@ class Reply {
 		std::deque<std::string>	getCmdList( void ) const;
 		std::map<int, Client *>	getClientList( void ) const;
 		bool					getSkipSender( void ) const;
+		int						getSenderSlot( void ) const;
 
 	private:
 		Reply ( void );
@@ -52,6 +56,7 @@ class Reply {
 		std::map<int, Client *>		_listclients;
 		std::string					_src;
 		bool						_skipSender;
+		int							_senderSlot;
 };
 #endif
 

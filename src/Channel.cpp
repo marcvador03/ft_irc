@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/25 14:05:41 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/30 16:00:14 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ bool Channel::isTopicLocked() const
 		if (it->second->getNickname() != src)
 			broadcast.ship(msg);
 	}
-}*/
+}
 
 void Channel::broadcast_ops(const std::string &msg, const std::string src)
 {
@@ -219,4 +219,4 @@ void Channel::broadcast_ops(const std::string &msg, const std::string src)
 		if (it->second->getNickname() != src)
 			broadcast.ship(msg);
 	}
-}
+}*/

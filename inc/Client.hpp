@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/23 16:26:45 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 17:25:55 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ class Client {
 		std::string	getServerVersion( void ) const;
 		t_settings	getServerSettings( void ) const;
 		std::string	getServerSetting( const std::string ) const;
+		std::map<int, Client *> getServerClientList( void ) const;
 		std::string	getNickname( void ) const;
 		int			setNickname( std::string & );
 		int			setUser( std::string &, std::string &);
@@ -71,10 +72,39 @@ class Client {
 		void handleMode( t_arg args ); 
 		
 		/* RPL functions */
+		void	rpl_Welcome( void );
+		void	rpl_YourHost( void );
+		void	rpl_Created( void );
+		void	rpl_MyInfo( void );
+		void	rpl_ISupport( void );
 		void	rpl_Topic( Channel & );
 		void	rpl_noTopic( Channel & );
 		void	rpl_NamReply( Channel & );
 		void	rpl_EndOfNames( Channel & );
+		void	rpl_Away( void );
+		void	rpl_ChannelModeIs( Channel &, const std::string & );
+		void	rpl_CreationTime( const std::string & );
+
+		/*ERR functions */
+		void	err_NeedMoreParameters( const std::string & );
+		void	err_noSuchChannel( const std::string & );
+		void	err_tooManyChannels( const std::string & );
+		void	err_BadChannelKey( const std::string & );
+		void	err_ChannelIsFull( const std::string & );
+		void	err_InviteOnlyChan( const std::string & );
+		void	err_BadChanMask( const std::string & );
+		void	err_notOnChannel( const std::string & );
+		void	err_noTextToSend( void );
+		void	err_noSuchNick( void );
+		void	err_UModeUnknownFlag( void );
+		void	err_ChanOPrivsNeeded( const std::string & );
+		void	err_InvalidModeParam( Channel &, const std::string &, const std::string &, const std::string & );
+		void	err_NoOrigin( void );
+		void	err_NoNicknameGiven( void );
+		void	err_ErroneusNickname( const std::string & );
+		void	err_NicknameInUse( const std::string & );
+		void	err_AlreadyRegistered ( void );
+		void	err_PasswdMismatch ( void );
 
 		public:
 			class ErrnoException: public std::exception {

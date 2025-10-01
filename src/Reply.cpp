@@ -6,26 +6,30 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:08:11 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/25 15:26:29 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 17:39:46 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../inc/Reply.hpp"
 
 /*Constructors*/
-Reply::Reply ( Client &c, Channel &chan, const char ops_only, const std::string &src, const char skip): 
-	_src(src)
+Reply::Reply ( Client &c, const std::string &src, Channel &chan, const char audience, const char skipsender ): 
+	_src(src),
+	_senderSlot(c.getSlot())
 {
-	switch (ops_only) {
+	switch (audience) {
 		case 'a':
 			_listclients = chan.getAllClients();
 			break;
 		case 'o':
 			_listclients = chan.getOpsClients();
 			break;
+		case 's':
+			_listclients = c.getServerClientList();
+			break;
 		default:
 			std::cout << "error in Reply constructor" << std::endl;
 	}
-	switch (skip) {
+	switch (skipsender) {
 		case 'y':
 			_skipSender = true;
 			break;
@@ -38,20 +42,47 @@ Reply::Reply ( Client &c, Channel &chan, const char ops_only, const std::string 
 	
 }
 
-Reply::Reply ( Client &c, Channel &chan, const char ops_only, const char skip ): 
-	_src(c.getServername())
+Reply::Reply ( Client &c, Channel &chan, const char audience, const char skipsender ): 
+	_src(c.getServername()),
+	_senderSlot(c.getSlot())
 {
-	switch (ops_only) {
+	switch (audience) {
 		case 'a':
 			_listclients = chan.getAllClients();
 			break;
 		case 'o':
 			_listclients = chan.getOpsClients();
 			break;
+		case 's':
+			_listclients = c.getServerClientList();
+			break;
 		default:
 			std::cout << "error in Reply constructor" << std::endl;
 	}
-	switch (skip) {
+	switch (skipsender) {
+		case 'y':
+			_skipSender = true;
+			break;
+		case 'n':
+			_skipSender = false;
+			break;
+		default:
+			std::cout << "error in Reply constructor" << std::endl;
+	}
+}
+
+Reply::Reply ( Client &c, const std::string &src, const char audience, const char skipsender ): 
+	_src(src),
+	_senderSlot(c.getSlot())
+{
+	switch (audience) {
+		case 's':
+			_listclients = c.getServerClientList();
+			break;
+		default:
+			std::cout << "error in Reply constructor" << std::endl;
+	}
+	switch (skipsender) {
 		case 'y':
 			_skipSender = true;
 			break;
@@ -65,16 +96,34 @@ Reply::Reply ( Client &c, Channel &chan, const char ops_only, const char skip ):
 
 Reply::Reply ( Client &c, const std::string &src ): 
 	_src(src),
-	_skipSender(false)
+	_skipSender(false),
+	_senderSlot(c.getSlot())
 {
 	_listclients[c.getSlot()] = &c;
 }
 
 Reply::Reply ( Client &c ): 
 	_src(c.getServername()),
-	_skipSender(false)
+	_skipSender(false),
+	_senderSlot(c.getSlot())
 {
 	_listclients[c.getSlot()] = &c;
+}
+
+Reply::Reply ( Client &c, const std::string &src, Client &receiver ): 
+	_src(src),
+	_skipSender(false),
+	_senderSlot(c.getSlot())
+{
+	_listclients[c.getSlot()] = &receiver;
+}
+
+Reply::Reply ( Client &c, Client &receiver ): 
+	_src(c.getServername()),
+	_skipSender(false),
+	_senderSlot(c.getSlot())
+{
+	_listclients[c.getSlot()] = &receiver;
 }
 
 Reply::~Reply ( void )
@@ -88,7 +137,8 @@ Reply::Reply ( const Reply &o ):
 	_cmdlist(o.getCmdList()),
 	_listclients(o.getClientList()),
 	_src(o.getSrc()),
-	_skipSender(o.getSkipSender())
+	_skipSender(o.getSkipSender()),
+	_senderSlot(o.getSenderSlot())
 {
 }
 
@@ -215,12 +265,15 @@ void	Reply::ship( void )
 	}
 	str += "\r\n";
 
-	std::stringstream ss;
-	for (it2 = _listclients.begin(); it2 != _listclients.end(); ++it)
+	for (it2 = _listclients.begin(); it2 != _listclients.end(); it2++)
 	{
-		send(it2->second->getClientfd(), str.c_str(), str.length(), 0);
-		ss << it2->second->getClientfd();
-		log("Reply: " + str + " sent to "+ ss.str());
+		if (_skipSender == false || (_skipSender == true && it2->second->getSlot() != _senderSlot))
+		{
+			std::stringstream ss;
+			send(it2->second->getClientfd(), str.c_str(), str.length(), 0);
+			ss << it2->second->getClientfd();
+			log("Reply sent to " + ss.str() + "\n\t" + str);
+		}
 	}
 	_cmdlist.erase(_cmdlist.begin(), _cmdlist.end());
 	
@@ -244,4 +297,9 @@ std::map<int, Client *>	Reply::getClientList( void ) const
 bool					Reply::getSkipSender( void ) const
 {
 	return _skipSender;
+}
+
+int						Reply::getSenderSlot( void ) const
+{
+	return _senderSlot;
 }

@@ -6,68 +6,14 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/23 18:04:26 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 15:39:50 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
-/*RPL_NAMES_REPLY*/
-void	Client::rpl_NamReply( Channel &chan )
-{
-	Reply	rpl(*this);
-	std::map<int, Client *>::const_iterator it;
-
-	for (it = chan.getAllClients().begin(); it != chan.getAllClients().end(); it++)
-	{
-		rpl.list(_nickname);
-		rpl.list("=");
-		rpl.list(chan.getName());
-		if (chan.isOperator(it->second) == true)
-			rpl.list("@" + it->second->getNickname());
-		else
-			rpl.list(it->second->getNickname());
-		rpl.ship(353);
-	}
-	rpl_EndOfNames(chan);	
-}
-
-void	Client::rpl_EndOfNames( Channel &chan )
-{
-	Reply	rpl(*this);
-
-	rpl.list(_nickname);
-	rpl.list(chan.getName());
-	rpl.list("End of /NAMES list");
-	rpl.ship(366);
-}
-
-/*RPL_TOPIC*/
-void	Client::rpl_noTopic( Channel &chan )
-{
-	Reply	rpl(*this);
-
-	rpl.list(_nickname);
-	rpl.list(chan.getName());
-	rpl.list("No topic is set");
-	rpl.ship(331);
-	return ;
-}
-
-void	Client::rpl_Topic( Channel &chan )
-{
-	Reply	rpl(*this);
-
-	rpl.list(_nickname);
-	rpl.list(chan.getName());
-	rpl.list(chan.getTopic());
-	rpl.ship(332);
-	return;
-}
-
 /*JOIN*/
 void Client::handleJoin( t_arg args ) 
 {
-	Reply				join(*this, _nickname);
 	t_list				list;
 	t_list::iterator	it;
 	std::string			chan, key;
@@ -83,7 +29,7 @@ void Client::handleJoin( t_arg args )
 	}
 	if (args.size() < 2 || args[1].empty()) 
 	{
-		join.ship(461);
+		err_NeedMoreParameters(args[0]);
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
@@ -94,31 +40,33 @@ void Client::handleJoin( t_arg args )
 	}
 	for (it = list.begin(); it!= list.end(); it++)
 	{
-		join.list(args[0]);
-		join.list(it->first);
+		Channel *c = _server->getChannel(it->first, this);
 		switch (joinChannel(it->first, it->second)) {
 			case 405:
-				join.ship(405);
+				err_tooManyChannels(it->first);
 				break ;
 			case 475:
-				join.ship(475);
+				err_BadChannelKey(it->first);
 				break ;
 			case 471:
-				join.ship(471);
+				err_ChannelIsFull(it->first);
 				break ;
 			case 473:
-				join.ship(473);
+				err_InviteOnlyChan(it->first);
 				break ;
 			case 476:
-				join.ship(476);
+				err_BadChanMask(it->first);
 				break ;
 			case 0:
 			{
+				Reply	join(*this, _nickname, *c, 'a', 'n');
+				join.list(args[0]);
+				join.list(it->first);
 				join.ship();
-				Channel *c = _server->getChannel(it->first, this);
 				if (c->getTopic().empty() == false)
 					rpl_Topic(*c);
-				c->broadcast_all(this, Client::rpl_NamReply(*c), *c);
+				rpl_NamReply(*c);
+				rpl_EndOfNames(*c);
 			}
 		}
 	}
@@ -136,7 +84,7 @@ void Client::handlePart( t_arg args )
 	
 	if (args.size() < 2 || args[1].empty()) 
 	{
-		part.ship(461);
+		err_NeedMoreParameters(args[0]);
 		return ;
 	}
 	for (int j = 0; std::getline(chan_s, chan, ','); j++)
@@ -145,10 +93,10 @@ void Client::handlePart( t_arg args )
 	{
 		switch (leaveChannel(it->first)) {
 			case 403:
-				part.ship(403);
+				err_noSuchChannel(it->first);
 				break ;
 			case 442:
-				part.ship(442);
+				err_notOnChannel(it->first);
 				break ;
 			case 0:
 				part.list(args[0]);

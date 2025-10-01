@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/25 14:05:00 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/09/30 15:59:58 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ class Channel {
 		bool isOperator(Client * );
 		
 		//broadcast messages in channel
-		template<typename T>
+		/*template<typename T>
 		void broadcast( const Reply &rpl, T val , bool ops_only )
 		{
 			std::map<int, Client *> &list = (ops_only = true) ? _operators: _clients;
@@ -82,7 +82,7 @@ class Channel {
 			}
 		};
 
-		void broadcast_ops(const::std::string &, const std::string );
+		void broadcast_ops(const::std::string &, const std::string );*/
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
 			public:

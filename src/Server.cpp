@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/23 16:22:02 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 17:20:36 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,6 +261,21 @@ bool	Server::isClientExist(std::string &name)
 	return false;
 
 }
+std::map<int, Client *>	&Server::getAllClients( void )
+{
+	return _clients;
+}
+
+Client	&Server::getClient ( const std::string &name )
+{
+	std::map<int, Client *>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		if (name.compare(it->second->getNickname()) == 0)
+			return *it->second;
+	}
+	return *it->second;
+}
 
 /* Setters, Getters and private functions to manage available slot list */
 int	Server::getFirstSlot( void )
@@ -364,6 +379,22 @@ Channel	*Server::getChannel(const std::string &name, Client *c)
 		chan = new Channel(name, c);
 		this->_channels.insert(std::make_pair(name, chan));
 	}
+	return chan;			
+}
+
+Channel	*Server::getChannel(const std::string &name)
+{
+	/*checks if the channel is already listed on the server list
+	 * and it not, creates it - are there cases where it should not be created? */
+
+	Channel *chan = NULL;
+
+	std::map<std::string, Channel *>::iterator it;
+	it = _channels.find(name);
+	if (it != this->_channels.end())
+		return it->second;
+	/*else
+		return nullptr;*/
 	return chan;			
 }
 

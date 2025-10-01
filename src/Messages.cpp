@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/25 11:53:53 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 16:47:40 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,11 @@
 /*PRIVMSG*/
 void Client::handlePrivMsg( t_arg args )
 {
-	Reply	privmsg(*this);
 	std::map<int, std::string>	targets;
 	std::vector<std::string>	tmp;	
 	
 	if (args.size() != 3) //needs at least a target and a message to send
-	{
-		privmsg.list(_nickname);
-		privmsg.list("no text to send");
-		privmsg.ship(412);
-		return;
-	}
+		return (err_noTextToSend());
 	tmp = split(args[1], ',');
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
@@ -36,19 +30,11 @@ void Client::handlePrivMsg( t_arg args )
 		{
 			std::string chan = tmp[i].substr(j, tmp[i].size());
 			if (_server->isChannelExist(chan) == false)
-			{
-				privmsg.list(_nickname);
-				privmsg.list("no such nick/channel");
-				privmsg.ship(403);
-			}
+				err_noSuchChannel(chan);
 			else if (j > 1 && tmp[i][0] == '&')
 				targets.insert(std::pair<int, std::string>(2, chan));
 			else if (j > 1 && tmp[i][0] != '&')
-			{
-				privmsg.list(_nickname);
-				privmsg.list("no such nick/channel");
-				privmsg.ship(403);
-			}
+				err_noSuchChannel(chan);
 			else
 				targets.insert(std::pair<int, std::string>(1, chan));
 		}
@@ -57,11 +43,7 @@ void Client::handlePrivMsg( t_arg args )
 			if (_server->isClientExist(tmp[i]) == true)
 				targets.insert(std::pair<int, std::string>(0, tmp[i]));
 			else
-			{
-				privmsg.list(_nickname);
-				privmsg.list("no such nick/channel");
-				privmsg.ship(401);
-			}
+				err_noSuchNick();
 		}
 	}
 	
@@ -71,20 +53,31 @@ void Client::handlePrivMsg( t_arg args )
 		switch (it->first) {
 			case 0:
 			{
+				Reply	privmsg(*this, _nickname, _server->getClient(args[1]));
 				if (_away == true)
-					privmsg.ship(301);
-				privmsg.ship(args[1]);
+					rpl_Away();
+				privmsg.list("PRIVMSG");
+				privmsg.list(args[1]);
+				privmsg.list(args[2]);
+				privmsg.ship();
 				break;
 			}
 			case 1:
 			{
-				//_server->getChannel(it->second, this)->broadcast_all(args[1], getNickname());
-				_server->getChannel(it->second, this)->broadcast_all(*this, getNickname());
+				Reply	privmsg(*this, _nickname, *_server->getChannel(it->second, this), 'a', 'y');
+				privmsg.list("PRIVMSG");
+				privmsg.list(args[1]);
+				privmsg.list(args[2]);
+				privmsg.ship();
 				break;
 			}
 			case 2:
 			{
-				_server->getChannel(it->second, this)->broadcast_ops(args[1], getNickname());
+				Reply	privmsg(*this, _nickname, *_server->getChannel(it->second, this), 'o', 'y');
+				privmsg.list("PRIVMSG");
+				privmsg.list(args[1]);
+				privmsg.list(args[2]);
+				privmsg.ship();
 				break;
 			}
 		}	

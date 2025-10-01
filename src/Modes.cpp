@@ -6,38 +6,13 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:03:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/22 17:03:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 16:06:32 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
 
 /*MODE*/
-
-static void	rpl_chanmode(Channel *chan, Reply &rpl_channelmodeis, std::string &target)
-{
-	rpl_channelmodeis.list("marc");
-	rpl_channelmodeis.list(target);
-	rpl_channelmodeis.list("+o");
-	rpl_channelmodeis.list("marc");
-	rpl_channelmodeis.list("l");
-	rpl_channelmodeis.list(chan->getLimit());
-	rpl_channelmodeis.ship(324);
-	rpl_channelmodeis.list(target);
-	/*rpl_channelmodeis.list("TopicLocked");
-	rpl_channelmodeis.list(chan->isTopicLocked());
-	rpl_channelmodeis.ship(324);
-	rpl_channelmodeis.list(target);
-	rpl_channelmodeis.list("HasPassword");
-	rpl_channelmodeis.list(chan->hasKey());
-	rpl_channelmodeis.ship(324);
-	rpl_channelmodeis.list(target);
-	rpl_channelmodeis.list("HasLimit");
-	rpl_channelmodeis.list(chan->getLimit());
-	rpl_channelmodeis.ship(324);*/
-
-	return;
-}
 
 static t_list	construct_modestring(t_arg &args)
 {
@@ -86,13 +61,7 @@ static void	execute_modes(t_list &string, Channel *chan, Client *c)
 				break;
 			case 2:
 				if (chan->setKey(it->second) == -1)
-				{
-					err.list(chan->getName());
-					err.list("k");
-					err.list(it->second);
-					err.list("use of invalid charachters");
-					err.ship(696);
-				}
+					c->err_InvalidModeParam(*chan, "k", it->first, "use of invalid characters");
 				break;
 			case 3:
 				chan->unsetKey();
@@ -117,11 +86,7 @@ static void	execute_modes(t_list &string, Channel *chan, Client *c)
 				ss >> l;
 				if (l == 0)
 				{
-					err.list(chan->getName());
-					err.list("l");
-					err.list(it->second);
-					err.list("incorrect limit number");
-					err.ship(696);
+					c->err_InvalidModeParam(*chan, "l", it->first, "incorrect limit number");
 					break;
 				}
 				chan->setLimit(l);
@@ -136,33 +101,28 @@ static void	execute_modes(t_list &string, Channel *chan, Client *c)
 }
 void Client::handleMode( t_arg args )
 {
-	Reply	mode(*this);
-	Reply	err(*this, _nickname);
 	t_list	string;
 	Channel	*chan;
 	
 	if (args.size() == 1)
-		err.ship(403);
+		err_noSuchChannel(args[1]);
 	else if (_server->isChannelExist(args[1]) == false)
-		err.ship(403);
+		err_noSuchChannel(args[1]);
 	else 
 	{
 		chan = _server->getChannel(args[1], this);	
 		if (args.size() == 2)
 		{
-			Reply	rpl_channelmodeis(*this);
-			rpl_chanmode(chan, rpl_channelmodeis, args[1]);
-			Reply	rpl_creationtime(*this, _nickname);
-			rpl_creationtime.list(args[1]);
-			//rpl_creationtime.list(chan->getCreationTime());
-			rpl_creationtime.ship(329);
+			rpl_ChannelModeIs(*chan, args[1]);
+			rpl_CreationTime(args[1]);
 		}
 		else if (args[2][0] != '+' && args[2][0] != '-')
-			err.ship(501);
+			err_UModeUnknownFlag();
 		else if (chan->isOperator(this) == false)
-			err.ship(482);
+			err_ChanOPrivsNeeded(args[1]);
 		else
 		{
+			Reply	mode(*this, *chan, 'a', 'n');
 			construct_modestring(args);
 			execute_modes(string, chan, this);
 			mode.list(args[0]);

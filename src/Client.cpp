@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/19 19:00:25 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/01 17:25:55 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,11 @@ t_settings	Client::getServerSettings( void ) const
 std::string	Client::getServerSetting( const std::string str ) const
 {
 	return (_server->getSetting(str));
+}
+
+std::map<int, Client *> Client::getServerClientList( void ) const
+{
+	return (_server->getAllClients());
 }
 
 std::string	Client::getNickname( void ) const

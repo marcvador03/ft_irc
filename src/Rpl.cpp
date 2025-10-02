@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:14:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 15:40:52 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,5 +189,43 @@ void	Client::rpl_Inviting( const std::string &chan, const std::string &inv )
 	rpl.list(inv);
 	rpl.list(chan);
 	rpl.ship(341);
+	return;
+}
+
+/*RPL_NOTOPIC*/
+void	Client::rpl_noTopic( const std::string &chan )
+{
+	Reply	rpl(*this, *_server->getChannel(chan), 'a', 'n');
+
+	rpl.list(_nickname);
+	rpl.list(chan);
+	rpl.list("No topic is set");
+	rpl.ship(331);
+	
+	return;
+}
+
+/*RPL_TOPIC*/
+void	Client::rpl_TopicAll( const std::string &chan )
+{
+	Reply	rpl(*this, *_server->getChannel(chan), 'a', 'n');
+
+	rpl.list(_nickname);
+	rpl.list(chan);
+	rpl.list(_server->getChannel(chan)->getTopic());
+	rpl.ship(332);
+		
+	return;
+}
+
+void	Client::rpl_Topic( const std::string &chan )
+{
+	Reply	rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(chan);
+	rpl.list(_server->getChannel(chan)->getTopic());
+	rpl.ship(332);
+		
 	return;
 }

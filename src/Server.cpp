@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 14:40:26 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 15:19:29 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,6 +220,8 @@ void	Server::LaunchCmd(Client *c)
 		c->handleKick(args);
 	else if (args[0] == "INVITE")
 		c->handleInvite(args);
+	else if (args[0] == "TOPIC")
+		c->handleTopic(args);
 }
 
 void	Server::closefds( void )

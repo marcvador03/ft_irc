@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 14:52:45 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 15:43:31 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 Channel::Channel ( const std::string name , Client &c):
 	_name(name),
+	_topic(""),
 	_inviteOnly(false),
 	_topicLocked(false),
 	_hasKey(false),

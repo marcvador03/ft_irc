@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:17:52 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 15:52:43 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,8 +172,26 @@ void Client::handleInvite( t_arg args )
 	return;
 }
 
-/*void Client::handleTopic( t_args args )
+/*TOPIC*/
+void	Client::handleTopic( t_arg args )
 {
-
+	if (args.size() < 2 || args.size() > 3)
+		return (err_NeedMoreParameters(args[0]));
+	if (_server->isChannelExist(args[1]) == false)
+		return (err_noSuchChannel(args[1]));
+	Channel *chan = _server->getChannel(args[1]);
+	if (chan->isMember(*this) == false)
+		return (err_notOnChannel(_nickname));
+	if (chan->isTopicLocked() == true && chan->isOperator(*this) == false)
+		return (err_ChanOPrivsNeeded(_nickname));
+	if (args.size() == 2)
+		return (rpl_noTopic(args[1]));
+	if (args[2].empty() == true)
+		return (rpl_noTopic(args[1]));
+	else
+	{
+		chan->setTopic(args[2]);
+		rpl_TopicAll(args[1]);
+	}
 	return ;
-}*/
+}

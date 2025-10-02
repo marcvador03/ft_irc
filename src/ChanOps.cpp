@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 13:53:37 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 15:17:52 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,12 +141,35 @@ void Client::handleKick( t_arg args )
 			kick.list(args[3]);
 			kick.ship();
 			chan->removeMember(_server->getClient(*it));
-			//rpl_NamReply(*chan);
-			//rpl_EndOfNames(*chan);
-
 		}
 	}	
+	return;
+}
 
+/*INVITE*/
+void Client::handleInvite( t_arg args )
+{
+	if (args.size() < 3 || args.size() > 4)
+		return (err_NeedMoreParameters(args[0]));
+	if (_server->isChannelExist(args[2]) == false)
+		return (err_noSuchChannel(args[2]));
+	Channel *chan = _server->getChannel(args[2]);
+	if (_server->isClientExist(args[1]) == false)
+		return(err_noSuchNick());
+	if (chan->isMember(_server->getClient(args[1])) == true)
+		return (err_UserOnChannel(args[2]));
+	if (chan->isMember(*this) == false)
+		return (err_notOnChannel(args[2]));
+	if (chan->isInviteOnly() == true && chan->isOperator(*this) == false)
+		return (err_ChanOPrivsNeeded(args[2]));
+	chan->addInvite(_server->getClient(args[1]));
+	rpl_Inviting(args[2], args[1]);
+	Reply	invite(*this, _nickname);
+	invite.list("INVITE");
+	invite.list(args[1]);
+	invite.list(args[2]);
+	invite.ship();
+	return;
 }
 
 /*void Client::handleTopic( t_args args )

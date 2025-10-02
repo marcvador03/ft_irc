@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 13:39:53 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 14:52:45 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,11 @@ bool Channel::hasKey(void) const
 	return _hasKey;
 }
 
+std::string Channel::getKey(void) const
+{
+	return _key;
+}
+
 //limit related
 void 	Channel::unsetLimit( void )
 {
@@ -160,6 +165,35 @@ void Channel::setInviteOnly(bool isInviteOnly)
 bool Channel::isInviteOnly() const
 {
 	return (this->_inviteOnly);
+}
+
+void	Channel::addInvite(Client &c )
+{
+	std::map<int, Client *>::iterator it = this->_invites.find(c.getSlot());
+	if (it == this->_invites.end())
+		this->_invites.insert(std::pair<int, Client *>(c.getSlot(), &c));
+	return;
+}
+
+void 	Channel::removeInvite(Client &c )
+{
+	std::map<int, Client *>::iterator it = this->_invites.find(c.getSlot());
+	if (it != this->_invites.end())
+		this->_invites.erase(it);
+	return;
+}
+
+
+bool 	Channel::isInvited(Client &c )
+{
+	if (_inviteOnly == false)
+		return true;
+	std::map<int, Client *>::iterator it;
+	it = _invites.find(c.getSlot());
+	if (it == _invites.end())
+		return false;
+	return true;
+
 }
 
 /*Getters and setters */

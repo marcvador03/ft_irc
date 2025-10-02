@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 10:17:56 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 15:14:25 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ class Client {
 		void handlePrivMsg( t_arg args ); 
 		void handleMode( t_arg args ); 
 		void handleKick( t_arg args ); 
+		void handleInvite( t_arg args ); 
 		
 		/* RPL functions */
 		void	rpl_Welcome( void );
@@ -85,6 +86,7 @@ class Client {
 		void	rpl_Away( void );
 		void	rpl_ChannelModeIs( Channel &, const std::string & );
 		void	rpl_CreationTime( const std::string & );
+		void	rpl_Inviting( const std::string &, const std::string & );
 
 		/*ERR functions */
 		void	err_NeedMoreParameters( const std::string & );
@@ -106,6 +108,7 @@ class Client {
 		void	err_NicknameInUse( const std::string & );
 		void	err_AlreadyRegistered ( void );
 		void	err_PasswdMismatch ( void );
+		void	err_UserOnChannel( const std::string &chan );
 
 		public:
 			class ErrnoException: public std::exception {

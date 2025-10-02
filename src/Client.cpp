@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 13:38:28 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 14:36:19 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,11 +171,12 @@ int		Client::joinChannel( std::string name, std::string key )
 	ch = _server->getChannel(name, *this);
 	if (ch->checkKey(key) == false)
 		return 475;
-	if (ch->isInviteOnly() == true)
+	if (ch->isInviteOnly() == true && ch->isInvited(*this) == false)
 		return 473;
 	if (ch->hasReachedLimit() == true)
 		return 471;
 	ch->addMember(*this);
+	ch->removeInvite(*this);
 	_channels.insert(ch);
 	return 0;
 }

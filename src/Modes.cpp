@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:03:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 13:41:10 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 14:46:29 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 
 /*MODE*/
 
-static t_list	construct_modestring(t_arg &args)
+static void	construct_modestring(t_arg &args, t_list &string)
 {
-	t_list	string;
 	size_t	j = 3;
 	
 	for (size_t i = 1; i < args[2].size(); i++)
@@ -30,12 +29,11 @@ static t_list	construct_modestring(t_arg &args)
 				string.insert(std::pair<std::string, std::string>(sign + args[2][i], ""));
 		}
 	}
-	return string;
+	return;
 }
 
 static void	execute_modes(t_list &string, Channel *chan, Client &c)
 {
-	Reply	err(c, c.getNickname());
 	std::map<std::string, int>	mod_table;
 	
 	mod_table["+i"] = 0;
@@ -123,7 +121,7 @@ void Client::handleMode( t_arg args )
 		else
 		{
 			Reply	mode(*this, *chan, 'a', 'n');
-			construct_modestring(args);
+			construct_modestring(args, string);
 			execute_modes(string, chan, *this);
 			mode.list(args[0]);
 			mode.list(args[1]);

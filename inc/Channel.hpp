@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 13:39:27 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 14:52:19 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,11 @@ class Channel {
 		bool isMember( Client & );
 		
 		//key (password) related
-		int		setKey(const std::string &key);
-		void	unsetKey( void );
-		bool 	checkKey(const std::string &key) const;
-		bool 	hasKey(void) const;
+		int				setKey(const std::string &key);
+		void			unsetKey( void );
+		bool 			checkKey(const std::string &key) const;
+		bool 			hasKey(void) const;
+		std::string 	getKey(void) const;
 		
 		//limit related
 		void	setLimit( size_t limit );
@@ -57,7 +58,10 @@ class Channel {
 		
 		//invite only related
 		void	setInviteOnly( bool );
-		bool 	isInviteOnly( void ) const;
+		bool	isInviteOnly( void ) const;
+		void	addInvite(Client & );
+		void 	removeInvite(Client & );
+		bool 	isInvited(Client & );
 		
 		//topic related
 		std::string	getTopic( void ) const;
@@ -70,19 +74,6 @@ class Channel {
 		void removeOperator(Client & );
 		bool isOperator(Client & );
 		
-		//broadcast messages in channel
-		/*template<typename T>
-		void broadcast( const Reply &rpl, T val , bool ops_only )
-		{
-			std::map<int, Client *> &list = (ops_only = true) ? _operators: _clients;
-			for (std::map<int, Client *>::iterator it = list.begin(); it != list.end(); ++it)
-			{
-				if (it->second->getNickname() != rpl.getSrc())
-					rpl.ship(val);
-			}
-		};
-
-		void broadcast_ops(const::std::string &, const std::string );*/
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
 			public:
@@ -95,7 +86,8 @@ class Channel {
 		Channel &operator-( const Channel &other );
 		
 		std::map <int, Client *>	_clients;
-		std::map <int, Client *>	_operators;		//channel operators (for mode 'o')
+		std::map <int, Client *>	_operators;	
+		std::map <int, Client *>	_invites;
 
 		std::string	_name;			//channel name
 		std::string	_topic;			//channel topic

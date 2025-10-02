@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 13:42:56 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 14:40:26 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,8 @@ void	Server::ReceiveInput(Client *c)
 	{
 		buf[bytes] = '\0';
 		std::istringstream ss(buf);
+		std::cout << "Received input from " << c->getNickname();
+		std::cout << "|" << buf;
 		for (std::string line; std::getline(ss, line);) 
 		{
 			line = this->_trim(line);
@@ -216,6 +218,8 @@ void	Server::LaunchCmd(Client *c)
 		c->handleMode(args);
 	else if (args[0] == "KICK")
 		c->handleKick(args);
+	else if (args[0] == "INVITE")
+		c->handleInvite(args);
 }
 
 void	Server::closefds( void )
@@ -384,18 +388,11 @@ Channel	*Server::getChannel(const std::string &name, Client &c)
 
 Channel	*Server::getChannel(const std::string &name)
 {
-	/*checks if the channel is already listed on the server list
-	 * and it not, creates it - are there cases where it should not be created? */
-
-	Channel *chan = NULL;
-
 	std::map<std::string, Channel *>::iterator it;
 	it = _channels.find(name);
 	if (it != this->_channels.end())
 		return it->second;
-	/*else
-		return nullptr;*/
-	return chan;			
+	return it->second;
 }
 
 /* Password check */

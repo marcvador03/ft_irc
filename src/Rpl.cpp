@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 11:12:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 15:14:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,25 +81,30 @@ void	Client::rpl_ChannelModeIs( Channel &chan, const std::string &target)
 {
 	Reply	rpl(*this);
 
+	std::string keys;
+	std::map<int, Client *>::const_iterator it;
+	
+	keys = "+";
+	for (it = chan.getOpsClients().begin(); it != chan.getOpsClients().end(); it++)
+		keys += "o";
+	if (chan.hasKey() == true)
+		keys += "k";
+	if (chan.getLimit() > 0)
+		keys += "l";
+	if (chan.isInviteOnly() == true)
+		keys += "i";
+	if (chan.isTopicLocked() == true)
+		keys += "k";
 	rpl.list("marc");
 	rpl.list(target);
-	rpl.list("+o");
-	rpl.list("marc");
-	rpl.list("l");
-	rpl.list(chan.getLimit());
+	rpl.list(keys);
+	for (it = chan.getOpsClients().begin(); it != chan.getOpsClients().end(); it++)
+		rpl.list(it->second->getNickname());
+	if (chan.hasKey() == true)
+		rpl.list(chan.getKey());
+	if (chan.getLimit() > 0)
+		rpl.list(chan.getLimit());
 	rpl.ship(324);
-	rpl.list(target);
-	/*rpl.list("TopicLocked");
-	rpl.list(chan->isTopicLocked());
-	rpl.ship(324);
-	rpl.list(target);
-	rpl.list("HasPassword");
-	rpl.list(chan->hasKey());
-	rpl.ship(324);
-	rpl.list(target);
-	rpl.list("HasLimit");
-	rpl.list(chan->getLimit());
-	rpl.ship(324);*/
 	return;
 }
 
@@ -110,7 +115,7 @@ void	Client::rpl_CreationTime( const std::string &target )
 	rpl.list(target);
 	//rpl.list(chan->getCreationTime());
 	rpl.ship(329);
-
+	return;
 }
 
 void	Client::rpl_Welcome( void )
@@ -120,7 +125,7 @@ void	Client::rpl_Welcome( void )
 	rpl.list(_nickname); // client is not nickname, to be checked
 	rpl.list("Welcome to the network, " + _nickname + "!" + _username + "@" + _host);
 	rpl.ship(1);
-
+	return;
 }
 
 void	Client::rpl_YourHost( void )
@@ -131,6 +136,7 @@ void	Client::rpl_YourHost( void )
 	rpl.list("Your host is ");
 	rpl.list(getServername());
 	rpl.ship(2);
+	return;
 }
 
 void	Client::rpl_Created( void )
@@ -143,7 +149,7 @@ void	Client::rpl_Created( void )
 	rpl.list(", running version ");
 	rpl.list(getServerVersion());
 	rpl.ship(3);
-
+	return;
 }
 
 void	Client::rpl_MyInfo( void )
@@ -156,6 +162,7 @@ void	Client::rpl_MyInfo( void )
 	rpl.list("o");
 	rpl.list("itlbk");
 	rpl.ship(4);
+	return;
 }
 
 void	Client::rpl_ISupport( void )
@@ -170,5 +177,17 @@ void	Client::rpl_ISupport( void )
 			rpl.list("are supported by this server");
 			rpl.ship(5);
 	}
+	return;
+}
 
+/*RPL_INVITING*/
+void	Client::rpl_Inviting( const std::string &chan, const std::string &inv )
+{
+	Reply	rpl(*this, _nickname);
+
+	rpl.list(_nickname);
+	rpl.list(inv);
+	rpl.list(chan);
+	rpl.ship(341);
+	return;
 }

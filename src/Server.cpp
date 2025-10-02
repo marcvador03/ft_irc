@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/01 17:20:36 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 13:42:56 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,8 +150,6 @@ void	Server::ReceiveInput(Client *c)
 	else
 	{
 		buf[bytes] = '\0';
-		log("Received input: ");
-	   	log(buf);
 		std::istringstream ss(buf);
 		for (std::string line; std::getline(ss, line);) 
 		{
@@ -216,6 +214,8 @@ void	Server::LaunchCmd(Client *c)
 		c->handlePrivMsg(args);
 	else if (args[0] == "MODE")
 		c->handleMode(args);
+	else if (args[0] == "KICK")
+		c->handleKick(args);
 }
 
 void	Server::closefds( void )
@@ -250,7 +250,7 @@ void	Server::removeClient( const Client *client )
 	}
 }
 		
-bool	Server::isClientExist(std::string &name)
+bool	Server::isClientExist(const std::string &name)
 {
 	std::map<int, Client *>::iterator it;
 	for (it = _clients.begin(); it != _clients.end(); it++)
@@ -363,7 +363,7 @@ bool	Server::isChannelExist(std::string &name)
 	return c;			
 }*/
 
-Channel	*Server::getChannel(const std::string &name, Client *c)
+Channel	*Server::getChannel(const std::string &name, Client &c)
 {
 	/*checks if the channel is already listed on the server list
 	 * and it not, creates it - are there cases where it should not be created? */

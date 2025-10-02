@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:03:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/01 16:06:32 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 13:41:10 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ static t_list	construct_modestring(t_arg &args)
 	return string;
 }
 
-static void	execute_modes(t_list &string, Channel *chan, Client *c)
+static void	execute_modes(t_list &string, Channel *chan, Client &c)
 {
-	Reply	err(*c, c->getNickname());
+	Reply	err(c, c.getNickname());
 	std::map<std::string, int>	mod_table;
 	
 	mod_table["+i"] = 0;
@@ -61,7 +61,7 @@ static void	execute_modes(t_list &string, Channel *chan, Client *c)
 				break;
 			case 2:
 				if (chan->setKey(it->second) == -1)
-					c->err_InvalidModeParam(*chan, "k", it->first, "use of invalid characters");
+					c.err_InvalidModeParam(*chan, "k", it->first, "use of invalid characters");
 				break;
 			case 3:
 				chan->unsetKey();
@@ -86,7 +86,7 @@ static void	execute_modes(t_list &string, Channel *chan, Client *c)
 				ss >> l;
 				if (l == 0)
 				{
-					c->err_InvalidModeParam(*chan, "l", it->first, "incorrect limit number");
+					c.err_InvalidModeParam(*chan, "l", it->first, "incorrect limit number");
 					break;
 				}
 				chan->setLimit(l);
@@ -110,7 +110,7 @@ void Client::handleMode( t_arg args )
 		err_noSuchChannel(args[1]);
 	else 
 	{
-		chan = _server->getChannel(args[1], this);	
+		chan = _server->getChannel(args[1], *this);	
 		if (args.size() == 2)
 		{
 			rpl_ChannelModeIs(*chan, args[1]);
@@ -118,13 +118,13 @@ void Client::handleMode( t_arg args )
 		}
 		else if (args[2][0] != '+' && args[2][0] != '-')
 			err_UModeUnknownFlag();
-		else if (chan->isOperator(this) == false)
+		else if (chan->isOperator(*this) == false)
 			err_ChanOPrivsNeeded(args[1]);
 		else
 		{
 			Reply	mode(*this, *chan, 'a', 'n');
 			construct_modestring(args);
-			execute_modes(string, chan, this);
+			execute_modes(string, chan, *this);
 			mode.list(args[0]);
 			mode.list(args[1]);
 			mode.list(args[2]);

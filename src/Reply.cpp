@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 11:08:11 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/01 17:39:46 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 11:35:00 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../inc/Reply.hpp"
@@ -272,7 +272,6 @@ void	Reply::ship( void )
 			std::stringstream ss;
 			send(it2->second->getClientfd(), str.c_str(), str.length(), 0);
 			ss << it2->second->getClientfd();
-			log("Reply sent to " + ss.str() + "\n\t" + str);
 		}
 	}
 	_cmdlist.erase(_cmdlist.begin(), _cmdlist.end());

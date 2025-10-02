@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:18:27 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/07/24 14:46:45 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 13:30:47 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 	return str.substr(start, end - start + 1);
 }*/
 
-std::vector<std::string> split(const std::string &s, char delimiter) {
+/*std::vector<std::string> split(const std::string &s, char delimiter) {
 	std::vector<std::string> tokens;
 	std::string token;
 	std::istringstream tokenStream(s);;
@@ -32,5 +32,5 @@ std::vector<std::string> split(const std::string &s, char delimiter) {
 			tokens.push_back(token);
 	}
 	return tokens;
-}
+}*/
 

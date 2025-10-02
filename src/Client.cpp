@@ -6,12 +6,12 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/01 17:25:55 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 13:38:28 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/Client.hpp"
 #include "../inc/utils.hpp"
+#include "../inc/Client.hpp"
 
 Client::Client (Server *s, int slot): //we will need to revisit all Server parameters set at start!!//
 		_server(s),
@@ -132,8 +132,8 @@ int		Client::leaveChannel( std::string name)
 		return 403;
 	else if (isPartofChannel(name) == false)
 		return 442;
-	ch = _server->getChannel(name, this);
-	ch->removeMember(this);
+	ch = _server->getChannel(name, *this);
+	ch->removeMember(*this);
 	_channels.erase(ch);
 	return 0;
 }
@@ -147,8 +147,8 @@ int		Client::leaveAllChannels( void )
 	for (it = this->_channels.begin(); it != this->_channels.end() ; it++)
 	{
 		name = (*it)->getName();
-		ch = _server->getChannel(name, this);
-		ch->removeMember(this);
+		ch = _server->getChannel(name, *this);
+		ch->removeMember(*this);
 		_channels.erase(ch);
 		if (_channels.empty() == true)
 			return (0);
@@ -168,14 +168,14 @@ int		Client::joinChannel( std::string name, std::string key )
 			|| name.find(0x07) != std::string::npos \
 			|| name.find(',') != std::string::npos)
 		return 476;
-	ch = _server->getChannel(name, this);
+	ch = _server->getChannel(name, *this);
 	if (ch->checkKey(key) == false)
 		return 475;
 	if (ch->isInviteOnly() == true)
 		return 473;
 	if (ch->hasReachedLimit() == true)
 		return 471;
-	ch->addMember(this);
+	ch->addMember(*this);
 	_channels.insert(ch);
 	return 0;
 }
@@ -184,8 +184,8 @@ bool	Client::isPartofChannel( std::string &name )
 {
 	Channel *ch;
 	
-	ch = _server->getChannel(name, this);
-	return (ch->isMember(this));
+	ch = _server->getChannel(name, *this);
+	return (ch->isMember(*this));
 }
 		
 int		Client::registerPass( std::string &pass)

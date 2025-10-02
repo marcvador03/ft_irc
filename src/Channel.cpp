@@ -6,13 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/09/30 16:00:14 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 13:39:53 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Channel.hpp"
 
-Channel::Channel ( const std::string name , Client *c):
+Channel::Channel ( const std::string name , Client &c):
 	_name(name),
 	_inviteOnly(false),
 	_topicLocked(false),
@@ -41,50 +41,50 @@ std::map<int, Client *>	&Channel::getOpsClients( void )
 	return _operators;
 }
 
-void	Channel::addMember( Client *c )
+void	Channel::addMember( Client &c )
 {
-	std::map<int, Client *>::iterator it = this->_clients.find(c->getSlot());
+	std::map<int, Client *>::iterator it = this->_clients.find(c.getSlot());
 	if (it == this->_clients.end())
-		this->_clients.insert(std::pair<int, Client *>(c->getSlot(), c));
+		this->_clients.insert(std::pair<int, Client *>(c.getSlot(), &c));
 }
 
-void	Channel::removeMember( Client *c )
+void	Channel::removeMember( Client &c )
 {
-	std::map<int, Client *>::iterator it1 = this->_clients.find(c->getSlot());
-	std::map<int, Client *>::iterator it2 = this->_operators.find(c->getSlot());
+	std::map<int, Client *>::iterator it1 = this->_clients.find(c.getSlot());
+	std::map<int, Client *>::iterator it2 = this->_operators.find(c.getSlot());
 	if (it1 != this->_clients.end())
 		this->_clients.erase(it1);
 	if (it2 != this->_operators.end())
 		this->_operators.erase(it2);
 }
 
-bool 	Channel::isMember( Client *c )
+bool 	Channel::isMember( Client &c )
 {
 	std::map<int, Client *>::iterator it;
-	it = _clients.find(c->getSlot());
+	it = _clients.find(c.getSlot());
 	if (it == _clients.end())
 		return false;
 	return true;
 }
 //operator management
-void Channel::addOperator(Client * c)
+void Channel::addOperator(Client &c)
 {
-	std::map<int, Client *>::iterator it = this->_operators.find(c->getSlot());
+	std::map<int, Client *>::iterator it = this->_operators.find(c.getSlot());
 	if (it == this->_operators.end())
-		this->_operators.insert(std::pair<int, Client *>(c->getSlot(), c));
+		this->_operators.insert(std::pair<int, Client *>(c.getSlot(), &c));
 }
 
-void Channel::removeOperator(Client * c)
+void Channel::removeOperator(Client &c)
 {
-	std::map<int, Client *>::iterator it = this->_operators.find(c->getSlot());
+	std::map<int, Client *>::iterator it = this->_operators.find(c.getSlot());
 	if (it != this->_operators.end())
 		this->_operators.erase(it);
 }
 
-bool Channel::isOperator(Client * c)
+bool Channel::isOperator(Client &c)
 {
 	std::map<int, Client *>::iterator it;
-	it = _operators.find(c->getSlot());
+	it = _operators.find(c.getSlot());
 	if (it == _operators.end())
 		return false;
 	return true;

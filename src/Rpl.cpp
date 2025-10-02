@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/01 17:01:03 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 11:12:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	Client::rpl_NamReply( Channel &chan )
 		rpl.list(_nickname);
 		rpl.list("=");
 		rpl.list(chan.getName());
-		if (chan.isOperator(it->second) == true)
+		if (chan.isOperator(*it->second) == true)
 			rpl.list("@" + it->second->getNickname());
 		else
 			rpl.list(it->second->getNickname());

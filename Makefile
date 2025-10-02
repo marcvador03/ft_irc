@@ -18,12 +18,7 @@ SRC_NAMES := main.cpp \
 			 OtherCmds.cpp \
 			 Registration.cpp \
 			 Reply.cpp \
-			 Rpl.cpp \
-			 utils.cpp 
-
-#CMDS_NAMES := cmds_marc.cpp
-
-#SRC_NAMES += $(addprefix $(SRC_DIR)/commands/, $(CMDS_NAMES))
+			 Rpl.cpp
 
 INC_NAMES := ft_irc.h 
 

@@ -6,12 +6,11 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/01 16:47:40 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 13:40:24 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
-#include "../inc/Server.hpp"
 #include "../inc/utils.hpp"
 
 /*PRIVMSG*/
@@ -64,7 +63,7 @@ void Client::handlePrivMsg( t_arg args )
 			}
 			case 1:
 			{
-				Reply	privmsg(*this, _nickname, *_server->getChannel(it->second, this), 'a', 'y');
+				Reply	privmsg(*this, _nickname, *_server->getChannel(it->second, *this), 'a', 'y');
 				privmsg.list("PRIVMSG");
 				privmsg.list(args[1]);
 				privmsg.list(args[2]);
@@ -73,7 +72,7 @@ void Client::handlePrivMsg( t_arg args )
 			}
 			case 2:
 			{
-				Reply	privmsg(*this, _nickname, *_server->getChannel(it->second, this), 'o', 'y');
+				Reply	privmsg(*this, _nickname, *_server->getChannel(it->second, *this), 'o', 'y');
 				privmsg.list("PRIVMSG");
 				privmsg.list(args[1]);
 				privmsg.list(args[2]);

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:19:29 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 18:26:47 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,12 +96,12 @@ void	Server::launch( void )
 	std::memset(&this->_server_addr, 0, sizeof(this->_server_addr));
 	this->_server_addr.sin_family = AF_INET;
 	this->_server_addr.sin_addr.s_addr = INADDR_ANY;
-	this->_server_addr.sin_port = htons(PORT);
+	this->_server_addr.sin_port = htons(this->_port);	
 	this->_socklen = sizeof(this->_server_addr);
 	std::cout << "Server launched" << std::endl;
 	if (bind(this->_serverfd, (const struct sockaddr *)&(this->_server_addr), sizeof(this->_server_addr)) == -1)
 		throw Server::ErrnoException(); 
-	std::cout << "Server bound to address and port: " << PORT << std::endl;
+	std::cout << "Server bound to address and port: " << this->_port << std::endl;
 }
 
 void	Server::listen_poll( void )
@@ -337,6 +337,16 @@ std::string	Server::getVersion() const
 t_settings	Server::getSettings() const
 {
 	return (this->_settings);
+}
+
+void	Server::setPort(const int port)
+{
+	this->_port = port;
+}
+
+void	Server::setPassword(const std::string &password)
+{
+	this->_password = password;
 }
 
 /* Management of nickname list on server */

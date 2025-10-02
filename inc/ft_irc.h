@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:25:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 11:23:01 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 19:08:38 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,7 @@ typedef std::vector<std::string> t_cmd_reply;
 typedef std::map<int, std::string> t_arg;
 typedef std::map<std::string, std::string> t_list;
 typedef std::vector<t_list> t_settings;
+
+#define TRUE -1
 
 #endif

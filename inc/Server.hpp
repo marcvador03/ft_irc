@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 14:15:26 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/02 18:24:42 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,10 @@ class Server {
 		std::string		getLaunchTime() const;	
 		std::string		getVersion() const;
 
+		void			setPort(const int port);
+		void			setPassword(const std::string &pass);
+
+
 		/*Settings getters & setters*/	
 		t_settings		getSettings() const;	
 		void			setSettings(const char *);
@@ -110,6 +114,7 @@ class Server {
 		/* Server variables */
 		std::string			_name; //server name
 		std::string			_password; // server password
+		int 				_port; // server port
 		int					_serverfd; // fd of the server
 		std::map<int, bool>	_slots; // list slots for pollfd and status false: free to accept new client true: occupied by a client
 		char				_launchtime[100];

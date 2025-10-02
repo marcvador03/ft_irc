@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/09/30 17:08:04 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/02 15:42:33 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,24 +34,28 @@ int	main ( int argc, char **argv )
 
 	char *endptr;
 	errno = 0;
-	int portLong = strtol(argv[1]);
+	int portLong = strtol(argv[1], &endptr, 10);
 
 	if (endptr != '\0') {
 		std::cout << "Error! Port must be a valid number!" << std::endl;
 		return 1;
 	}
-	if (errn == ERANGE || portLong < 1 || portLong > 65535) {
+	if (errno == ERANGE || portLong < 1 || portLong > 65535) {
 		std::cout << "Error! Port number out of range (1 - 65535)!" << std::endl;
 		return 1;
 	}
 
-	int port = static_cast<int>(port_long);
+	int port = static_cast<int>(portLong);
 
 	//<-- TO DO: exporting the port number to use in other files
 
 	//<-- TO DO: password validation
 	
-	char 
+	std::string password = argv[2];
+	if (password.length() < 5 || password.length() > 32) {
+		std::cout << "Error! Password length must be between 5 and 32 characters!" << std::endl;
+		return 1;
+	}
 
 	//end: password validation
 

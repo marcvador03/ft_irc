@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 18:24:42 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:08:42 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class Server {
 		std::string		getVersion() const;
 
 		void			setPort(const int port);
-		void			setPassword(const std::string &pass);
+		//void			setPassword(const std::string &pass);
 
 
 		/*Settings getters & setters*/	

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/03 14:25:21 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:20:26 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,11 @@ static int checkPasswordChars(std::string str)
 int	main ( int argc, char **argv )
 {	
 	if (argc == 2) {
-		std::cout << "Sending only port to the program. Server will not require a password!" << std::endl;
+		std::cout << "Sending only port to the program. Server will not require a password!";
 	}
 	if (argc < 2 || argc > 3) {
 		std::cout << "Error! Wrong number of arguments!" << std::endl
-				  << "Please use this order:  \"./ircserv <port> <password>\"" << std::endl
-				  << "Note: Password is optional!" << std::endl;
+				  << "Please use this order:  \"./ircserv <port> <password>\"" << std::endl;
 		return 1;
 	}
 	
@@ -65,7 +64,7 @@ int	main ( int argc, char **argv )
 	int port = static_cast<int>(portLong);
 
 	//password validation
-	std::string password = "";
+	std::string password = ""
 	if (argc == 3) {
 		password = argv[2];
 		
@@ -80,6 +79,7 @@ int	main ( int argc, char **argv )
 			return 1;
 		}
 	}
+
 	//end: password validation
 
 	Server server(".irc42", password);
@@ -87,8 +87,7 @@ int	main ( int argc, char **argv )
 	try {
 		server.setPort(port);
 		//server.setPassword(password);
-		if (argc == 3)
-			std::cout << "Server password set to: " << password << std::endl;
+		std::cout << "Server password set to: " << password << std::endl;
 		server.setSettings("irc_config");
 		server.launch();
 		server.listen_poll();

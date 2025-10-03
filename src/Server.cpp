@@ -6,13 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 18:26:47 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:32:25 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 
-Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!!
+Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!! <-done
 	_name(servername),
 	_password(pass),
 	_version("1.0")	
@@ -344,10 +344,10 @@ void	Server::setPort(const int port)
 	this->_port = port;
 }
 
-void	Server::setPassword(const std::string &password)
+/*void	Server::setPassword(const std::string &password)
 {
 	this->_password = password;
-}
+}*/
 
 /* Management of nickname list on server */
 bool Server::InsertNick(std::string &nick)

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/03 14:08:42 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/06 15:38:07 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,8 @@ class Server {
 		std::map<int, Client *>	&getAllClients( void );
 		
 		/* Management of nickname list on server */
-		bool 	InsertNick(std::string &nick);
+		bool 	InsertNick(const std::string &nick);
+		void 	removeNick(const std::string &nick);
 
 		/* Management of channel list on server */
 		bool	isChannelExist(std::string &name);

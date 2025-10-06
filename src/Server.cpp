@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:19:29 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 12:53:16 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,7 +249,9 @@ void	Server::removeClient( const Client *client )
 	it = _clients.find(client->getSlot());
 	if (it != _clients.end())
 	{
-		//close(client->getClientfd());
+		close(client->getClientfd());
+		setFreeSlot(client->getSlot());
+		removeNick(client->getNickname());
 		delete it->second;
 		_clients.erase(it);
 		std::cout << "Client was disconnected" << std::endl;
@@ -340,12 +342,18 @@ t_settings	Server::getSettings() const
 }
 
 /* Management of nickname list on server */
-bool Server::InsertNick(std::string &nick)
+bool 	Server::InsertNick(const std::string &nick)
 {
 	//insert in std::set return a std::pair, with first element pointing to the
 	//new element inserted or the duplicate element. The second element of the
 	//pair is false if it was a duplicate or true if it was inserted.
 	return (this->_nicknames.insert(nick).second);
+}
+
+void	Server::removeNick(const std::string &nick)
+{
+	_nicknames.erase(_nicknames.find(nick));
+	return;
 }
 
 /* Management of channel list on server */

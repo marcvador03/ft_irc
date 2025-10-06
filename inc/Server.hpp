@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/06 15:38:07 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/06 18:38:28 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,10 @@ class Server {
 		std::string		getName() const;	
 		std::string		getLaunchTime() const;	
 		std::string		getVersion() const;
+		bool			getHasServerPass() const;
 
 		void			setPort(const int port);
+		void			setHasServerPass(const bool b);
 		//void			setPassword(const std::string &pass);
 
 
@@ -114,6 +116,7 @@ class Server {
 		
 		/* Server variables */
 		std::string			_name; //server name
+		bool				_hasServerPass; // flag if server has password protection
 		std::string			_password; // server password
 		int 				_port; // server port
 		int					_serverfd; // fd of the server

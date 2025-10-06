@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/06 15:38:39 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/06 18:38:26 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,6 +336,11 @@ std::string	Server::getVersion() const
 	return (this->_version);
 }
 
+bool		Server::getHasServerPass() const
+{
+	return (this->_hasServerPass);
+}
+
 t_settings	Server::getSettings() const
 {
 	return (this->_settings);
@@ -344,6 +349,11 @@ t_settings	Server::getSettings() const
 void	Server::setPort(const int port)
 {
 	this->_port = port;
+}
+
+void	Server::setHasServerPass(const bool b)
+{
+	this->_hasServerPass = b;
 }
 
 /*void	Server::setPassword(const std::string &password)

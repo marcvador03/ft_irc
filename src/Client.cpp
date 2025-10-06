@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 14:36:19 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 18:54:07 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,8 @@ int		Client::registerPass( std::string &pass)
 		return 462;
 	if (_server->checkPass(pass) == false)
 		return 464;
+	if (pass == "")
+		return 1; //no password set on server;
 	_isPassAccepted = true;
 	return 0;
 }

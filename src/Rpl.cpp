@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:40:52 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 14:19:33 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,21 @@ void	Client::rpl_NamReply( Channel &chan )
 {
 	Reply	rpl(*this, chan, 'a', 'n');
 	std::map<int, Client *>::const_iterator it;
+	std::string	list;
 
+	rpl.list(_nickname);
+	rpl.list("=");
+	rpl.list(chan.getName());
 	for (it = chan.getAllClients().begin(); it != chan.getAllClients().end(); it++)
 	{
-		rpl.list(_nickname);
-		rpl.list("=");
-		rpl.list(chan.getName());
 		if (chan.isOperator(*it->second) == true)
-			rpl.list("@" + it->second->getNickname());
-		else
-			rpl.list(it->second->getNickname());
-		rpl.ship(353);
+			list += "@";
+		list += it->second->getNickname();
+		if ((it != chan.getAllClients().end()) && (it != --chan.getAllClients().end()))
+			list += " ";
 	}
+	rpl.list(list);
+	rpl.ship(353);
 }
 
 void	Client::rpl_EndOfNames( Channel &chan )

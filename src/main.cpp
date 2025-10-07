@@ -6,13 +6,12 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/06 18:50:28 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:45:47 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 #include <cerrno> // for errno
-#include <climits> // for INT_MIN and MAX
 
 bool	Server::signal = false;
 
@@ -38,13 +37,9 @@ static int checkPasswordChars(std::string str)
 
 int	main ( int argc, char **argv )
 {	
-	if (argc == 2) {
-		std::cout << "Sending only port to the program. Server will not require a password!" << std::endl;
-	}
-	if (argc < 2 || argc > 3) {
+	if (argc != 3) {
 		std::cout << "Error! Wrong number of arguments!" << std::endl
-				  << "Please use this order:  \"./ircserv <port> <password>\"" << std::endl
-				  << "Note: Password is optional!" << std::endl;
+				  << "Please use this order:  \"./ircserv <port> <password>\"" << std::endl;
 		return 1;
 	}
 	
@@ -65,31 +60,26 @@ int	main ( int argc, char **argv )
 	int port = static_cast<int>(portLong);
 
 	//password validation
-	std::string password = "";
-	if (argc == 3) {
-		password = argv[2];
-		
-		if (password == "" || password.find(' ') != std::string::npos) {
-			std::cout << "Error! Password cannot be empty or contain spaces!" << std::endl;
-			return 1;
-		}
-		
-		int wrongCharPos = checkPasswordChars(password);
-		if (wrongCharPos != -1) {
-			std::cout << "Error! Password cannot contain the character: \"" << password[wrongCharPos] << "\" on position " << wrongCharPos << std::endl;
-			return 1;
-		}
+	std::string password = argv[2];
+	
+	if (password == "" || password.find(' ') != std::string::npos) {
+		std::cout << "Error! Password cannot be empty or contain spaces!" << std::endl;
+		return 1;
 	}
+	
+	int wrongCharPos = checkPasswordChars(password);
+	if (wrongCharPos != -1) {
+		std::cout << "Error! Password cannot contain the character: \"" << password[wrongCharPos] << "\" on position " << wrongCharPos << std::endl;
+		return 1;
+	}
+
 	//end: password validation
 
 	Server server(".irc42", password);
 	signal(SIGINT, handle_signal);
 	try {
 		server.setPort(port);
-		//server.setPassword(password);
-		if (argc == 3) {
-			std::cout << "Server password set to: " << password << std::endl;
-		}
+		//std::cout << "Server password set to: " << password << std::endl;
 		server.setSettings("irc_config");
 		server.launch();
 		server.listen_poll();

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/06 18:53:48 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:23:44 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,6 @@ void Client::handlePass( t_arg args )
 			break;
 		case 464:
 			err_PasswdMismatch();
-			break;
-		case 1:
-			std::cout << "No password set on server, connection accepted" << std::endl;
 			break;
 		case 0:
 			std::cout << "Password accepted" << std::endl;

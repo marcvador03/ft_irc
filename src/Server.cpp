@@ -6,11 +6,12 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/07 17:10:27 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:47:21 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
+#include <cctype> // for toupper
 
 Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!! <-done
 	_name(servername),
@@ -62,7 +63,6 @@ void	Server::setSettings(const char *link)
 	}
 	else
 		throw std::runtime_error("Could not open setting file");
-
 }
 
 std::string		Server::getSetting(const std::string str) const
@@ -133,6 +133,12 @@ void	Server::listen_poll( void )
 	this->closefds();
 }
 
+static void toupperStr(std::string &str)
+{
+	for (size_t i = 0; i < str.size(); ++i)
+		str[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(str[i])));
+}
+
 void	Server::ReceiveInput(Client *c)
 {
 	char		buf[2048];
@@ -169,6 +175,10 @@ void	Server::ReceiveInput(Client *c)
 				}
 				else
 					std::getline(sub_line, args[i], ' ');
+			}
+			if (!args[0].empty()) {
+				toupperStr(args[0]); //capitalizing command token only
+				//std::cout << "Parsed command: " << args[0] << std::endl;
 			}
 			this->LaunchCmd(c);
 			args.erase(args.begin(), args.end());
@@ -345,11 +355,6 @@ void	Server::setPort(const int port)
 {
 	this->_port = port;
 }
-
-/*void	Server::setHasServerPass(const bool b)
-{
-	this->_hasServerPass = b;
-}*/
 
 /*void	Server::setPassword(const std::string &password)
 {

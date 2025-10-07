@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/07 13:42:41 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:10:27 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,11 +335,6 @@ std::string	Server::getVersion() const
 {
 	return (this->_version);
 }
-
-/*bool		Server::getHasServerPass() const
-{
-	return (this->_hasServerPass);
-}*/
 
 t_settings	Server::getSettings() const
 {

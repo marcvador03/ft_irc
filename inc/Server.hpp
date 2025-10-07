@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/07 13:42:18 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:09:01 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,6 @@ class Server {
 		
 		/* Server variables */
 		std::string			_name; //server name
-		//bool				_hasServerPass; // flag if server has password protection
 		std::string			_password; // server password
 		int 				_port; // server port
 		int					_serverfd; // fd of the server

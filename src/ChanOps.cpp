@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChanOps.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:52:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/08 16:20:34 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,22 @@ void Client::handleJoin( t_arg args )
 				break ;
 			case 0:
 			{
-				Reply	join(*this, _nickname, *c, 'a', 'n');
-				join.list(args[0]);
-				join.list(it->first);
+				// full user mask is: nick!user@host
+				std::string fullsrc = _nickname;
+				if (!getUser().empty() && !getHost().empty())
+					fullsrc += "!" + getUser() + "@" + getHost();
+				
+				// broadcast JOIN (audience 'a', do not skip sender 'n')
+				Reply	join(*this, fullsrc, *c, 'a', 'n');
+				join.list("JOIN");
+				join.list(c->getName()); //channel name
 				join.ship();
-				if (c->getTopic().empty() == false)
-					rpl_Topic(*c);
-				rpl_NamReply(*c);
-				rpl_EndOfNames(*c);
+				if (c->getTopic().empty() == false) 
+					rpl_Topic(*c); //sends 332
+				else
+					rpl_noTopic(*c); 
+				rpl_NamReply(*c); //sends 353
+				rpl_EndOfNames(*c); //sends 366
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/07 17:09:01 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/08 14:54:03 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,8 @@ class Server {
 		std::string		getName() const;	
 		std::string		getLaunchTime() const;	
 		std::string		getVersion() const;
-		bool			getHasServerPass() const;
 
 		void			setPort(const int port);
-		void			setHasServerPass(const bool b);
 		//void			setPassword(const std::string &pass);
 
 

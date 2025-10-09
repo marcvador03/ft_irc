@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 16:29:41 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/09 17:16:34 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ void Client::handleInvite( t_arg args )
 	if (_server->isClientExist(args[1]) == false)
 		return(err_noSuchNick());
 	if (chan->isMember(_server->getClient(args[1])) == true)
-		return (err_UserOnChannel(args[2]));
+		return (err_UserOnChannel(args[1], args[2]));
 	if (chan->isMember(*this) == false)
 		return (err_notOnChannel(args[2]));
 	if (chan->isInviteOnly() == true && chan->isOperator(*this) == false)

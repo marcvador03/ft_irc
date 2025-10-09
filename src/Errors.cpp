@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:31:02 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 14:19:58 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/09 17:16:46 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,13 +225,14 @@ void	Client::err_PasswdMismatch ( void )
 }
 
 /*443*/
-void	Client::err_UserOnChannel( const std::string &chan ) 
+void	Client::err_UserOnChannel( const std::string &nick, const std::string &chan ) 
 {
 	Reply	err(*this);
 
 	err.list(_nickname);
+	err.list(nick);
 	err.list(chan);
-	err.list(":is already on channel");
+	err.list("is already on channel");
 	err.ship(443);
 	return ;
 }

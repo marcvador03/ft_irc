@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/07 17:47:21 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:33:59 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,32 @@ std::string		Server::getSetting(const std::string str) const
 			return _settings[i].find(str)->second;
 	}
 	return "";
+}
+
+size_t			Server::getChanLim() const
+{
+	std::vector<std::string>	str;
+	std::map<char, int>		chanset;
+
+	str = split(getSetting("CHANLIMIT"), ',');
+	for (std::vector<std::string>::iterator it = str.begin(); it != str.end(); it++)
+	{
+		if ((*it).find(":") != (*it).npos)
+		{
+			for (size_t i = (*it).find(":") + 1; i < (*it).size();i++)
+			{
+				if (std::isdigit((*it)[i]) == false)
+					return 1000;	
+			}
+			size_t n = std::atoi((*it).substr((*it).find(":") + 1, (*it).size()).c_str());
+			for (size_t i = 0; i != (*it).find(":"); i++)
+			{
+				if ((*it)[i] == '#')
+					return n;
+			}
+		}
+	}
+	return 1000;
 }
 
 void	Server::_setChanPrefix( void )

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/07 17:09:01 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:31:50 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include "ft_irc.h"
 # include "Client.hpp"
 # include "Channel.hpp"
+#include "../inc/utils.hpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  
@@ -65,12 +66,14 @@ class Server {
 		void			setHasServerPass(const bool b);
 		//void			setPassword(const std::string &pass);
 
-
+		
 		/*Settings getters & setters*/	
 		t_settings		getSettings() const;	
 		void			setSettings(const char *);
 		std::string		getSetting(const std::string) const;
-		
+	
+		size_t			getChanLim() const;
+
 		/* Functions to add/remove clients within the list of connections */
 		void	addClient ( void );
 		void	removeClient ( const Client *client );

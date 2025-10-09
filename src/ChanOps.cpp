@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 16:16:56 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/09 16:29:41 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,9 +192,9 @@ void	Client::handleTopic( t_arg args )
 		return (err_noSuchChannel(args[1]));
 	Channel *chan = _server->getChannel(args[1]);
 	if (chan->isMember(*this) == false)
-		return (err_notOnChannel(_nickname));
+		return (err_notOnChannel(args[1]));
 	if (chan->isTopicLocked() == true && chan->isOperator(*this) == false)
-		return (err_ChanOPrivsNeeded(_nickname));
+		return (err_ChanOPrivsNeeded(args[1]));
 	if (args.size() == 2)
 		return (rpl_noTopic(args[1]));
 	if (args[2].empty() == true)

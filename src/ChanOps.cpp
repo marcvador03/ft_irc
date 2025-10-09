@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:52:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/09 15:15:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,15 @@ void Client::handleJoin( t_arg args )
 	//special case: "JOIN 0" means leave all channels
 	if (args[1] == "0")
 	{
-		leaveAllChannels();	
+		std::set<Channel *>::iterator it2;
+		std::string tmp = "";
+		t_arg args2;
+		args2.insert(std::pair<int, std::string>(0, "PART"));
+		for (it2 = this->_channels.begin(); it2 != this->_channels.end() ; it2++)
+			tmp += (*it2)->getName() + ",";
+		tmp.erase(tmp.size() - 1, 1);
+		args2.insert(std::pair<int, std::string>(1, tmp));
+		handlePart(args2);	
 		return ;
 	}
 	if (args.size() < 2 || args[1].empty()) 

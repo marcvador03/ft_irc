@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 15:15:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/09 16:16:56 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void Client::handleJoin( t_arg args )
 /*PART*/
 void Client::handlePart( t_arg args ) 
 {
-	Reply				part(*this);
+	Reply				part(*this, _nickname);
 	t_list				list;
 	t_list::iterator 	it;
 	std::istringstream	chan_s(args[1]);
@@ -111,6 +111,9 @@ void Client::handlePart( t_arg args )
 				part.list(args[0]);
 				part.list(it->first);
 				part.ship();
+				Channel *c = _server->getChannel(chan);
+				rpl_NamReply(*c);
+				rpl_EndOfNames(*c);
 		}
 	}
 	return;

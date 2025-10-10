@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:31:02 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 11:06:58 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 11:35:47 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,6 +233,19 @@ void	Client::err_UserOnChannel( const std::string &nick, const std::string &chan
 	err.list(nick);
 	err.list(chan);
 	err.list("is already on channel");
+	err.ship(443);
+	return ;
+}
+
+/*441*/
+void	Client::err_UserNotInChannel( const std::string &nick, const std::string &chan ) 
+{
+	Reply	err(*this);
+
+	err.list(_nickname);
+	err.list(nick);
+	err.list(chan);
+	err.list("They aren't on that channel");
 	err.ship(443);
 	return ;
 }

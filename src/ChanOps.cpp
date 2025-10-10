@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 11:02:10 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 11:53:52 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ void Client::handleKick( t_arg args )
 	if (_server->isChannelExist(args[1]) == false)
 		return (err_noSuchChannel(args[1]));
 	if (args.size() == 3)
-		   args.insert(std::pair<int, std::string>(4, "No reason provided"));
+		   args.insert(std::pair<int, std::string>(3, "for no reason"));
 	user_list = split(args[2], ',');
 	if (static_cast<int>(user_list.size()) > std::atoi(_server->getSetting("TARGMAX").c_str()))
 		return ;	
@@ -140,10 +140,10 @@ void Client::handleKick( t_arg args )
 		if (_server->isClientExist(*it) == false)
 			err_noSuchNick();
 		else if (chan->isMember(_server->getClient(*it)) == false)
-			err_notOnChannel(args[1]);
+			err_UserNotInChannel(*it, args[1]);
 		else if (chan->isOperator(*this) == false)
 			err_ChanOPrivsNeeded(args[1]);
-		else
+		else if (_server->getClient(*it).getSlot() != _slot)
 		{
 			Reply	kick(*this, _nickname, *chan, 'a', 'n');
 			kick.list("KICK");

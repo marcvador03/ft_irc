@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/09 17:15:28 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 11:31:09 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ class Client {
 		void	err_AlreadyRegistered ( void );
 		void	err_PasswdMismatch ( void );
 		void	err_UserOnChannel( const std::string &, const std::string &chan );
+		void	err_UserNotInChannel( const std::string &nick, const std::string &chan );
 
 		public:
 			class ErrnoException: public std::exception {

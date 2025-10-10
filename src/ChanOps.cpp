@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 10:45:39 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 11:02:10 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ void Client::handleInvite( t_arg args )
 		return (err_UserOnChannel(args[1], args[2]));
 	if (chan->isMember(*this) == false)
 		return (err_notOnChannel(args[2]));
-	if (chan->isInviteOnly() == true && chan->isOperator(*this) == false)
+	if (chan->isOperator(*this) == false)
 		return (err_ChanOPrivsNeeded(args[2]));
 	chan->addInvite(_server->getClient(args[1]));
 	rpl_Inviting(args[2], args[1]);

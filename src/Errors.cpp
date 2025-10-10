@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:31:02 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 11:35:47 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 17:29:51 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,21 @@ void	Client::err_InvalidModeParam( Channel &chan, const std::string &key, const 
 {
 	Reply	err(*this);
 	
+	err.list(_nickname);
+	err.list(chan.getName());
+	err.list(key);
+	err.list(param);
+	err.list(msg);
+	err.ship(696);
+	return ;
+}
+
+/*696 overload*/
+void	Client::err_InvalidModeParam( Channel &chan, const char key, const std::string &param, const std::string &msg )
+{
+	Reply	err(*this);
+	
+	err.list(_nickname);
 	err.list(chan.getName());
 	err.list(key);
 	err.list(param);

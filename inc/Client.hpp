@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/10 11:31:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 17:28:56 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ class Client {
 		void	err_UModeUnknownFlag( void );
 		void	err_ChanOPrivsNeeded( const std::string & );
 		void	err_InvalidModeParam( Channel &, const std::string &, const std::string &, const std::string & );
+		void	err_InvalidModeParam( Channel &, const char, const std::string &, const std::string & );
 		void	err_NoOrigin( void );
 		void	err_NoNicknameGiven( void );
 		void	err_ErroneusNickname( const std::string & );
@@ -150,6 +151,9 @@ class Client {
 		/* Internal helpers */
 		void	_send(std::string &);
 		int		_completeReg( void );
+		int		_execute_modes(t_list &string, Channel &chan);
+		int		_construct_modestring(t_arg &, t_list &string, Channel &chan);
+		int		_check_param(const char key, std::string param, Channel &chan);
 	
 		std::set<Channel *> _channels; //channels which client is member of
 };

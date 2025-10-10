@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 13:33:59 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:26:19 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,13 @@ Server::Server ( const std::string &servername, const std::string &pass ): // we
 
 Server::~Server( void )
 {
+	std::map<int, Client *>::iterator 			it;
+	std::map<std::string, Channel *>::iterator 	it2;
+
+	for (it = _clients.begin(); it != _clients.end(); it++)
+		delete it->second;
+	for (it2 = _channels.begin(); it2 != _channels.end(); it2++)
+		delete it2->second;
 	this->closefds();
 }
 
@@ -156,7 +163,8 @@ void	Server::listen_poll( void )
 			}
 		}
 	}
-	this->closefds();
+	delete this;
+	//this->closefds();
 }
 
 static void toupperStr(std::string &str)
@@ -263,7 +271,7 @@ void	Server::LaunchCmd(Client *c)
 void	Server::closefds( void )
 {
 	close(this->_serverfd);
-	std::cout << "Server has been properly shutdown" << std::endl;
+	std::cout << "Server file descriptor has been properly shutdown" << std::endl;
 }
 
 /* Internal Functions to add/remove clients within the list of connections */

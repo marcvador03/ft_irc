@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 14:52:19 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 17:01:14 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class Channel {
 		bool isMember( Client & );
 		
 		//key (password) related
-		int				setKey(const std::string &key);
+		int				setKey(const std::string &key, const bool only_check);
 		void			unsetKey( void );
 		bool 			checkKey(const std::string &key) const;
 		bool 			hasKey(void) const;

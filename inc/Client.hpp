@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/10 11:31:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 12:19:54 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "Channel.hpp"
 # include "Server.hpp"
 # include "Reply.hpp"
+# include <atomic>
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -115,6 +116,9 @@ class Client {
 		void	err_UserOnChannel( const std::string &, const std::string &chan );
 		void	err_UserNotInChannel( const std::string &nick, const std::string &chan );
 
+		bool	shouldDisconnect() const { return _shouldDisconnect; }
+		void	markForDisconnect() { _shouldDisconnect = true; }
+
 		public:
 			class ErrnoException: public std::exception {
 				virtual const char* what() const throw() 
@@ -135,6 +139,7 @@ class Client {
 		bool		_isRegistered; // flag if client is registered
 		bool		_hasNick;
 		bool		_hasUser;
+		bool		_shouldDisconnect; // set by QUIT to safely remove in server loop
 
 		std::string	_realname;
 		std::string	_username;

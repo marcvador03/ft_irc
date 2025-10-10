@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 12:54:59 by milosz           ###   ########.fr       */
+/*   Updated: 2025/10/10 12:28:58 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,9 @@ void	Server::ReceiveInput(Client *c)
 		throw Server::ErrnoException(); 
 	else if (bytes == 0)
 	{
-		delete this;
+		/* client disconnected */
+		c->leaveAllChannels();
+		removeClient(c);
 		return;
 	}
 	else
@@ -203,11 +205,16 @@ void	Server::ReceiveInput(Client *c)
 					std::getline(sub_line, args[i], ' ');
 			}
 			if (!args[0].empty()) {
-				toupperStr(args[0]); //capitalizing command token only
-				//std::cout << "Parsed command: " << args[0] << std::endl;
+				toupperStr(args[0]);
 			}
 			this->LaunchCmd(c);
 			args.erase(args.begin(), args.end());
+			if (c->shouldDisconnect())
+			{
+				c->leaveAllChannels();
+				removeClient(c);
+				return;
+			}
 		}
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/09 13:30:33 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 12:21:31 by milosz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 		_isRegistered(false),
 		_hasNick(false),
 		_hasUser(false),
-		_chanlim(s->getChanLim()),
+		_chanlim(10),
 		_away(false)
 {
+	_shouldDisconnect = false;
 	this->_socklen = sizeof(this->_client_addr);
 	this->_clientfd = accept(_server->getFd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
 	if (this->_clientfd == -1)

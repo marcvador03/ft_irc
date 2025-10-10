@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:31:02 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 11:35:47 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 12:33:07 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ void	Client::err_ErroneusNickname( const std::string &nick )
 	Reply	err(*this);
 	
 	err.list(nick);
-	err.list("Erroneus nickname");
+	err.list("Erroneous nickname");
 	err.ship(432);
 	return;
 }

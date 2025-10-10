@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:43:18 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/08 15:20:23 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/10 12:25:02 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,32 @@ void Client::handlePing( t_arg args )
 
 	std::cout << "PONG (token=" << token << ")" << std::endl;
 	return;
+}
+
+void Client::handleQuit( t_arg args )
+{
+	std::string reason;
+	if (args.size() > 1)
+		reason = args[1];
+	if (!reason.empty() && reason[0] == ':')
+		reason.erase(0,1);
+	if (reason.empty())
+		reason = "Client Quit";
+	std::string src = getNickname();
+	if (!getUser().empty())
+		src += "!" + getUser();
+	if (!getHost().empty())
+		src += "@" + getHost();
+	for (std::set<Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+	{
+		Reply r(*this, src, **it, 'a', 'y');
+		r.list("QUIT");
+		r.list(reason);
+		r.ship();
+	}
+	Reply self(*this, src, *this); // send back using same prefix
+	self.list("ERROR");
+	self.list("Closing Link: " + reason);
+	self.ship();
+	markForDisconnect();
 }

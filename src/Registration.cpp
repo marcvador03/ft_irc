@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Registration.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/07 16:23:44 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/10 15:48:47 by milosz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,27 +24,28 @@ void Client::handleNick( t_arg args )
 			err_NoNicknameGiven();
 			break;
 		case 432:
-			err_ErroneusNickname(args[1]);
+			err_ErroneousNickname(args[1]);
 			break;
 		case 433:
 			err_NicknameInUse(args[1]);
 			break;
-		case 1:
-			nick.list(args[0]);
-			nick.list(args[1]);
-			nick.ship();
-			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
+		case 1://first time registration of nickname on server
+			//nick.list(args[0]);
+			//nick.list(args[1]);
+			//nick.ship();
+			//std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
 			rpl_Welcome();
 			rpl_YourHost();
 			rpl_Created();
 			rpl_MyInfo();
 			rpl_ISupport();
 			break;
-		case 0:
+		case 0: //nickname change after registration
 			nick.list(args[0]);
 			nick.list(args[1]);
 			nick.ship();
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
+			break;
 	}
 	return;
 }
@@ -68,6 +69,7 @@ void Client::handleUser( t_arg args )
 			break;
 		case 0:
 			std::cout << "Username and Realname changed" << std::endl;
+			break;
 	}
 	return;
 }
@@ -75,7 +77,12 @@ void Client::handleUser( t_arg args )
 /*PASS*/
 void Client::handlePass( t_arg args ) 
 {
-	Reply	pass(*this);
+	//Reply	pass(*this); <-- not used
+	if (args.size() < 2)
+	{	
+		err_NeedMoreParameters(args.empty() ? "PASS" : args[0]);
+		return ;
+	}
 	
 	switch (registerPass(args[1])) {
 		case 461:
@@ -89,19 +96,34 @@ void Client::handlePass( t_arg args )
 			break;
 		case 0:
 			std::cout << "Password accepted" << std::endl;
+			break;
 	}
-	return;
 }
 
+/*QUIT*/
 void Client::handleQuit( t_arg args ) 
 {
 	Reply	quit(*this, _nickname, 's', 'n');
-	std::string reason = (args.size() > 1) ? args[1] : "";
+	std::string reason;
+	if (args.size() > 1)
+		reason = args[1];
+	//if more reasons print all
+	for (size_t i = 2; i < args.size(); ++i) {
+		if (!reason.empty())
+			reason += " ";
+		reason += args[i];
+	}
+
+	//strip leading ':'
+	if (!reason.empty() && reason[0] == ':')
+		reason.erase(0, 1);
 	
+	if (reason.empty())
+		reason = "Client Quit";
+
 	leaveAllChannels();
 	quit.list("QUIT");
-	quit.list("Quit: " + args[1]);
+	quit.list(":" + reason);
 	quit.ship();
 	_server->removeClient(this);
-	return;
 }

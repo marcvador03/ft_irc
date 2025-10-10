@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 13:31:50 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 12:54:07 by milosz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
@@ -60,10 +61,8 @@ class Server {
 		std::string		getName() const;	
 		std::string		getLaunchTime() const;	
 		std::string		getVersion() const;
-		bool			getHasServerPass() const;
 
 		void			setPort(const int port);
-		void			setHasServerPass(const bool b);
 		//void			setPassword(const std::string &pass);
 
 		

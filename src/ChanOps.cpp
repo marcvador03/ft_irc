@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 17:16:34 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 10:45:39 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ void Client::handleInvite( t_arg args )
 		return (err_ChanOPrivsNeeded(args[2]));
 	chan->addInvite(_server->getClient(args[1]));
 	rpl_Inviting(args[2], args[1]);
-	Reply	invite(*this, _nickname);
+	Reply	invite(*this, _nickname, _server->getClient(args[1]));
 	invite.list("INVITE");
 	invite.list(args[1]);
 	invite.list(args[2]);

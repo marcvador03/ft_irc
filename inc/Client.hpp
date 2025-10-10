@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/10 11:31:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:48:47 by milosz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ class Client {
 		void	err_InvalidModeParam( Channel &, const std::string &, const std::string &, const std::string & );
 		void	err_NoOrigin( void );
 		void	err_NoNicknameGiven( void );
-		void	err_ErroneusNickname( const std::string & );
+		void	err_ErroneousNickname( const std::string & );
 		void	err_NicknameInUse( const std::string & );
 		void	err_AlreadyRegistered ( void );
 		void	err_PasswdMismatch ( void );

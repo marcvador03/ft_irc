@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Registration.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 17:33:27 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/10 15:48:47 by milosz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void Client::handleNick( t_arg args )
 			err_NoNicknameGiven();
 			break;
 		case 432:
-			err_ErroneusNickname(args[1]);
+			err_ErroneousNickname(args[1]);
 			break;
 		case 433:
 			err_NicknameInUse(args[1]);

@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/08 14:54:03 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/10 12:54:07 by milosz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
@@ -24,6 +25,7 @@
 # include "ft_irc.h"
 # include "Client.hpp"
 # include "Channel.hpp"
+#include "../inc/utils.hpp"
 
 /*
 **`Server.hpp` / `Server.cpp`**  
@@ -63,12 +65,14 @@ class Server {
 		void			setPort(const int port);
 		//void			setPassword(const std::string &pass);
 
-
+		
 		/*Settings getters & setters*/	
 		t_settings		getSettings() const;	
 		void			setSettings(const char *);
 		std::string		getSetting(const std::string) const;
-		
+	
+		size_t			getChanLim() const;
+
 		/* Functions to add/remove clients within the list of connections */
 		void	addClient ( void );
 		void	removeClient ( const Client *client );

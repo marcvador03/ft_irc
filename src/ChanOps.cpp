@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChanOps.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/08 16:20:34 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/10 12:52:09 by milosz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,15 @@ void Client::handleJoin( t_arg args )
 	//special case: "JOIN 0" means leave all channels
 	if (args[1] == "0")
 	{
-		leaveAllChannels();	
+		std::set<Channel *>::iterator it2;
+		std::string tmp = "";
+		t_arg args2;
+		args2.insert(std::pair<int, std::string>(0, "PART"));
+		for (it2 = this->_channels.begin(); it2 != this->_channels.end() ; it2++)
+			tmp += (*it2)->getName() + ",";
+		tmp.erase(tmp.size() - 1, 1);
+		args2.insert(std::pair<int, std::string>(1, tmp));
+		handlePart(args2);	
 		return ;
 	}
 	if (args.size() < 2 || args[1].empty()) 
@@ -85,7 +93,7 @@ void Client::handleJoin( t_arg args )
 /*PART*/
 void Client::handlePart( t_arg args ) 
 {
-	Reply				part(*this);
+	Reply				part(*this, _nickname);
 	t_list				list;
 	t_list::iterator 	it;
 	std::istringstream	chan_s(args[1]);
@@ -111,6 +119,9 @@ void Client::handlePart( t_arg args )
 				part.list(args[0]);
 				part.list(it->first);
 				part.ship();
+				Channel *c = _server->getChannel(chan);
+				rpl_NamReply(*c);
+				rpl_EndOfNames(*c);
 		}
 	}
 	return;
@@ -127,7 +138,7 @@ void Client::handleKick( t_arg args )
 	if (_server->isChannelExist(args[1]) == false)
 		return (err_noSuchChannel(args[1]));
 	if (args.size() == 3)
-		   args.insert(std::pair<int, std::string>(4, "No reason provided"));
+		   args.insert(std::pair<int, std::string>(3, "for no reason"));
 	user_list = split(args[2], ',');
 	if (static_cast<int>(user_list.size()) > std::atoi(_server->getSetting("TARGMAX").c_str()))
 		return ;	
@@ -137,10 +148,10 @@ void Client::handleKick( t_arg args )
 		if (_server->isClientExist(*it) == false)
 			err_noSuchNick();
 		else if (chan->isMember(_server->getClient(*it)) == false)
-			err_notOnChannel(args[1]);
+			err_UserNotInChannel(*it, args[1]);
 		else if (chan->isOperator(*this) == false)
 			err_ChanOPrivsNeeded(args[1]);
-		else
+		else if (_server->getClient(*it).getSlot() != _slot)
 		{
 			Reply	kick(*this, _nickname, *chan, 'a', 'n');
 			kick.list("KICK");
@@ -165,14 +176,14 @@ void Client::handleInvite( t_arg args )
 	if (_server->isClientExist(args[1]) == false)
 		return(err_noSuchNick());
 	if (chan->isMember(_server->getClient(args[1])) == true)
-		return (err_UserOnChannel(args[2]));
+		return (err_UserOnChannel(args[1], args[2]));
 	if (chan->isMember(*this) == false)
 		return (err_notOnChannel(args[2]));
-	if (chan->isInviteOnly() == true && chan->isOperator(*this) == false)
+	if (chan->isOperator(*this) == false)
 		return (err_ChanOPrivsNeeded(args[2]));
 	chan->addInvite(_server->getClient(args[1]));
 	rpl_Inviting(args[2], args[1]);
-	Reply	invite(*this, _nickname);
+	Reply	invite(*this, _nickname, _server->getClient(args[1]));
 	invite.list("INVITE");
 	invite.list(args[1]);
 	invite.list(args[2]);
@@ -189,9 +200,9 @@ void	Client::handleTopic( t_arg args )
 		return (err_noSuchChannel(args[1]));
 	Channel *chan = _server->getChannel(args[1]);
 	if (chan->isMember(*this) == false)
-		return (err_notOnChannel(_nickname));
+		return (err_notOnChannel(args[1]));
 	if (chan->isTopicLocked() == true && chan->isOperator(*this) == false)
-		return (err_ChanOPrivsNeeded(_nickname));
+		return (err_ChanOPrivsNeeded(args[1]));
 	if (args.size() == 2)
 		return (rpl_noTopic(args[1]));
 	if (args[2].empty() == true)

@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:31:02 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 14:19:58 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 11:35:47 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,9 @@ void	Client::err_InviteOnlyChan( const std::string &chan )
 
 void	Client::err_BadChanMask( const std::string &chan )
 {
-	Reply	err(*this);
+	Reply	err(*this, _nickname);
 
-	err.list(_nickname);
+	//err.list(_nickname);
 	err.list(chan);
 	err.list("Bad channel mask");
 	err.ship(476);
@@ -93,9 +93,9 @@ void	Client::err_BadChanMask( const std::string &chan )
 
 void	Client::err_notOnChannel( const std::string &chan ) 
 {
-	Reply	err(*this);
+	Reply	err(*this, _nickname);
 
-	err.list(_nickname);
+	//err.list(_nickname);
 	err.list(chan);
 	err.list("You're not on that channel");
 	err.ship(442);
@@ -104,9 +104,9 @@ void	Client::err_notOnChannel( const std::string &chan )
 
 void	Client::err_noTextToSend( void )
 {
-	Reply	err(*this);
+	Reply	err(*this, _nickname);
 
-	err.list(_nickname);
+	//err.list(_nickname);
 	err.list("No text to send");
 	err.ship(412);
 	return ;
@@ -225,13 +225,27 @@ void	Client::err_PasswdMismatch ( void )
 }
 
 /*443*/
-void	Client::err_UserOnChannel( const std::string &chan ) 
+void	Client::err_UserOnChannel( const std::string &nick, const std::string &chan ) 
+{
+	Reply	err(*this, _nickname);
+
+	//err.list(_nickname);
+	err.list(nick);
+	err.list(chan);
+	err.list("is already on channel");
+	err.ship(443);
+	return ;
+}
+
+/*441*/
+void	Client::err_UserNotInChannel( const std::string &nick, const std::string &chan ) 
 {
 	Reply	err(*this);
 
 	err.list(_nickname);
+	err.list(nick);
 	err.list(chan);
-	err.list(":is already on channel");
+	err.list("They aren't on that channel");
 	err.ship(443);
 	return ;
 }

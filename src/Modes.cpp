@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Modes.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:03:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 17:44:42 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 14:44:54 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	Client::_construct_modestring(t_arg &args, t_list &string, Channel &chan)
 				else if (sign == "-")
 					string.insert(std::pair<std::string, std::string>(sign + args[2][i], ""));
 			}
-			else if ((args[2][i] == 'o'))
+			else if (args[2][i] == 'o')
 			{
 				if (j >= args.size() || _server->isClientExist(args[j]) == false)
 					return (err_InvalidModeParam(chan, "o", "", "missing or invalid target user"), -1);

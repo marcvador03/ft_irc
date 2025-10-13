@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 18:44:32 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 19:11:34 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@ Server::~Server( void )
 	std::map<std::string, Channel *>::iterator 	it2;
 
 	for (it = _clients.begin(); it != _clients.end(); it++)
+	{		
+		it->second->rpl_UnexpectedQuit("Server was shut");
 		delete it->second;
+	}
 	for (it2 = _channels.begin(); it2 != _channels.end(); it2++)
 		delete it2->second;
 	this->closefds();
@@ -138,6 +141,9 @@ void	Server::launch( void )
 	this->_server_addr.sin_port = htons(this->_port);	
 	this->_socklen = sizeof(this->_server_addr);
 	std::cout << "Server launched" << std::endl;
+	int	reuse = 1;
+	if (setsockopt(this->_serverfd, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuse, sizeof(reuse)) == -1)
+		throw Server::ErrnoException(); 
 	if (bind(this->_serverfd, (const struct sockaddr *)&(this->_server_addr), sizeof(this->_server_addr)) == -1)
 		throw Server::ErrnoException(); 
 	std::cout << "Server bound to address and port: " << this->_port << std::endl;

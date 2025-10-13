@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/08 16:35:18 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:04:16 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,5 +230,19 @@ void	Client::rpl_Topic( const std::string &chan )
 	rpl.list(_server->getChannel(chan)->getTopic());
 	rpl.ship(332);
 		
+	return;
+}
+
+void	Client::rpl_UnexpectedQuit( const std::string &msg )
+{
+	Reply	rpl(*this);
+
+	/*rpl.list("ERROR");
+	rpl.list(msg);
+	rpl.ship();*/
+	rpl.list("QUIT");
+	rpl.list(msg);
+	rpl.ship();
+	
 	return;
 }

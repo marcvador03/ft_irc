@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/10 17:52:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 19:01:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ class Client {
 		void handleMode( t_arg args ); 
 		void handleKick( t_arg args ); 
 		void handleInvite( t_arg args ); 
-		void handleTopic( t_arg args ); 
+		void handleTopic( t_arg args );
+
 		
 		/* RPL functions */
 		void	rpl_Welcome( void );
@@ -91,6 +92,8 @@ class Client {
 		void	rpl_noTopic( const std::string & );
 		void	rpl_Topic( const std::string &);
 		void	rpl_TopicAll( const std::string & );
+		
+		void	rpl_UnexpectedQuit( const std::string & );
 
 		/*ERR functions */
 		void	err_NeedMoreParameters( const std::string & );

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/09 13:30:33 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 14:05:40 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 		_hasNick(false),
 		_hasUser(false),
 		_chanlim(s->getChanLim()),
-		_away(false)
+		_away(false),
+		_buffer("")
 {
 	this->_socklen = sizeof(this->_client_addr);
 	this->_clientfd = accept(_server->getFd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
@@ -32,6 +33,7 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 
 Client::~Client( void )
 {
+	leaveAllChannels();	
 	close (this->_clientfd);
 	std::cout << "Client has been closed" << std::endl;
 }
@@ -45,6 +47,30 @@ int		Client::getClientfd( void ) const
 int		Client::getSlot( void ) const
 {
 	return this->_slot;
+}
+
+std::string	Client::getLineBuffer( void )
+{
+	std::string	str;
+	
+	if (_buffer.rfind('\n') == _buffer.npos)
+		return "";
+	str = _buffer.substr(0, _buffer.rfind('\n') + 1);
+	_buffer.erase(0, _buffer.rfind('\n') + 1);
+	return str;
+}
+
+void		Client::incrementBuffer( char buf[BUF_SIZE], int bytes )
+{
+	buf[bytes] = '\0';
+	std::string	str(buf, bytes);
+	_buffer += str;
+}
+
+
+std::string	Client::readBuffer( void ) const
+{
+	return _buffer;
 }
 
 std::string	Client::getServername( void ) const

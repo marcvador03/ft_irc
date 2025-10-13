@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 11:14:07 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 12:32:42 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,12 +164,11 @@ void	Server::listen_poll( void )
 		}
 	}
 	delete this;
-	//this->closefds();
 }
 
 void	Server::ReceiveInput(Client *c)
 {
-	char		buf[2048];
+	char		buf[BUF_SIZE];
 	int			bytes;
 
 	std::memset(buf, 0, sizeof(buf));
@@ -178,15 +177,19 @@ void	Server::ReceiveInput(Client *c)
 		throw Server::ErrnoException(); 
 	else if (bytes == 0)
 	{
-		delete this;
+		//delete this;
+		delete c;
 		return;
 	}
 	else
 	{
-		buf[bytes] = '\0';
-		std::istringstream ss(buf);
+		c->incrementBuffer(buf, bytes);
+		if (c->readBuffer().rfind('\n') == c->readBuffer().npos)
+			return;
+		std::string	str = c->getLineBuffer();
 		std::cout << "Received input from " << c->getNickname();
-		std::cout << "|" << buf;
+		std::cout << "|" << str;
+		std::istringstream ss(str);
 		for (std::string line; std::getline(ss, line);) 
 		{
 			line = trimstr(line);
@@ -204,10 +207,8 @@ void	Server::ReceiveInput(Client *c)
 				else
 					std::getline(sub_line, args[i], ' ');
 			}
-			if (!args[0].empty()) {
+			if (!args[0].empty())
 				toupper(args[0]); //capitalizing command token only
-				//std::cout << "Parsed command: " << args[0] << std::endl;
-			}
 			this->LaunchCmd(c);
 			args.erase(args.begin(), args.end());
 		}

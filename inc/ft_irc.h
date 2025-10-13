@@ -6,12 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:25:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/09 15:04:12 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 12:29:47 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_IRC_H
 # define FT_IRC_H
+# define BUF_SIZE 2048
 # include <iostream>
 # include <string>
 # include <csignal>

@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 11:14:07 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 18:44:32 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ Server::~Server( void )
 	for (it2 = _channels.begin(); it2 != _channels.end(); it2++)
 		delete it2->second;
 	this->closefds();
+}
+
+void	Server::closefds( void )
+{
+	close(this->_serverfd);
+	std::cout << "Server file descriptor has been properly shutdown" << std::endl;
 }
 
 void	Server::setSettings(const char *link)
@@ -163,8 +169,6 @@ void	Server::listen_poll( void )
 			}
 		}
 	}
-	delete this;
-	//this->closefds();
 }
 
 void	Server::ReceiveInput(Client *c)
@@ -260,12 +264,6 @@ void	Server::LaunchCmd(Client *c)
 		c->handleInvite(args);
 	else if (args[0] == "TOPIC")
 		c->handleTopic(args);
-}
-
-void	Server::closefds( void )
-{
-	close(this->_serverfd);
-	std::cout << "Server file descriptor has been properly shutdown" << std::endl;
 }
 
 /* Internal Functions to add/remove clients within the list of connections */
@@ -400,6 +398,8 @@ bool 	Server::InsertNick(const std::string &nick)
 
 void	Server::removeNick(const std::string &nick)
 {
+	if (_nicknames.find(nick) == _nicknames.end())
+		return;
 	_nicknames.erase(_nicknames.find(nick));
 	return;
 }

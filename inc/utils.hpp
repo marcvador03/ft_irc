@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:14:20 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 13:34:01 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 11:13:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ void	log(T input)
 	std::cout << "\033[0;36m" << input << "\033[0;37m "<< std::endl; 
 };*/
 
-template<typename U> 
-std::vector<U>	split(const U &input, char delimiter)
+template<typename T> 
+std::vector<T>	split(const T &input, char delimiter)
 {
-	std::vector<U>		tokens;
+	std::vector<T>		tokens;
 	std::string 		token;
 	std::string 		s(input);
 	std::istringstream	tokenStream(s);
@@ -39,6 +39,25 @@ std::vector<U>	split(const U &input, char delimiter)
 	}
 	return tokens;
 };
+
+template<typename T> 
+void toupper(T &str)
+{
+	for (size_t i = 0; i < str.size(); ++i)
+		str[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(str[i])));
+}
+
+template<typename T> 
+std::string trimstr (const T &str) 
+{
+	const std::string WHITESPACE = " \n\r\t\f\v";
+	size_t start = str.find_first_not_of(WHITESPACE);
+	if (start == std::string::npos)
+		return "";
+	size_t end = str.find_last_not_of(WHITESPACE);
+	return str.substr(start, end - start + 1);
+}
+
 
 /*template<typename U> 
 std::vector<std::string> split(U input, char delimiter)

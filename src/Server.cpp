@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 17:50:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 11:14:07 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,12 +167,6 @@ void	Server::listen_poll( void )
 	//this->closefds();
 }
 
-static void toupperStr(std::string &str)
-{
-	for (size_t i = 0; i < str.size(); ++i)
-		str[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(str[i])));
-}
-
 void	Server::ReceiveInput(Client *c)
 {
 	char		buf[2048];
@@ -195,7 +189,7 @@ void	Server::ReceiveInput(Client *c)
 		std::cout << "|" << buf;
 		for (std::string line; std::getline(ss, line);) 
 		{
-			line = this->_trim(line);
+			line = trimstr(line);
 			if (line.empty())
 				continue;
 			std::istringstream sub_line(line);
@@ -211,7 +205,7 @@ void	Server::ReceiveInput(Client *c)
 					std::getline(sub_line, args[i], ' ');
 			}
 			if (!args[0].empty()) {
-				toupperStr(args[0]); //capitalizing command token only
+				toupper(args[0]); //capitalizing command token only
 				//std::cout << "Parsed command: " << args[0] << std::endl;
 			}
 			this->LaunchCmd(c);
@@ -495,13 +489,3 @@ bool	Server::checkPass(const std::string &pass) const
 	}
 	delete client; //check if it doesn't cause segfault/double free
 }*/
-
-std::string Server::_trim (const std::string &str) 
-{
-	const std::string WHITESPACE = " \n\r\t\f\v";
-	size_t start = str.find_first_not_of(WHITESPACE);
-	if (start == std::string::npos)
-		return "";
-	size_t end = str.find_last_not_of(WHITESPACE);
-	return str.substr(start, end - start + 1);
-}

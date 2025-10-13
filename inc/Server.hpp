@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 12:54:07 by milosz           ###   ########.fr       */
+/*   Updated: 2025/10/13 11:12:31 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,6 @@ class Server {
 		int		getFirstSlot( void );
 		void	setFreeSlot( const int i );
 		void	setBusySlot( const int i); // unused
-		
-		std::string _trim (const std::string &str);
 		
 		/* Server variables */
 		std::string			_name; //server name

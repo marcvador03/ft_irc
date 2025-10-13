@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 15:59:47 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 14:56:33 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,15 @@ void	handle_signal(int sig)
 	Server::signal = true;
 }
 
-static int checkPasswordChars(std::string str)
+static bool checkPasswordChars(const std::string &str)
 {
-	int i = 0;
-	while (str[i])
+	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
 	{
-		if (str[i] < '!' || str[i] > '~' || str[i] == '"' || str[i] == ',' || str[i] == ':' || str[i] == ';' || str[i] == '?' || str[i] == '*' || str[i] == '\\' || str[i] == '#' || str[i] == ' ' || str[i] == '\n' || str[i] == '\r' || str[i] == '\t')
-			return i;
-		i++;
+		unsigned char c = static_cast<unsigned char>(*it);
+		if (!std::isprint(c) || c == ' ')
+			return false;
 	}
-	return -1;
+	return true;
 }
 
 int	main ( int argc, char **argv )
@@ -62,14 +61,13 @@ int	main ( int argc, char **argv )
 	//password validation
 	std::string password = argv[2];
 	
-	if (password == "" || password.find(' ') != std::string::npos) {
-		std::cout << "Error! Password cannot be empty or contain spaces!" << std::endl;
+	if (password.empty()) {
+		std::cout << "Error! Password cannot be empty!" << std::endl;
 		return 1;
 	}
 	
-	int wrongCharPos = checkPasswordChars(password);
-	if (wrongCharPos != -1) {
-		std::cout << "Error! Password cannot contain the character: \"" << password[wrongCharPos] << "\" on position " << wrongCharPos << std::endl;
+	if (!checkPasswordChars(password)) {
+		std::cout << "Error! Password cannot contain the non-printed characters!" << std::endl;
 		return 1;
 	}
 

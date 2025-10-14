@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 11:12:31 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:14:10 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <fstream>
 # include <sys/socket.h>
 # include <netinet/in.h>
+# include <arpa/inet.h>
 # include <sys/types.h>
 # include <bits/stdc++.h>
 # include <sys/poll.h>
@@ -88,7 +89,7 @@ class Server {
 		bool	isChannelExist(std::string &name);
 		Channel	*getChannel( const std::string &name, Client & );	
 		Channel	*getChannel( const std::string &name );	
-		//std::vector<Channel*> getChannelsForClient(const Client *client) const;
+		std::vector<Channel *> getChannelsforClient( Client & );
 		
 		/* Password check */
 		bool	checkPass(const std::string &) const;

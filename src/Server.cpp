@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 19:11:34 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:17:05 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,6 +270,10 @@ void	Server::LaunchCmd(Client *c)
 		c->handleInvite(args);
 	else if (args[0] == "TOPIC")
 		c->handleTopic(args);
+	else if (args[0] == "WHO")
+		c->handleWho(args);
+	else if (args[0] == "WHOIS")
+		c->handleWhoIs(args);
 }
 
 /* Internal Functions to add/remove clients within the list of connections */
@@ -467,16 +471,16 @@ bool	Server::checkPass(const std::string &pass) const
 	return false;
 }
 
-/*std::vector<Channel*> Server::getChannelsForClient(const Client *client) const
+std::vector<Channel *> Server::getChannelsforClient( Client & client)
 {
-	std::vector<Channel*> result;
+	std::vector<Channel *> result;
 	for (std::map<std::string, Channel*>::const_iterator it = _channels.begin(); it !=_channels.end(); ++it)
 	{
-		if (it->second->isMember(const_cast<Client*>(client)))
+		if (it->second->isMember(client))
 			result.push_back(it->second);
 	}
 	return result;
-}*/
+}
 
 /*void Server::_removeClient(Client *client)
 {

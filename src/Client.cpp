@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/13 18:40:36 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:09:43 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,22 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 		_hasNick(false),
 		_hasUser(false),
 		_chanlim(s->getChanLim()),
-		_away(false)
+		_away(false),
+		_awaymsg("")
 {
+	struct sockaddr_in 	addr;
+	char 				ip_addr[INET_ADDRSTRLEN];
+	socklen_t			addr_len;
+
+	addr_len = sizeof(addr);
+	std::memset(&addr, 0, sizeof(addr));
 	this->_socklen = sizeof(this->_client_addr);
 	this->_clientfd = accept(_server->getFd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
 	if (this->_clientfd == -1)
 		throw Client::ErrnoException();
+	if(getsockname(_clientfd, (struct sockaddr *)&addr, &addr_len) == -1)
+		throw Client::ErrnoException();
+	_host = inet_ntop(AF_INET, &(addr.sin_addr), ip_addr, INET_ADDRSTRLEN);
 	std::cout << "Client connected" << std::endl;
 }
 
@@ -124,6 +134,11 @@ std::string	Client::getUser( void ) const
 	return this->_username;
 }
 
+std::string	Client::getRealname( void ) const
+{
+	return this->_realname;
+}
+
 int		Client::leaveChannel( std::string name)
 {
 	Channel *ch;
@@ -188,7 +203,7 @@ bool	Client::isPartofChannel( std::string &name )
 	ch = _server->getChannel(name, *this);
 	return (ch->isMember(*this));
 }
-		
+
 int		Client::registerPass( std::string &pass)
 {
 	if (pass.empty() == true && _server->checkPass(pass) == false)
@@ -221,4 +236,14 @@ bool		Client::isRegistered( void ) const
 {
 	return (_isRegistered);
 
+}
+	
+bool		Client::getAwayStatus( void ) const
+{
+	return _away;
+}
+
+std::string	Client::getAwayMsg( void ) const
+{
+	return _awaymsg;
 }

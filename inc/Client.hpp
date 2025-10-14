@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/13 19:01:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:19:30 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 # define CLIENT_HPP
 # include <sys/socket.h>
 # include <sys/types.h>
+# include <netdb.h>
 # include <netinet/in.h>
 # include <bits/stdc++.h>
+# include <vector>
 # include "ft_irc.h"
 # include "Channel.hpp"
 # include "Server.hpp"
@@ -51,6 +53,8 @@ class Client {
 		int			setNickname( std::string & );
 		int			setUser( std::string &, std::string &);
 		std::string	getUser( void ) const;
+		std::string	getRealname( void ) const;
+		int			setRealname( std::string & );
 		int			registerPass( std::string &);
 		std::string	getHost( void ) const;
 		int			leaveChannel( std::string );
@@ -59,6 +63,8 @@ class Client {
 		bool		isPartofChannel( std::string &name);
 		bool		isPasswordAccepted( void ) const;
 		bool		isRegistered( void ) const;
+		bool		getAwayStatus( void ) const;
+		std::string	getAwayMsg( void ) const;
 		
 		/*Commands handle */
 		void handleJoin( t_arg args );
@@ -73,6 +79,8 @@ class Client {
 		void handleKick( t_arg args ); 
 		void handleInvite( t_arg args ); 
 		void handleTopic( t_arg args );
+		void handleWho( t_arg args );
+		void handleWhoIs( t_arg args );
 
 		
 		/* RPL functions */
@@ -85,14 +93,22 @@ class Client {
 		void	rpl_noTopic( Channel & );
 		void	rpl_NamReply( Channel & );
 		void	rpl_EndOfNames( Channel & );
-		void	rpl_Away( void );
+		void	rpl_Away( const std::string & );
 		void	rpl_ChannelModeIs( Channel &, const std::string & );
 		void	rpl_CreationTime( const std::string & );
 		void	rpl_Inviting( const std::string &, const std::string & );
 		void	rpl_noTopic( const std::string & );
 		void	rpl_Topic( const std::string &);
 		void	rpl_TopicAll( const std::string & );
-		
+		void	rpl_WhoReply( const std::string & );
+		void	rpl_EndOfWho( const std::string & );
+		void	rpl_WhoIsUser( const std::string & );
+		void	rpl_WhoIsServer( const std::string & );
+		void	rpl_WhoIsChannels( const std::string & );
+		void	rpl_WhoIsActually( const std::string & );
+		void	rpl_WhoIsHost( const std::string & );
+		void	rpl_EndofWhoIs( const std::string & );
+			
 		void	rpl_UnexpectedQuit( const std::string & );
 
 		/*ERR functions */
@@ -146,6 +162,7 @@ class Client {
 		size_t		_chanlim;
 		std::string	_host;
 		bool		_away;
+		std::string	_awaymsg;
   
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;

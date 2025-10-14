@@ -6,13 +6,14 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/10 17:01:22 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 13:34:57 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Channel.hpp"
 
-Channel::Channel ( const std::string name , Client &c):
+Channel::Channel ( Server *s, const std::string &name , Client &c):
+	_server(s),
 	_name(name),
 	_topic(""),
 	_inviteOnly(false),
@@ -57,6 +58,8 @@ void	Channel::removeMember( Client &c )
 		this->_clients.erase(it1);
 	if (it2 != this->_operators.end())
 		this->_operators.erase(it2);
+	if(_clients.empty() == true)
+		_server->deleteChannel(this);
 }
 
 bool 	Channel::isMember( Client &c )

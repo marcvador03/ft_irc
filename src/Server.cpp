@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:37:22 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 13:41:25 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,6 +276,8 @@ void	Server::LaunchCmd(Client *c)
 		c->handleWhoIs(args);
 	else if (args[0] == "AWAY")
 		c->handleAway(args);
+	else if (args[0] == "LIST")
+		c->handleList(args);
 }
 
 /* Internal Functions to add/remove clients within the list of connections */
@@ -426,6 +428,11 @@ bool	Server::isChannelExist(const std::string &name)
 	return true;
 }
 
+std::map<std::string, Channel *> Server::getAllChannels( void )
+{
+	return _channels;
+}
+
 /*Channel	*Server::createChannel(std::string &name)
 {
 	Channel *c = nullptr;
@@ -442,7 +449,7 @@ Channel	*Server::getChannel(const std::string &name, Client &c)
 	/*checks if the channel is already listed on the server list
 	 * and it not, creates it - are there cases where it should not be created? */
 
-	Channel *chan;
+	Channel *chan = NULL;
 
 	std::map<std::string, Channel *>::iterator it;
 	it = _channels.find(name);
@@ -450,7 +457,7 @@ Channel	*Server::getChannel(const std::string &name, Client &c)
 		return it->second;
 	else
 	{
-		chan = new Channel(name, c);
+		chan = new Channel(this, name, c);
 		this->_channels.insert(std::make_pair(name, chan));
 	}
 	return chan;			
@@ -462,7 +469,19 @@ Channel	*Server::getChannel(const std::string &name)
 	it = _channels.find(name);
 	if (it != this->_channels.end())
 		return it->second;
-	return it->second;
+	return NULL;
+}
+
+void	Server::deleteChannel(Channel *chan)
+{
+	std::string name;
+	
+	if (chan == NULL)
+		return;
+	name = chan->getName();
+	delete _channels.find(name)->second;
+	_channels.erase(_channels.find(name));
+	return ;
 }
 
 /* Password check */

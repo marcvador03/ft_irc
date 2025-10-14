@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:41:44 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 13:08:18 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -398,5 +398,47 @@ void	Client::rpl_EndofWhoIs( const std::string &nick )
 	rpl.list("End of /WHOIS list");
 	rpl.ship(318);
 
+	return;
+}
+
+/*321*/
+void	Client::rpl_ListStart( void )
+{
+	Reply		rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list("Channel :Users Name");
+	rpl.ship(321);
+	
+	return;
+}
+
+/*322*/
+void	Client::rpl_List( Channel & chan)
+{
+	Reply		rpl(*this);
+	std::map<int, Client *> list;
+	std::ostringstream	ss;
+	
+	rpl.list(_nickname);
+	rpl.list(chan.getName());
+	list = chan.getAllClients();
+	ss << list.size();
+	rpl.list(ss.str());
+	rpl.list(chan.getTopic());
+	rpl.ship(322);
+	
+	return;
+}
+
+/*323*/
+void	Client::rpl_ListEnd( void )
+{
+	Reply		rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list("End of /LIST");
+	rpl.ship(323);
+	
 	return;
 }

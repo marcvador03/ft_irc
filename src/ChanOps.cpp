@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 12:52:09 by milosz           ###   ########.fr       */
+/*   Updated: 2025/10/14 13:40:33 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,11 @@ void Client::handlePart( t_arg args )
 				part.list(it->first);
 				part.ship();
 				Channel *c = _server->getChannel(chan);
-				rpl_NamReply(*c);
-				rpl_EndOfNames(*c);
+				if (c != NULL)
+				{
+					rpl_NamReply(*c);
+					rpl_EndOfNames(*c);
+				}
 		}
 	}
 	return;
@@ -212,5 +215,21 @@ void	Client::handleTopic( t_arg args )
 		chan->setTopic(args[2]);
 		rpl_TopicAll(args[1]);
 	}
+	return ;
+}
+
+/*LIST*/
+void	Client::handleList( t_arg args )
+{
+	std::map<std::string, Channel *>					list;
+	std::map<std::string, Channel *>::const_iterator	it;
+	
+	if (args.empty() == true)
+		return ;
+	rpl_ListStart();
+	list = _server->getAllChannels();
+	for (it = list.begin(); it!= list.end(); it++)
+		rpl_List(*it->second);
+	rpl_ListEnd();
 	return ;
 }

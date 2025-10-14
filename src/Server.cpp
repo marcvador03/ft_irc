@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:29:54 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:37:22 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,6 +274,8 @@ void	Server::LaunchCmd(Client *c)
 		c->handleWho(args);
 	else if (args[0] == "WHOIS")
 		c->handleWhoIs(args);
+	else if (args[0] == "AWAY")
+		c->handleAway(args);
 }
 
 /* Internal Functions to add/remove clients within the list of connections */

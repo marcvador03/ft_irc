@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 09:30:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:23:00 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:42:38 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,21 @@ void	Client::handleWhoIs( t_arg args )
 	rpl_Away(nick);
 	rpl_EndofWhoIs(nick);
 	return ;
+}
+
+void	Client::handleAway( t_arg args )
+{
+	if (args.size() == 1)
+	{
+		_away = false;
+		_awaymsg = "";
+		rpl_Unaway();
+	}
+	else if (args.size() == 2)
+	{
+		_away = true;
+		_awaymsg = args[1];
+		rpl_NowAway();
+	}
+	return;
 }

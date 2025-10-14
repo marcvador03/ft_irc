@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 12:19:30 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:39:48 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ class Client {
 		void handleTopic( t_arg args );
 		void handleWho( t_arg args );
 		void handleWhoIs( t_arg args );
+		void handleAway( t_arg args );
 
 		
 		/* RPL functions */
@@ -93,7 +94,6 @@ class Client {
 		void	rpl_noTopic( Channel & );
 		void	rpl_NamReply( Channel & );
 		void	rpl_EndOfNames( Channel & );
-		void	rpl_Away( const std::string & );
 		void	rpl_ChannelModeIs( Channel &, const std::string & );
 		void	rpl_CreationTime( const std::string & );
 		void	rpl_Inviting( const std::string &, const std::string & );
@@ -108,6 +108,9 @@ class Client {
 		void	rpl_WhoIsActually( const std::string & );
 		void	rpl_WhoIsHost( const std::string & );
 		void	rpl_EndofWhoIs( const std::string & );
+		void	rpl_Away( const std::string & );
+		void	rpl_Unaway( void );
+		void	rpl_NowAway( void );
 			
 		void	rpl_UnexpectedQuit( const std::string & );
 

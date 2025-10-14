@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:20:37 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:41:44 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,30 @@ void	Client::rpl_Away( const std::string &nick )
 	rpl.list(_server->getClient(nick).getAwayMsg());
 	rpl.ship(301);
 	return ;
+}
+
+/*305*/
+void	Client::rpl_Unaway( void )
+{
+	Reply	rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list("You are no longer marked as being away");	
+	rpl.ship(305);
+
+	return;
+}
+
+/*306*/
+void	Client::rpl_NowAway( void )
+{
+	Reply	rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list("You have been marked as being away");	
+	rpl.ship(306);
+
+	return;
 }
 
 /*RPL_NAMES_REPLY*/
@@ -265,7 +289,7 @@ void	Client::rpl_WhoReply( const std::string &chan )
 		str = "H";
 	else
 		str = "G";
-	if (_server->getChannel(chan)->isOperator(*this) == true)
+	if (_server->isChannelExist(chan) == true && _server->getChannel(chan)->isOperator(*this) == true)
 		str += "*";
 	rpl.list(str);
 	rpl.list("0" + _realname);

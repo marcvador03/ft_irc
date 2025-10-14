@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 19:33:39 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:07:24 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,32 @@ size_t			Server::getChanLim() const
 		}
 	}
 	return 1000;
+}
+
+int Server::getNickLen() const
+{
+	char *endptr;
+	long nickLenLong = strtol(Server::getSetting("NICKLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || nickLenLong < 1 || nickLenLong > INT_MAX)
+	{
+		std::cout << "Error! Nick lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of 30 characters." << std::endl;
+		return 30;
+	}
+	return static_cast<int>(nickLenLong);
+}
+
+int Server::getUserLen() const
+{
+	char *endptr;
+	long nickLenLong = strtol(Server::getSetting("USERLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || nickLenLong < 1 || nickLenLong > INT_MAX)
+	{
+		std::cout << "Error! User lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of 12 characters." << std::endl;
+		return 12;
+	}
+	return static_cast<int>(nickLenLong);
 }
 
 void	Server::_setChanPrefix( void )
@@ -419,18 +445,7 @@ void	Server::removeNick(const std::string &nick)
 	return;
 }
 
-int Server::getNickLen() const
-{
-	char *endptr;
-	long nickLenLong = strtol(Server::getSetting("NICKLEN").c_str(), &endptr, 10);
-	if (*endptr != '\0' || nickLenLong < 1 || nickLenLong > INT_MAX)
-	{
-		std::cout << "Error! Nick lenght limit given in irc_config is not a valid number!" << std::endl
-				  << "Setting standard value of 30 characters." << std::endl;
-		return 30;
-	}
-	return static_cast<int>(nickLenLong);
-}
+
 
 /* Management of channel list on server */
 bool	Server::isChannelExist(const std::string &name)

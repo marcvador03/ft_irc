@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 19:40:36 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:26:56 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ std::string	Client::getNickname( void ) const
 	return this->_nickname;
 }
 
-static bool isCharValidSymbol( unsigned char c )
+static bool isNickValidSymbol( unsigned char c )
 {
 	return ( c == '[' || c == ']' || c =='\\' || c == '`' || c == '_' || c == '^' || c == '{' || c == '}' || c == '|' );
 }
@@ -106,12 +106,12 @@ bool Client::isNicknameValid( std::string &nick )
 
 	unsigned char c0 = static_cast<unsigned char>(nick[0]);
 
-	if (!(isCharValidSymbol(c0) || std::isalpha(c0))) 
+	if (!(isNickValidSymbol(c0) || std::isalpha(c0))) 
 		return false;
 	for (size_t i = 1; i < nick.size(); ++i) 
 	{
 		unsigned char c = static_cast<unsigned char>(nick[i]);
-		if (!(isCharValidSymbol(c) || std::isalnum(c) || c == '-'))
+		if (!(isNickValidSymbol(c) || std::isalnum(c) || c == '-'))
 			return false;
 	}
 	return true;		
@@ -133,10 +133,34 @@ int	Client::setNickname( std::string &nick)
 	return _completeReg();
 }
 
+bool Client::isUsernameValid( std::string &user )
+{
+	if (user.size() > static_cast<unsigned long>(_server->getUserLen()))
+		return false;
+
+	for (size_t i = 0; i < user.size(); ++i) 
+	{
+		unsigned char c = static_cast<unsigned char>(user[i]);
+		if (c == 0 || c == '\r' || c == '\n' || c == ' ' || c == '@')
+			return false;
+		if (!std::isprint(c))
+			return false;
+	}
+	return true;		
+}
+
 int	Client::setUser( std::string &user, std::string &real)
 {
-	if (user.empty() == true|| real.empty() == true)
-		return 431;
+	//check if username and real name are provided
+	if (user.empty() == true || real.empty() == true)
+		return 461;
+	//validate username format
+	if (Client::isUsernameValid(user) == false)
+		return 461;
+	//validagte realname format <------------------------------------------------- TO DO
+	//if (isValidRealname(real) == false) //TO DO
+	//	return 461;
+
 	//missing validating user length
 	this->_username = user;
 	this->_realname = real;

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 19:31:03 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:08:56 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ class Server {
 		std::string		getVersion() const;
 
 		void			setPort(const int port);
-		//void			setPassword(const std::string &pass);
-
 		
 		/*Settings getters & setters*/	
 		t_settings		getSettings() const;	
@@ -73,6 +71,8 @@ class Server {
 		std::string		getSetting(const std::string) const;
 	
 		size_t			getChanLim() const;
+		int				getNickLen() const;
+		int				getUserLen() const;
 
 		/* Functions to add/remove clients within the list of connections */
 		void	addClient ( void );
@@ -84,7 +84,7 @@ class Server {
 		/* Management of nickname list on server */
 		bool 	InsertNick(const std::string &nick);
 		void 	removeNick(const std::string &nick);
-		int		getNickLen() const;
+		
 
 		/* Management of channel list on server */
 		bool	isChannelExist(const std::string &name);

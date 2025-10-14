@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:17:05 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:29:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -415,7 +415,7 @@ void	Server::removeNick(const std::string &nick)
 }
 
 /* Management of channel list on server */
-bool	Server::isChannelExist(std::string &name)
+bool	Server::isChannelExist(const std::string &name)
 {
 	std::map<std::string, Channel *>::iterator it;
 	it = _channels.find(name);

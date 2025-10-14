@@ -6,7 +6,7 @@
 /*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:14:10 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:29:41 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ class Server {
 		void 	removeNick(const std::string &nick);
 
 		/* Management of channel list on server */
-		bool	isChannelExist(std::string &name);
+		bool	isChannelExist(const std::string &name);
 		Channel	*getChannel( const std::string &name, Client & );	
 		Channel	*getChannel( const std::string &name );	
 		std::vector<Channel *> getChannelsforClient( Client & );

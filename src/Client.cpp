@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 12:09:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 18:38:45 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,20 +92,38 @@ std::string	Client::getNickname( void ) const
 	return this->_nickname;
 }
 
+static bool isCharValidSymbol( unsigned char c )
+{
+	return ( c == '[' || c == ']' || c =='\\' || c == '`' || c == '_' || c == '^' || c == '{' || c == '}' || c == '|' );
+}
+
+
+bool Client::isNicknameValid( std::string &nick )
+{
+	if (nick.size() > nickMaxLen)
+		return false;
+
+	unsigned char c0 = static_cast<unsigned char>(nick[0]);
+
+	if (!(isCharValidSymbol(c0) || std::isalpha(c0))) 
+		return false;
+	for (size_t i = 1; i < nick.size(); ++i) 
+	{
+		unsigned char c = static_cast<unsigned char>(nick[i]);
+		if (!(isCharValidSymbol(c) || std::isalnum(c) || c == '-'))
+			return false;
+	}
+	return true;		
+}
+
 int	Client::setNickname( std::string &nick)
 {
 	//check if nickname is provided
 	if (nick.empty())
 		return 431;
 	//validate nickname format
-	if (nick[0] == '#' || nick[0] == ':' || std::isspace(nick[0]))
+	if (Client::isNicknameValid(nick) == false)
 		return 432;
-	for (size_t i = 0; i < nick.size(); ++i)
-	{
-		char c = nick[i];
-		if (!std::isalnum(c) && std::string("[]{}\\|").find(c) == std::string::npos)
-			return 432;
-	}
 	if (this->_server->InsertNick(nick) == false)
 		return 433;
 	this->_nickname = nick;

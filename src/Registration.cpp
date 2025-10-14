@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 15:53:48 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:48:32 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,18 +75,35 @@ void Client::handleUser( t_arg args )
 }
 
 /*PASS*/
-void Client::handlePass( t_arg args ) 
+void Client::handlePass(t_arg args)
 {
-	//Reply	pass(*this); <-- not used
-	if (args.size() < 2)
-	{	
-		err_NeedMoreParameters(args.empty() ? "PASS" : args[0]);
-		return ;
+	// Expected layout: args[0] = "PASS", args[1] = <password>
+	// Problems you saw (no reply on just "PASS") usually come from:
+	// 1. args.size() == 1 so we return early, but err_NeedMoreParameters got a lowercase "pass"
+	//    (if your err_* helpers normalize/lookup on uppercase it may silently fail).
+	// 2. Or you sometimes even get args.size() == 0 (parser stripped the command), so args[0] was never valid.
+	//
+	// Fix: always pass the canonical uppercase "PASS" to the error helper and guard before indexing args[1].
+
+	// Already registered? (RFC: PASS must be sent before registration completes)
+	if (isRegistered())
+	{
+		err_AlreadyRegistered();
+		return;
 	}
-	
-	switch (registerPass(args[1])) {
-		case 461:
-			err_NeedMoreParameters(args[0]);
+
+	// Not enough parameters (need the password token)
+	if (args.size() < 2 || args[1].empty())
+	{
+		err_NeedMoreParameters("PASS");
+		return;
+	}
+
+	// Now we have a candidate password
+	switch (registerPass(args[1]))
+	{
+		case 461: // (Should not happen anymore; we handled missing param above)
+			err_NeedMoreParameters("PASS");
 			break;
 		case 462:
 			err_AlreadyRegistered();
@@ -96,6 +113,10 @@ void Client::handlePass( t_arg args )
 			break;
 		case 0:
 			std::cout << "Password accepted" << std::endl;
+			break;
+		default:
+			// Unknown return code: optional debug
+			std::cerr << "registerPass() returned unexpected code\n";
 			break;
 	}
 }

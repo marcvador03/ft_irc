@@ -6,12 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 18:38:45 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:40:36 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/utils.hpp"
 #include "../inc/Client.hpp"
+#include "../inc/Server.hpp"
 
 Client::Client (Server *s, int slot): //we will need to revisit all Server parameters set at start!!//
 		_server(s),
@@ -100,7 +101,7 @@ static bool isCharValidSymbol( unsigned char c )
 
 bool Client::isNicknameValid( std::string &nick )
 {
-	if (nick.size() > nickMaxLen)
+	if (nick.size() > static_cast<unsigned long>(_server->getNickLen()))
 		return false;
 
 	unsigned char c0 = static_cast<unsigned char>(nick[0]);
@@ -124,6 +125,7 @@ int	Client::setNickname( std::string &nick)
 	//validate nickname format
 	if (Client::isNicknameValid(nick) == false)
 		return 432;
+	//check if nickname is already in use
 	if (this->_server->InsertNick(nick) == false)
 		return 433;
 	this->_nickname = nick;

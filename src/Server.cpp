@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 13:41:25 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 19:33:39 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
 #include <cctype> // for toupper
+#include <climits> // for INT_MAX
 
 Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!! <-done
 	_name(servername),
@@ -416,6 +417,19 @@ void	Server::removeNick(const std::string &nick)
 		return;
 	_nicknames.erase(_nicknames.find(nick));
 	return;
+}
+
+int Server::getNickLen() const
+{
+	char *endptr;
+	long nickLenLong = strtol(Server::getSetting("NICKLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || nickLenLong < 1 || nickLenLong > INT_MAX)
+	{
+		std::cout << "Error! Nick lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of 30 characters." << std::endl;
+		return 30;
+	}
+	return static_cast<int>(nickLenLong);
 }
 
 /* Management of channel list on server */

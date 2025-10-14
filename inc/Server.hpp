@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 13:28:37 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 19:31:03 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ class Server {
 		/* Management of nickname list on server */
 		bool 	InsertNick(const std::string &nick);
 		void 	removeNick(const std::string &nick);
+		int		getNickLen() const;
 
 		/* Management of channel list on server */
 		bool	isChannelExist(const std::string &name);

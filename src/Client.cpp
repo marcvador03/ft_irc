@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/15 13:22:41 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/15 17:41:16 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,24 +229,56 @@ int		Client::leaveAllChannels( void )
 	}
 	return (0);
 }
+
+bool Client::isChannelnameValid( std::string &chan)
+{
+	std::string chantypes = _server->getSetting("CHANTYPES"); // can be "#&+!"
+	if (chantypes == "")
+		chantypes = "#";
 	
+	const int chanlen = _server->getChannelLen();
+
+	//check if channel name is not empty and prefix is valid according to the irc_config
+	if (chan.empty() || chantypes.find(chan[0]) == std::string::npos)
+		return false;
+	
+	//check channel name lenght
+	if (chan.length() < 1 || chan.length() > static_cast<size_t>(chanlen))
+		return false;
+	
+	//check if doesn't contain forbidden symbols
+	if (	chan.find(' ') != std::string::npos \
+			|| chan.find(0x07) != std::string::npos \
+			|| chan.find(',') != std::string::npos)
+		return false;
+	
+	//check if all characters are printable
+	for (size_t i = 0; i < chan.length(); ++i)
+	{
+		unsigned char c = static_cast<unsigned char>(chan[i]);
+		if (!std::isprint(c))
+			return false;
+	}
+
+	return true;
+}
+
 int		Client::joinChannel( std::string name, std::string key )
 {
 	Channel *ch;
 	
+	//check if channel limit per user is not exceeded
 	if (_channels.size() >= _chanlim)
 		return 405;
-	if (name[0] != '&' && name[0] != '#')
-		return 476;
-	if (	name.find(' ') != std::string::npos \
-			|| name.find(0x07) != std::string::npos \
-			|| name.find(',') != std::string::npos)
+	//channel name checks for setting up new channel
+	if (isChannelnameValid(name) == false)
 		return 476;
 	ch = _server->getChannel(name, *this);
 	if (ch->checkKey(key) == false)
 		return 475;
 	if (ch->isInviteOnly() == true && ch->isInvited(*this) == false)
 		return 473;
+	//checks if the channel's clients limit isn't reached
 	if (ch->hasReachedLimit() == true)
 		return 471;
 	ch->addMember(*this);

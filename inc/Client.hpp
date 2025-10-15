@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/15 13:04:06 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/15 16:01:14 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class Client {
 		std::string	getHost( void ) const;
 		int			leaveChannel( std::string );
 		int			leaveAllChannels( void );
+		bool		isChannelnameValid( std::string &chan );
 		int			joinChannel( std::string, std::string );
 		bool		isPartofChannel( std::string &name);
 		bool		isPasswordAccepted( void ) const;

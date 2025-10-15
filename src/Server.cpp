@@ -6,11 +6,12 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/15 15:13:52 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/15 17:35:20 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
+#include "../inc/utils.hpp"
 #include <cctype> // for toupper
 #include <climits> // for INT_MAX
 
@@ -121,29 +122,41 @@ size_t			Server::getChanLim() const
 int Server::getNickLen() const
 {
 	char *endptr;
-	long nickLenLong = strtol(Server::getSetting("NICKLEN").c_str(), &endptr, 10);
-	if (*endptr != '\0' || nickLenLong < 1 || nickLenLong > INT_MAX)
+	long lenLong = strtol(Server::getSetting("NICKLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
 	{
 		std::cout << "Error! Nick lenght limit given in irc_config is not a valid number!" << std::endl
 				  << "Setting standard value of 30 characters." << std::endl;
 		return 30;
 	}
-	return static_cast<int>(nickLenLong);
+	return static_cast<int>(lenLong);
 }
 
 int Server::getUserLen() const
 {
 	char *endptr;
-	long nickLenLong = strtol(Server::getSetting("USERLEN").c_str(), &endptr, 10);
-	if (*endptr != '\0' || nickLenLong < 1 || nickLenLong > INT_MAX)
+	long lenLong = strtol(Server::getSetting("USERLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
 	{
 		std::cout << "Error! User lenght limit given in irc_config is not a valid number!" << std::endl
 				  << "Setting standard value of 12 characters." << std::endl;
 		return 12;
 	}
-	return static_cast<int>(nickLenLong);
+	return static_cast<int>(lenLong);
 }
 
+int Server::getChannelLen() const
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting("CHANNELLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! Channel lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of 32 characters." << std::endl;
+		return 32;
+	}
+	return static_cast<int>(lenLong);
+}
 void	Server::_setChanPrefix( void )
 {
 	std::string	str;
@@ -338,15 +351,14 @@ void	Server::removeClient( const Client *client )
 bool	Server::isClientExist(const std::string &name)
 {
 	const std::string normalizedNick = _casefoldNick(name);
-	std::map<int, Client *>::iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++)
+	for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
-		if (normalizedNick.compare(it->second->getNickname()) == 0)
+		if (_casefoldNick(it->second->getNickname()) == normalizedNick)
 			return true;
 	}
 	return false;
-
 }
+
 std::map<int, Client *>	&Server::getAllClients( void )
 {
 	return _clients;
@@ -431,43 +443,11 @@ void	Server::setPort(const int port)
 }*/
 
 /* Management of nickname list on server */
-static inline char fold_ascii(unsigned char c) 
+// Wrapper that uses utils::casefold according to ISUPPORT CASEMAPPING
+std::string Server::_casefoldNick(const std::string& s) const
 {
-	if (c >= 'A' && c <= 'Z') 
-		return static_cast<char>(c + ('a' - 'A'));
-	return static_cast<char>(c);
-}
-
-static inline char fold_rfc1459(unsigned char c) 
-{
-	if (c >= 'A' && c <= 'Z') 
-		return static_cast<char>(c + ('a' - 'A'));
-	if (c == '{')
-		return '[';
-	if (c == '}')
-		return ']';
-	if (c == '|')
-		return '\\';
-	return static_cast<char>(c);
-}
-
-// returns the casefolded (one that is indeferent to letter case) version 
-// of the nickname according to server settings
-std::string Server::_casefoldNick(const std::string& s) const {
-	const std::string caseMapping = getSetting("CASEMAPPING"); // e.g. "ascii", "rfc1459"
-	std::string out;
-	out.reserve(s.size());
-	if (caseMapping == "ascii") 
-	{
-		for (size_t i = 0; i < s.size(); ++i) 
-			out.push_back(fold_ascii(static_cast<unsigned char>(s[i])));
-	}
-	else // default to rfc1459 behavior
-	{ 
-		for (size_t i = 0; i < s.size(); ++i) 
-			out.push_back(fold_rfc1459(static_cast<unsigned char>(s[i])));
-	}
-	return out;
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	return casefold(s, cm);
 }
 
 bool 	Server::InsertNick(const std::string &nick)
@@ -485,11 +465,14 @@ void	Server::removeNick(const std::string &nick)
 /* Management of channel list on server */
 bool	Server::isChannelExist(const std::string &name)
 {
-	std::map<std::string, Channel *>::iterator it;
-	it = _channels.find(name);
-	if (it == this->_channels.end())
-		return false;
-	return true;
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	const std::string normalizedChan = casefold(name, cm);
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+	{
+		if (casefold(it->first, cm) == normalizedChan)
+			return true;
+	}
+	return false;
 }
 
 std::map<std::string, Channel *> Server::getAllChannels( void )
@@ -510,29 +493,31 @@ std::map<std::string, Channel *> Server::getAllChannels( void )
 
 Channel	*Server::getChannel(const std::string &name, Client &c)
 {
-	/*checks if the channel is already listed on the server list
-	 * and it not, creates it - are there cases where it should not be created? */
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	const std::string key = casefold(name, cm);
 
-	Channel *chan = NULL;
-
-	std::map<std::string, Channel *>::iterator it;
-	it = _channels.find(name);
-	if (it != this->_channels.end())
-		return it->second;
-	else
+	// try case-insensitive match
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
-		chan = new Channel(this, name, c);
-		this->_channels.insert(std::make_pair(name, chan));
+		if (casefold(it->first, cm) == key)
+			return it->second;
 	}
-	return chan;			
+
+	// not found: create with original casing
+	Channel *chan = new Channel(this, name, c);
+	_channels.insert(std::make_pair(name, chan));
+	return chan;
 }
 
 Channel	*Server::getChannel(const std::string &name)
 {
-	std::map<std::string, Channel *>::iterator it;
-	it = _channels.find(name);
-	if (it != this->_channels.end())
-		return it->second;
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	const std::string key = casefold(name, cm);
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+	{
+		if (casefold(it->first, cm) == key)
+			return it->second;
+	}
 	return NULL;
 }
 

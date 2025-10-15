@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 20:26:56 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:22:41 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,21 @@ bool Client::isUsernameValid( std::string &user )
 	return true;		
 }
 
+bool Client::isRealnameValid( std::string &real )
+{
+	if (real.size() > REALNAME_LEN) //defined in Client.hpp
+		return false;
+	for (size_t i = 0; i < real.size(); ++i)
+	{
+		unsigned char c = static_cast<unsigned char>(real[i]);
+		if (c == 0 || c == '\r' || c == '\n')
+			return false;
+		if (!std::isprint(c))
+			return false;
+	}
+	return true;		
+}
+
 int	Client::setUser( std::string &user, std::string &real)
 {
 	//check if username and real name are provided
@@ -157,9 +172,9 @@ int	Client::setUser( std::string &user, std::string &real)
 	//validate username format
 	if (Client::isUsernameValid(user) == false)
 		return 461;
-	//validagte realname format <------------------------------------------------- TO DO
-	//if (isValidRealname(real) == false) //TO DO
-	//	return 461;
+	//validate realname format
+	if (isRealnameValid(real) == false) //TO DO
+		return 461;
 
 	//missing validating user length
 	this->_username = user;

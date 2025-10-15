@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 20:08:56 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:34:54 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,9 @@ class Server {
 		/* Internal variables for socket client management */
 		socklen_t				_socklen;
 		struct sockaddr_in		_server_addr;
-		//int						_timeout;
+		//int							_timeout;
+
+		std::string _casefoldNick(const std::string& s) const;
 };
 
 #endif

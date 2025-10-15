@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 20:07:24 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:39:14 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,10 +337,11 @@ void	Server::removeClient( const Client *client )
 		
 bool	Server::isClientExist(const std::string &name)
 {
+	const std::string normalizedNick = _casefoldNick(name);
 	std::map<int, Client *>::iterator it;
 	for (it = _clients.begin(); it != _clients.end(); it++)
 	{
-		if (name.compare(it->second->getNickname()) == 0)
+		if (normalizedNick.compare(it->second->getNickname()) == 0)
 			return true;
 	}
 	return false;
@@ -353,10 +354,11 @@ std::map<int, Client *>	&Server::getAllClients( void )
 
 Client	&Server::getClient ( const std::string &name )
 {
+	const std::string normalizedNick = _casefoldNick(name);
 	std::map<int, Client *>::iterator it;
 	for (it = _clients.begin(); it != _clients.end(); it++)
 	{
-		if (name.compare(it->second->getNickname()) == 0)
+		if (normalizedNick.compare(_casefoldNick(it->second->getNickname())) == 0)
 			return *it->second;
 	}
 	return *it->second;
@@ -429,23 +431,48 @@ void	Server::setPort(const int port)
 }*/
 
 /* Management of nickname list on server */
+static inline char fold_ascii(unsigned char c) {
+    if (c >= 'A' && c <= 'Z') return static_cast<char>(c + ('a' - 'A'));
+    return static_cast<char>(c);
+}
+static inline char fold_rfc1459(unsigned char c) {
+    if (c >= 'A' && c <= 'Z') return static_cast<char>(c + ('a' - 'A'));
+    if (c == '{') return '[';
+    if (c == '}') return ']';
+    if (c == '|') return '\\';
+    return static_cast<char>(c);
+}
+
+// returns the casefolded (one that is indeferent to letter case) version 
+// of the nickname according to server settings
+std::string Server::_casefoldNick(const std::string& s) const {
+    const std::string caseMapping = getSetting("CASEMAPPING"); // e.g. "ascii", "rfc1459"
+    std::string out;
+    out.reserve(s.size());
+    if (caseMapping == "ascii") 
+	{
+        for (size_t i = 0; i < s.size(); ++i) 
+			out.push_back(fold_ascii(static_cast<unsigned char>(s[i])));
+    }
+	else // default to rfc1459 behavior
+	{ 
+        for (size_t i = 0; i < s.size(); ++i) 
+			out.push_back(fold_rfc1459(static_cast<unsigned char>(s[i])));
+    }
+    return out;
+}
+
 bool 	Server::InsertNick(const std::string &nick)
 {
-	//insert in std::set return a std::pair, with first element pointing to the
-	//new element inserted or the duplicate element. The second element of the
-	//pair is false if it was a duplicate or true if it was inserted.
-	return (this->_nicknames.insert(nick).second);
+    // store the folded form to enforce case-insensitive uniqueness
+    return this->_nicknames.insert(_casefoldNick(nick)).second;
 }
 
 void	Server::removeNick(const std::string &nick)
 {
-	if (_nicknames.find(nick) == _nicknames.end())
-		return;
-	_nicknames.erase(_nicknames.find(nick));
-	return;
+    _nicknames.erase(_casefoldNick(nick));
+    return;
 }
-
-
 
 /* Management of channel list on server */
 bool	Server::isChannelExist(const std::string &name)

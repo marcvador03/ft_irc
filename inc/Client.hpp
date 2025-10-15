@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 20:09:29 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:04:06 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include "Server.hpp"
 # include "Reply.hpp"
 
-//#define nickMaxLen 30
+#define REALNAME_LEN 50
 
 /*
 **`Client.hpp` / `Client.cpp`**  
@@ -55,6 +55,7 @@ class Client {
 		bool		isNicknameValid(std::string & );
 		int			setNickname( std::string & );
 		bool		isUsernameValid(std::string & );
+		bool		isRealnameValid(std::string & );
 		int			setUser( std::string &, std::string &);
 		std::string	getUser( void ) const;
 		std::string	getRealname( void ) const;

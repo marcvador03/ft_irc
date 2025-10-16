@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/15 17:41:16 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/16 18:30:36 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ bool Client::isChannelnameValid( std::string &chan)
 		return false;
 	
 	//check channel name lenght
-	if (chan.length() < 1 || chan.length() > static_cast<size_t>(chanlen))
+	if (chan.length() < 2 || chan.length() > static_cast<size_t>(chanlen))
 		return false;
 	
 	//check if doesn't contain forbidden symbols

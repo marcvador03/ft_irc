@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   UserQry.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 09:30:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:42:38 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/16 19:16:28 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,18 +63,28 @@ void	Client::handleWhoIs( t_arg args )
 	return ;
 }
 
+/*AWAY*/
 void	Client::handleAway( t_arg args )
 {
-	if (args.size() == 1)
+	std::string msg;
+	if (args.size() >= 2)
+		msg = args[1];
+
+	//truncate a AWAY message to AWAYLEN value from irc_config
+	int maxLen = _server->getAwayLen();
+	if (msg.size() > static_cast<size_t>(maxLen))
+		msg.resize(maxLen);
+	
+	if (msg.empty())
 	{
 		_away = false;
-		_awaymsg = "";
+		_awaymsg.clear();
 		rpl_Unaway();
 	}
-	else if (args.size() == 2)
+	else
 	{
 		_away = true;
-		_awaymsg = args[1];
+		_awaymsg = msg;
 		rpl_NowAway();
 	}
 	return;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ChanOps.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 13:40:33 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/16 19:47:12 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,15 +137,19 @@ void Client::handleKick( t_arg args )
 	std::vector<std::string>::const_iterator	it;
 	
 	if (args.size() < 3 || args.size() > 4)
-		return (err_NeedMoreParameters(args[0]));
+		return (err_NeedMoreParameters(args[0])); //461
 	if (_server->isChannelExist(args[1]) == false)
-		return (err_noSuchChannel(args[1]));
+		return (err_noSuchChannel(args[1])); //403
+
+	Channel *chan = _server->getChannel(args[1]);
+	if (chan == NULL)
+		return (err_noSuchChannel(args[1])); //403 //<-----FINISHED HERE
 	if (args.size() == 3)
 		   args.insert(std::pair<int, std::string>(3, "for no reason"));
 	user_list = split(args[2], ',');
 	if (static_cast<int>(user_list.size()) > std::atoi(_server->getSetting("TARGMAX").c_str()))
 		return ;	
-	Channel *chan = _server->getChannel(args[1]);
+	
 	for (it = user_list.begin(); it != user_list.end(); it++)
 	{
 		if (_server->isClientExist(*it) == false)
@@ -197,25 +201,53 @@ void Client::handleInvite( t_arg args )
 /*TOPIC*/
 void	Client::handleTopic( t_arg args )
 {
-	if (args.size() < 2 || args.size() > 3)
-		return (err_NeedMoreParameters(args[0]));
+	//check if there is at least channel name
+	if (args.size() < 2) // || args.size() > 3)
+		return (err_NeedMoreParameters(args[0])); //461
+
+	//check if channel exists
 	if (_server->isChannelExist(args[1]) == false)
-		return (err_noSuchChannel(args[1]));
+		return (err_noSuchChannel(args[1])); //403
+
 	Channel *chan = _server->getChannel(args[1]);
+	if (chan == NULL)
+		return (err_noSuchChannel(args[1])); //403
+	
+	//check if user is on the channel
 	if (chan->isMember(*this) == false)
-		return (err_notOnChannel(args[1]));
+		return (err_notOnChannel(args[1]));	//442
+
+	//check if there is only channel name (no topic) - then just return the topic
+	if (args.size() == 2)
+	{
+		if (chan->getTopic().empty())
+			return (rpl_noTopic(args[1])); //331
+		return (rpl_Topic(args[1])); //332
+	}
+
+	//check if topic is locked and if user is not an operator
+	//if topic is locked and user is not an operator - return error
 	if (chan->isTopicLocked() == true && chan->isOperator(*this) == false)
 		return (err_ChanOPrivsNeeded(args[1]));
-	if (args.size() == 2)
-		return (rpl_noTopic(args[1]));
-	if (args[2].empty() == true)
-		return (rpl_noTopic(args[1]));
-	else
-	{
-		chan->setTopic(args[2]);
-		rpl_TopicAll(args[1]);
-	}
-	return ;
+
+	//set new topic
+	std::string newTopic = args[2];
+
+	//if topic starts with ':', remove it
+	if (newTopic[0] == ':')
+		newTopic.erase(0, 1);
+
+	//truncate topic if it's too long
+	int topicLen = _server->getTopicLen();
+	if (newTopic.length() > static_cast<size_t>(topicLen))
+		newTopic.resize(topicLen);
+
+	//set the topic
+	chan->setTopic(newTopic);
+	
+	//broadcast new topic to all channel members 
+	rpl_TopicAll(newTopic);
+	return;
 }
 
 /*LIST*/

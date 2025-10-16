@@ -6,14 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:03:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 14:44:54 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/16 18:48:12 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
 
 /*MODE*/
-
 void Client::handleMode( t_arg args )
 {
 	t_list	string;

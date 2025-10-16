@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/15 16:01:14 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/16 18:50:31 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,24 +73,29 @@ class Client {
 		std::string	getAwayMsg( void ) const;
 		
 		/*Commands handle */
-		void handleJoin( t_arg args );
-		void handlePing( t_arg args );
+			//Registration.cpp:
 		void handleNick( t_arg args ); 
 		void handleUser( t_arg args ); 
 		void handlePass( t_arg args ); 
-		void handlePart( t_arg args ); 
 		void handleQuit( t_arg args ); 
-		void handlePrivMsg( t_arg args ); 
+			//Modes.cpp:
 		void handleMode( t_arg args ); 
-		void handleKick( t_arg args ); 
-		void handleInvite( t_arg args ); 
-		void handleTopic( t_arg args );
+			//Messages.cpp:
+		void handlePrivMsg( t_arg args );
+			//UserQry.cpp:
 		void handleWho( t_arg args );
 		void handleWhoIs( t_arg args );
 		void handleAway( t_arg args );
+			//ChanOps.cpp:
+		void handleJoin( t_arg args );
+		void handlePart( t_arg args );		
+		void handleKick( t_arg args );
+		void handleInvite( t_arg args );
+		void handleTopic( t_arg args );
 		void handleList( t_arg args );
+			//OtherCmds.cpp:
+		void handlePing( t_arg args );	
 
-		
 		/* RPL functions */
 		void	rpl_Welcome( void );
 		void	rpl_YourHost( void );

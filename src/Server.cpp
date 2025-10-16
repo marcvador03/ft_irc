@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/15 17:35:20 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:41:18 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,46 @@ int Server::getChannelLen() const
 	}
 	return static_cast<int>(lenLong);
 }
+
+int Server::getTopicLen() const
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting("TOPICLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! Topic lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of 307 characters." << std::endl;
+		return 307;
+	}
+	return static_cast<int>(lenLong);
+}
+
+int Server::getAwayLen() const
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting("AWAYLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! Away message lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of 200 characters." << std::endl;
+		return 200;
+	}
+	return static_cast<int>(lenLong);
+}
+
+int Server::getKickLen() const
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting("KICKLEN").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! Kick message lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of 255 characters." << std::endl;
+		return 255;
+	}
+	return static_cast<int>(lenLong);
+}
+
 void	Server::_setChanPrefix( void )
 {
 	std::string	str;

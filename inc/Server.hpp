@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/15 15:48:04 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:39:42 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,9 @@ class Server {
 		int				getNickLen() const;
 		int				getUserLen() const;
 		int				getChannelLen() const;
+		int				getTopicLen() const;
+		int				getAwayLen() const;
+		int				getKickLen() const;
 
 		/* Functions to add/remove clients within the list of connections */
 		void	addClient ( void );

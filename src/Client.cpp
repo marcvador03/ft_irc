@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/15 17:41:16 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/16 18:19:39 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,17 +215,19 @@ int		Client::leaveChannel( std::string name)
 int		Client::leaveAllChannels( void )
 {
 	std::set<Channel *>::iterator it;
-	Channel *ch;
-	std::string name;
+	//Channel *ch;
+	//std::string name;
 	
-	for (it = this->_channels.begin(); it != this->_channels.end() ; it++)
+	for (it = this->_channels.begin(); it != this->_channels.end(); ) //note: no it++ here
 	{
-		name = (*it)->getName();
-		ch = _server->getChannel(name, *this);
-		ch->removeMember(*this);
+		//name = (*it)->getName();
+		Channel *ch = *it;
+		++it; //increment iterator before erasing the element
+		if (ch)
+			ch->removeMember(*this);
 		_channels.erase(ch);
-		if (_channels.empty() == true)
-			return (0);
+		//if (_channels.empty() == true)
+		//	return (0);
 	}
 	return (0);
 }

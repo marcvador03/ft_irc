@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/16 19:41:18 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/17 16:56:45 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,45 @@ size_t			Server::getChanLim() const
 	return 1000;
 }
 
-int Server::getNickLen() const
+//only used when there is no per-command TARGMAX specified
+size_t Server::getMaxtargets() const
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting("MAXTARGETS").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! Maxtargets limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting unlimited number of targets." << std::endl;
+		return 0;
+	}
+	return static_cast<size_t>(lenLong);
+}
+
+//TARGMAX is a limit of targets a client may specify in single command given in the irc_config file
+//It overrides the older version MAXTARGETS and it can be per-command
+//e.g. TARGMAX=20 or TARGMAX=PRIVMSG:20,NOTICE:20,WHOIS:1,KICK:4
+size_t Server::getTargmax() const
+{
+	//legacy default (MAXTARGETS) if TARGMAX is missing
+	size_t maxTargets = getMaxtargets();
+	//<--------------------------------------------finished here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//store TARGMAX settings -> have to add a container in Server class
+}
+
+int Server::getLen(const std::string key, const std::string keyFullName, int stdLen) const
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting(key).c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! " << keyFullName << " lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of " << stdLen << " characters." << std::endl;
+		return stdLen;
+	}
+	return static_cast<int>(lenLong);
+}
+
+/*int Server::getNickLen() const
 {
 	char *endptr;
 	long lenLong = strtol(Server::getSetting("NICKLEN").c_str(), &endptr, 10);
@@ -130,9 +168,9 @@ int Server::getNickLen() const
 		return 30;
 	}
 	return static_cast<int>(lenLong);
-}
+}*/
 
-int Server::getUserLen() const
+/*int Server::getUserLen() const
 {
 	char *endptr;
 	long lenLong = strtol(Server::getSetting("USERLEN").c_str(), &endptr, 10);
@@ -143,9 +181,9 @@ int Server::getUserLen() const
 		return 12;
 	}
 	return static_cast<int>(lenLong);
-}
+}*/
 
-int Server::getChannelLen() const
+/*int Server::getChannelLen() const
 {
 	char *endptr;
 	long lenLong = strtol(Server::getSetting("CHANNELLEN").c_str(), &endptr, 10);
@@ -156,9 +194,9 @@ int Server::getChannelLen() const
 		return 32;
 	}
 	return static_cast<int>(lenLong);
-}
+}*/
 
-int Server::getTopicLen() const
+/*int Server::getTopicLen() const
 {
 	char *endptr;
 	long lenLong = strtol(Server::getSetting("TOPICLEN").c_str(), &endptr, 10);
@@ -169,9 +207,9 @@ int Server::getTopicLen() const
 		return 307;
 	}
 	return static_cast<int>(lenLong);
-}
+}*/
 
-int Server::getAwayLen() const
+/*int Server::getAwayLen() const
 {
 	char *endptr;
 	long lenLong = strtol(Server::getSetting("AWAYLEN").c_str(), &endptr, 10);
@@ -182,9 +220,9 @@ int Server::getAwayLen() const
 		return 200;
 	}
 	return static_cast<int>(lenLong);
-}
+}*/
 
-int Server::getKickLen() const
+/*int Server::getKickLen() const
 {
 	char *endptr;
 	long lenLong = strtol(Server::getSetting("KICKLEN").c_str(), &endptr, 10);
@@ -195,7 +233,7 @@ int Server::getKickLen() const
 		return 255;
 	}
 	return static_cast<int>(lenLong);
-}
+}*/
 
 void	Server::_setChanPrefix( void )
 {

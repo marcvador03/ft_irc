@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/16 18:30:36 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:22:42 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ static bool isNickValidSymbol( unsigned char c )
 
 bool Client::isNicknameValid( std::string &nick )
 {
-	if (nick.size() > static_cast<unsigned long>(_server->getNickLen()))
+	if (nick.size() > static_cast<unsigned long>(_server->getLen("NICKLEN", "Nick", 30)))
 		return false;
 
 	unsigned char c0 = static_cast<unsigned char>(nick[0]);
@@ -135,7 +135,7 @@ int	Client::setNickname( std::string &nick)
 
 bool Client::isUsernameValid( std::string &user )
 {
-	if (user.size() > static_cast<unsigned long>(_server->getUserLen()))
+	if (user.size() > static_cast<unsigned long>(_server->getLen("USERLEN", "User", 12)))
 		return false;
 
 	for (size_t i = 0; i < user.size(); ++i) 
@@ -236,7 +236,7 @@ bool Client::isChannelnameValid( std::string &chan)
 	if (chantypes == "")
 		chantypes = "#";
 	
-	const int chanlen = _server->getChannelLen();
+	const int chanlen = _server->getLen("CHANNELLEN", "Channel", 32);
 
 	//check if channel name is not empty and prefix is valid according to the irc_config
 	if (chan.empty() || chantypes.find(chan[0]) == std::string::npos)

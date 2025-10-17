@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/17 16:54:34 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:26:21 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,6 @@ class Server {
 
 		
 		size_t			getChanLim() const;
-		size_t			getTargmax() const;
-		size_t			getMaxtargets() const;
 		int				getLen(const std::string key, const std::string keyFullName, int stdLen) const;
 		//int				getNickLen() const;
 		//int				getUserLen() const;

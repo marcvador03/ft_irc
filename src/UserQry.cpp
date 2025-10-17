@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 09:30:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/16 19:16:28 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:24:18 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	Client::handleAway( t_arg args )
 		msg = args[1];
 
 	//truncate a AWAY message to AWAYLEN value from irc_config
-	int maxLen = _server->getAwayLen();
+	int maxLen = _server->getLen("AWAYLEN", "Away", 200);
 	if (msg.size() > static_cast<size_t>(maxLen))
 		msg.resize(maxLen);
 	

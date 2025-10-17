@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/16 19:47:12 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:31:36 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,10 @@ void Client::handlePart( t_arg args )
 /*KICK*/
 void Client::handleKick( t_arg args )
 {
-	std::vector<std::string>					user_list;
-	std::vector<std::string>::const_iterator	it;
+	std::vector<std::string>			user_list;
+	std::vector<std::string>::iterator	it;
 	
+	//KICK <channel> <user[,user2...]> [reason]
 	if (args.size() < 3 || args.size() > 4)
 		return (err_NeedMoreParameters(args[0])); //461
 	if (_server->isChannelExist(args[1]) == false)
@@ -144,8 +145,24 @@ void Client::handleKick( t_arg args )
 	Channel *chan = _server->getChannel(args[1]);
 	if (chan == NULL)
 		return (err_noSuchChannel(args[1])); //403 //<-----FINISHED HERE
-	if (args.size() == 3)
-		   args.insert(std::pair<int, std::string>(3, "for no reason"));
+	
+	//Kicker must be on the channel
+	if (chan->isMember(*this) == false)
+		return (err_notOnChannel(args[1]));
+
+	//Kicker must have op privilieges
+	if (chan->isOperator(*this) == false)
+		return (err_ChanOPrivsNeeded(args[1]));
+
+	//Reason: default if missing
+	std::string reason = (args.size() >= 4 ? args[3] : std::string("for no reason"));
+
+	//enforce KICKLEN (truncate)
+	int kickLen = _server->getLen("KICKLEN", "Kick", 255);
+	if (reason.length() > static_cast<size_t>(kickLen))
+		reason.resize(kickLen);
+
+	//targets
 	user_list = split(args[2], ',');
 	if (static_cast<int>(user_list.size()) > std::atoi(_server->getSetting("TARGMAX").c_str()))
 		return ;	
@@ -245,8 +262,8 @@ void	Client::handleTopic( t_arg args )
 	//set the topic
 	chan->setTopic(newTopic);
 	
-	//broadcast new topic to all channel members 
-	rpl_TopicAll(newTopic);
+	//broadcast to all channel members 
+	rpl_TopicAll(args[1]);
 	return;
 }
 

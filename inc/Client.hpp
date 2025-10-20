@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/16 18:50:31 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/20 20:01:32 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class Client {
 		int			setUser( std::string &, std::string &);
 		std::string	getUser( void ) const;
 		std::string	getRealname( void ) const;
-		int			setRealname( std::string & );
+		//int			setRealname( std::string & );
 		int			registerPass( std::string &);
 		std::string	getHost( void ) const;
 		int			leaveChannel( std::string );

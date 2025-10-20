@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/17 16:54:34 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/20 19:46:10 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,32 +62,24 @@ class Server {
 		std::string		getName() const;	
 		std::string		getLaunchTime() const;	
 		std::string		getVersion() const;
-
 		void			setPort(const int port);
 		
 		/*Settings getters & setters*/	
+		std::string		getSetting(const std::string) const;
 		t_settings		getSettings() const;	
 		void			setSettings(const char *);
-		std::string		getSetting(const std::string) const;
-
-		
+				
 		size_t			getChanLim() const;
-		size_t			getTargmax() const;
-		size_t			getMaxtargets() const;
+		size_t			getTargmax() const; // default TARGMAX
+		size_t			getTargmax(const std::string &cmd) const; //per-command TARGMAX
 		int				getLen(const std::string key, const std::string keyFullName, int stdLen) const;
-		//int				getNickLen() const;
-		//int				getUserLen() const;
-		//int				getChannelLen() const;
-		//int				getTopicLen() const;
-		//int				getAwayLen() const;
-		//int				getKickLen() const;
 
 		/* Functions to add/remove clients within the list of connections */
-		void	addClient ( void );
-		void	removeClient ( const Client *client );
-		Client	&getClient ( const std::string & );
-		bool	isClientExist(const std::string &name);
+		void					addClient ( void );
+		void					removeClient ( const Client *client );
+		bool					isClientExist(const std::string &name);
 		std::map<int, Client *>	&getAllClients( void );
+		Client					&getClient ( const std::string & );
 		
 		/* Management of nickname list on server */
 		bool 	InsertNick(const std::string &nick);
@@ -98,8 +90,10 @@ class Server {
 		bool	isChannelExist(const std::string &name);
 		Channel	*getChannel( const std::string &name, Client & );	
 		Channel	*getChannel( const std::string &name );	
-		std::map<std::string, Channel *> getAllChannels( void );
-		std::vector<Channel *> getChannelsforClient( Client & );
+		std::map<std::string, Channel *>
+				getAllChannels( void );
+		std::vector<Channel *>
+				getChannelsforClient( Client & );
 		void	deleteChannel(Channel *);
 		
 		/* Password check */
@@ -122,9 +116,9 @@ class Server {
 		Server &operator-( const Server &other );
 
 		/* Internal functions to manage available slots in pollfd array struct */
-		int		getFirstSlot( void );
-		void	setFreeSlot( const int i );
-		void	setBusySlot( const int i); // unused
+		int		_getFirstSlot( void );
+		void	_setFreeSlot( const int i );
+		void	_setBusySlot( const int i); // unused
 		
 		/* Server variables */
 		std::string			_name; //server name
@@ -134,11 +128,17 @@ class Server {
 		std::map<int, bool>	_slots; // list slots for pollfd and status false: free to accept new client true: occupied by a client
 		char				_launchtime[100];
 		std::string			_version;
+		
+		size_t							_maxtargets;
+		size_t			 				_targmaxDefault;
+		std::map<std::string, size_t>	_targmaxPerCommand;
 	
 		/* Variables and methods related to Settings*/	
 		t_settings			_settings; //RPL_ISUPORT parameters
 		std::vector<char>	_chantags;
 		void				_setChanPrefix( void );
+		void				_parseMaxtargets();
+		void				_parseTargmax();
 		
 		/* List of connections and pollfd structure array */
 		std::map<int, Client *> 	_clients;
@@ -151,8 +151,8 @@ class Server {
 		/* Internal variables for socket client management */
 		socklen_t				_socklen;
 		struct sockaddr_in		_server_addr;
-		//int							_timeout;
-
+		
+		/* Private utility functions */
 		std::string _casefoldNick(const std::string& s) const;
 };
 

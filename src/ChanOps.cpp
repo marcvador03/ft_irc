@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/17 15:31:36 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/20 20:03:49 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,27 +164,33 @@ void Client::handleKick( t_arg args )
 
 	//targets
 	user_list = split(args[2], ',');
-	if (static_cast<int>(user_list.size()) > std::atoi(_server->getSetting("TARGMAX").c_str()))
-		return ;	
+	size_t targetLimit = _server->getTargmax("KICK");
 	
-	for (it = user_list.begin(); it != user_list.end(); it++)
+	//enforce TARGMAX
+	if (user_list.size() > targetLimit && targetLimit != 0)
+		user_list.resize(targetLimit);
+	
+	for (it = user_list.begin(); it != user_list.end(); ++it)
 	{
 		if (_server->isClientExist(*it) == false)
-			err_noSuchNick();
-		else if (chan->isMember(_server->getClient(*it)) == false)
-			err_UserNotInChannel(*it, args[1]);
-		else if (chan->isOperator(*this) == false)
-			err_ChanOPrivsNeeded(args[1]);
-		else if (_server->getClient(*it).getSlot() != _slot)
 		{
-			Reply	kick(*this, _nickname, *chan, 'a', 'n');
-			kick.list("KICK");
-			kick.list(args[1]);
-			kick.list(*it);
-			kick.list(args[3]);
-			kick.ship();
-			chan->removeMember(_server->getClient(*it));
+			err_noSuchNick();
+			continue;
 		}
+		else if (chan->isMember(_server->getClient(*it)) == false)
+		{
+			err_UserNotInChannel(*it, args[1]);
+			continue;
+		}
+
+		//broadcast KICK message to channel members
+		Reply	kick(*this, _nickname, *chan, 'a', 'n');
+		kick.list("KICK");
+		kick.list(args[1]); //channel name
+		kick.list(*it); //kicked user
+		kick.list(reason); //reason
+		kick.ship(); //broadcast to channel members
+		chan->removeMember(_server->getClient(*it)); //remove user from channel
 	}	
 	return;
 }
@@ -219,7 +225,7 @@ void Client::handleInvite( t_arg args )
 void	Client::handleTopic( t_arg args )
 {
 	//check if there is at least channel name
-	if (args.size() < 2) // || args.size() > 3)
+	if (args.size() < 2)
 		return (err_NeedMoreParameters(args[0])); //461
 
 	//check if channel exists
@@ -255,7 +261,7 @@ void	Client::handleTopic( t_arg args )
 		newTopic.erase(0, 1);
 
 	//truncate topic if it's too long
-	int topicLen = _server->getTopicLen();
+	int topicLen = _server->getLen("TOPICLEN", "Topic", 307);
 	if (newTopic.length() > static_cast<size_t>(topicLen))
 		newTopic.resize(topicLen);
 

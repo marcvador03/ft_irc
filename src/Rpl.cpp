@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 13:08:18 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/21 20:23:22 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	Client::rpl_NamReply( Channel &chan )
 	rpl.ship(353);
 }
 
+/*RPL_ENDOFNAMES*/
 void	Client::rpl_EndOfNames( Channel &chan )
 {
 	Reply	rpl(*this, chan, 'a', 'n');
@@ -94,6 +95,7 @@ void	Client::rpl_noTopic( Channel &chan )
 	return ;
 }
 
+/*RPL_TOPIC*/
 void	Client::rpl_Topic( Channel &chan )
 {
 	Reply	rpl(*this);
@@ -105,6 +107,7 @@ void	Client::rpl_Topic( Channel &chan )
 	return;
 }
 
+/*RPL_CHANNELMODEIS*/
 void	Client::rpl_ChannelModeIs( Channel &chan, const std::string &target)
 {
 	Reply	rpl(*this);
@@ -113,6 +116,7 @@ void	Client::rpl_ChannelModeIs( Channel &chan, const std::string &target)
 	std::map<int, Client *>::const_iterator it;
 	
 	keys = "+";
+	// operator, key, limit, invite only, topic lock modes
 	for (it = chan.getOpsClients().begin(); it != chan.getOpsClients().end(); it++)
 		keys += "o";
 	if (chan.hasKey() == true)
@@ -122,8 +126,8 @@ void	Client::rpl_ChannelModeIs( Channel &chan, const std::string &target)
 	if (chan.isInviteOnly() == true)
 		keys += "i";
 	if (chan.isTopicLocked() == true)
-		keys += "k";
-	rpl.list("marc");
+		keys += "t";
+	rpl.list(_nickname);
 	rpl.list(target);
 	rpl.list(keys);
 	for (it = chan.getOpsClients().begin(); it != chan.getOpsClients().end(); it++)
@@ -136,12 +140,21 @@ void	Client::rpl_ChannelModeIs( Channel &chan, const std::string &target)
 	return;
 }
 
+/*RPL_CREATIONTIME*/
 void	Client::rpl_CreationTime( const std::string &target )
 {
+	//329 <me> <channel> <creation time>
 	Reply	rpl(*this);
 	
+	rpl.list(_nickname);
 	rpl.list(target);
-	//rpl.list(chan->getCreationTime());
+	Channel *chan = _server->getChannel(target);
+	if (chan != NULL)
+	{
+		std::ostringstream ss;
+		ss << chan->getCreationTime();
+		rpl.list(ss.str());
+	}
 	rpl.ship(329);
 	return;
 }
@@ -150,7 +163,7 @@ void	Client::rpl_Welcome( void )
 {
 	Reply	rpl(*this);
 	
-	rpl.list(_nickname); // client is not nickname, to be checked
+	rpl.list(_nickname); // recipient nick
 	rpl.list("Welcome to the network, " + _nickname + "!" + _username + "@" + _host);
 	rpl.ship(1);
 	return;
@@ -160,9 +173,8 @@ void	Client::rpl_YourHost( void )
 {
 	Reply	rpl(*this);
 	
-	rpl.list(_nickname); // client is not nickname, to be checked
-	rpl.list("Your host is ");
-	rpl.list(getServername());
+	rpl.list(_nickname); // recipient nick
+	rpl.list("Your host is " + getServername() + ", running version " + getServerVersion());
 	rpl.ship(2);
 	return;
 }
@@ -171,7 +183,7 @@ void	Client::rpl_Created( void )
 {
 	Reply	rpl(*this);
 	
-	rpl.list(getNickname()); // client is not nickname, to be checked
+	rpl.list(getNickname()); // recipient nick
 	rpl.list("The server was created ");
 	rpl.list(getServerLaunchTime());
 	rpl.list(", running version ");
@@ -184,7 +196,7 @@ void	Client::rpl_MyInfo( void )
 {
 	Reply	rpl(*this);
 
-	rpl.list(getNickname()); // client is not nickname, to be checked
+	rpl.list(getNickname()); // recipient nick
 	rpl.list(getServername());
 	rpl.list(getServerVersion());
 	rpl.list("o");
@@ -262,9 +274,6 @@ void	Client::rpl_UnexpectedQuit( const std::string &msg )
 {
 	Reply	rpl(*this);
 
-	/*rpl.list("ERROR");
-	rpl.list(msg);
-	rpl.ship();*/
 	rpl.list("QUIT");
 	rpl.list(msg);
 	rpl.ship();
@@ -292,7 +301,7 @@ void	Client::rpl_WhoReply( const std::string &chan )
 	if (_server->isChannelExist(chan) == true && _server->getChannel(chan)->isOperator(*this) == true)
 		str += "*";
 	rpl.list(str);
-	rpl.list("0" + _realname);
+	rpl.list("0 " + _realname);
 	rpl.ship(352);
 	return;
 }

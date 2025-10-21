@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 13:34:28 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/21 14:57:28 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,40 +40,40 @@ class Channel {
 		std::map<int, Client *>	&getOpsClients( void );
 		
 		//membership management
-		void addMember( Client & );
-		void removeMember( Client & );
-		bool isMember( Client & );
+		void					addMember( Client & );
+		void					removeMember( Client & );
+		bool					isMember( Client & );
 		
 		//key (password) related
-		int				setKey(const std::string &key, const bool only_check);
-		void			unsetKey( void );
-		bool 			checkKey(const std::string &key) const;
-		bool 			hasKey(void) const;
-		std::string 	getKey(void) const;
+		int						setKey(const std::string &key, const bool only_check);
+		void					unsetKey( void );
+		bool 					checkKey(const std::string &key) const;
+		bool 					hasKey(void) const;
+		std::string 			getKey(void) const;
 		
 		//limit related
-		void	setLimit( size_t limit );
-		void	unsetLimit( void );
-		size_t	getLimit( void ) const;
-		bool	hasReachedLimit( void ) const;
+		void					setLimit( size_t limit );
+		void					unsetLimit( void );
+		size_t					getLimit( void ) const;
+		bool					hasReachedLimit( void ) const;
 		
 		//invite only related
-		void	setInviteOnly( bool );
-		bool	isInviteOnly( void ) const;
-		void	addInvite(Client & );
-		void 	removeInvite(Client & );
-		bool 	isInvited(Client & );
+		void					setInviteOnly( bool );
+		bool					isInviteOnly( void ) const;
+		void					addInvite(Client & );
+		void 					removeInvite(Client & );
+		bool 					isInvited(Client & );
 		
 		//topic related
-		std::string	getTopic( void ) const;
-		void 		setTopic( const std::string & );
-		void 		setTopicLocked( bool );
-		bool 		isTopicLocked( void ) const;
+		std::string				getTopic( void ) const;
+		void 					setTopic( const std::string & );
+		void 					setTopicLocked( bool );
+		bool 					isTopicLocked( void ) const;
 
 		//operator management
-		void addOperator(Client & );
-		void removeOperator(Client & );
-		bool isOperator(Client & );
+		void					addOperator(Client & );
+		void					removeOperator(Client & );
+		bool					isOperator(Client & );
 		
 		/* Exceptions messages */
 		class ErrnoException: public std::exception {
@@ -81,6 +81,7 @@ class Channel {
 				virtual const char* what() const throw()
 				{ return std::strerror(errno); }
 		};
+		
 	private:
 		/* Coplien form - unauthorized constructors */	
 		Channel ( const Channel &other );

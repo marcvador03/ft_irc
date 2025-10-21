@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Errors.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:31:02 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/10 17:52:31 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/21 19:33:40 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	Client::err_noSuchChannel( const std::string &chan )
 	return ;
 }
 
+/*405*/
 void	Client::err_tooManyChannels( const std::string &chan )
 {
 	Reply	err(*this);
@@ -47,6 +48,7 @@ void	Client::err_tooManyChannels( const std::string &chan )
 	return ;
 }
 
+/*475*/
 void	Client::err_BadChannelKey( const std::string &chan )
 {
 	Reply	err(*this);
@@ -58,6 +60,7 @@ void	Client::err_BadChannelKey( const std::string &chan )
 	return ;
 }
 
+/*471*/
 void	Client::err_ChannelIsFull( const std::string &chan )
 {
 	Reply	err(*this);
@@ -69,6 +72,7 @@ void	Client::err_ChannelIsFull( const std::string &chan )
 	return ;
 }
 
+/*473*/
 void	Client::err_InviteOnlyChan( const std::string &chan )
 {
 	Reply	err(*this);
@@ -80,44 +84,48 @@ void	Client::err_InviteOnlyChan( const std::string &chan )
 	return ;
 }
 
+/*476*/
 void	Client::err_BadChanMask( const std::string &chan )
 {
 	Reply	err(*this, _nickname);
 
-	//err.list(_nickname);
+	err.list(_nickname);
 	err.list(chan);
 	err.list("Bad channel mask");
 	err.ship(476);
 	return ;
 }
 
+/*442*/
 void	Client::err_notOnChannel( const std::string &chan ) 
 {
 	Reply	err(*this, _nickname);
 
-	//err.list(_nickname);
+	err.list(_nickname);
 	err.list(chan);
 	err.list("You're not on that channel");
 	err.ship(442);
 	return ;
 }
 
+/*412*/
 void	Client::err_noTextToSend( void )
 {
 	Reply	err(*this, _nickname);
 
-	//err.list(_nickname);
+	err.list(_nickname);
 	err.list("No text to send");
 	err.ship(412);
 	return ;
 }
 
-void	Client::err_noSuchNick( void )
+/*401*/
+void	Client::err_noSuchNick( const std::string &nick )
 {
 	Reply	err(*this);
 
 	err.list(_nickname);
-	err.list(_nickname);
+	err.list(nick);
 	err.list("No such nick/channel");
 	err.ship(401);
 	return ;
@@ -244,7 +252,7 @@ void	Client::err_UserOnChannel( const std::string &nick, const std::string &chan
 {
 	Reply	err(*this, _nickname);
 
-	//err.list(_nickname);
+	err.list(_nickname);
 	err.list(nick);
 	err.list(chan);
 	err.list("is already on channel");
@@ -261,6 +269,6 @@ void	Client::err_UserNotInChannel( const std::string &nick, const std::string &c
 	err.list(nick);
 	err.list(chan);
 	err.list("They aren't on that channel");
-	err.ship(443);
+	err.ship(441);
 	return ;
 }

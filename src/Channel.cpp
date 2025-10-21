@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/14 13:34:57 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/21 18:49:38 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,23 +241,3 @@ bool Channel::isTopicLocked() const
 {
 	return _topicLocked;
 }
-
-/*void Channel::broadcast_all(const std::string &msg, const std::string src)
-{
-	for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
-	{
-		Reply	broadcast(*it->second, src);
-		if (it->second->getNickname() != src)
-			broadcast.ship(msg);
-	}
-}
-
-void Channel::broadcast_ops(const std::string &msg, const std::string src)
-{
-	for (std::map<int, Client *>::iterator it = _operators.begin(); it != _operators.end(); ++it)
-	{
-		Reply	broadcast(*it->second, src);
-		if (it->second->getNickname() != src)
-			broadcast.ship(msg);
-	}
-}*/

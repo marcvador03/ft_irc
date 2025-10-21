@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:50:24 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/21 19:21:29 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void Client::handlePrivMsg( t_arg args )
 			if (_server->isClientExist(tmp[i]) == true)
 				targets.insert(std::pair<int, std::string>(0, tmp[i]));
 			else
-				err_noSuchNick();
+				err_noSuchNick(tmp[i]);
 		}
 	}
 	

@@ -6,11 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/10/06 15:04:25 by mfleury          ###   ########.fr       */
-=======
-/*   Updated: 2025/10/14 13:08:18 by mfleury          ###   ########.fr       */
->>>>>>> fe18696f771d42addfe4da3e34a226d73f515bec
+/*   Updated: 2025/10/22 14:11:12 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +32,6 @@ void	Client::rpl_Unaway( void )
 	Reply	rpl(*this);
 
 	rpl.list(_nickname);
-<<<<<<< HEAD
-	rpl.list(_nickname);
-	//client away message string
-	rpl.ship(301);
-	return ;
-=======
 	rpl.list("You are no longer marked as being away");	
 	rpl.ship(305);
 
@@ -58,7 +48,6 @@ void	Client::rpl_NowAway( void )
 	rpl.ship(306);
 
 	return;
->>>>>>> fe18696f771d42addfe4da3e34a226d73f515bec
 }
 
 /*RPL_NAMES_REPLY*/
@@ -113,18 +102,6 @@ void	Client::rpl_Topic( Channel &chan )
 	rpl.list(chan.getName());
 	rpl.list(chan.getTopic());
 	rpl.ship(332);
-	return;
-}
-
-void	Client::rpl_TopicWhoTime( Channel &chan )
-{
-	Reply	rpl(*this);
-
-	rpl.list(_nickname);
-	rpl.list(chan.getName());
-	rpl.list(chan.getTopicCreator());
-	rpl.list(chan.getTopicTime());
-	rpl.ship(333);
 	return;
 }
 

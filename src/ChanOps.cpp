@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/22 14:03:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:10:34 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,22 +78,12 @@ void Client::handleJoin( t_arg args )
 				join.list("JOIN");
 				join.list(c->getName()); //channel name
 				join.ship();
-<<<<<<< HEAD
-				if (c->getTopic().empty() == false)
-				{
-					rpl_Topic(*c);
-					rpl_TopicWhoTime(*c);
-				}
-				rpl_NamReply(*c);
-				rpl_EndOfNames(*c);
-=======
 				if (c->getTopic().empty() == false) 
 					rpl_Topic(*c); //sends 332
 				else
 					rpl_noTopic(*c); 
 				rpl_NamReply(*c); //sends 353
 				rpl_EndOfNames(*c); //sends 366
->>>>>>> fe18696f771d42addfe4da3e34a226d73f515bec
 			}
 		}
 	}
@@ -253,14 +243,9 @@ void	Client::handleTopic( t_arg args )
 	//check if there is only channel name (no topic) - then just return the topic
 	if (args.size() == 2)
 	{
-<<<<<<< HEAD
-		chan->setTopic(args[2], _nickname);
-		rpl_TopicAll(args[1]);
-=======
 		if (chan->getTopic().empty())
 			return (rpl_noTopic(args[1])); //331
 		return (rpl_Topic(args[1])); //332
->>>>>>> fe18696f771d42addfe4da3e34a226d73f515bec
 	}
 
 	//check if topic is locked and if user is not an operator
@@ -281,7 +266,7 @@ void	Client::handleTopic( t_arg args )
 		newTopic.resize(topicLen);
 
 	//set the topic
-	chan->setTopic(newTopic);
+	chan->setTopic(newTopic, _nickname);
 	
 	//broadcast to all channel members 
 	rpl_TopicAll(args[1]);

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 15:43:31 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 14:57:32 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 Channel::Channel ( const std::string name , Client &c):
 	_name(name),
-	_topic(""),
 	_inviteOnly(false),
 	_topicLocked(false),
 	_hasKey(false),
 	_hasLimit(false),
-	_creationtime(std::time(NULL))
+	_creationtime(std::time(NULL)),
+	_topic("")
 {
 	std::cout << "Channel created" << std::endl;
 	addMember(c);
@@ -215,10 +215,13 @@ std::string	Channel::getCreationTime( void ) const
 	ss << _creationtime;
 	return ss.str();
 }
+
 //topic related
-void 		Channel::setTopic( const std::string &topic )
+void 		Channel::setTopic( const std::string &topic, const std::string &nick )
 {
 	_topic = topic;
+	_topiccreator = nick;
+	_topiccreationtime = std::time(NULL);
 }
 
 void 		Channel::setTopicLocked( bool b)
@@ -229,6 +232,19 @@ void 		Channel::setTopicLocked( bool b)
 std::string	Channel::getTopic( void ) const
 {
 	return this->_topic;
+}
+
+std::string	Channel::getTopicCreator( void ) const
+{
+	return this->_topiccreator;
+}
+
+std::string	Channel::getTopicTime( void ) const
+{
+	std::stringstream ss;
+
+	ss << _topiccreationtime;
+	return ss.str();
 }
 
 bool Channel::isTopicLocked() const

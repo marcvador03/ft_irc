@@ -6,7 +6,7 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/06 14:19:33 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 15:04:25 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	Client::rpl_Away( void )
 	//client away message string
 	rpl.ship(301);
 	return ;
-
 }
 
 /*RPL_NAMES_REPLY*/
@@ -77,6 +76,18 @@ void	Client::rpl_Topic( Channel &chan )
 	rpl.list(chan.getName());
 	rpl.list(chan.getTopic());
 	rpl.ship(332);
+	return;
+}
+
+void	Client::rpl_TopicWhoTime( Channel &chan )
+{
+	Reply	rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(chan.getName());
+	rpl.list(chan.getTopicCreator());
+	rpl.list(chan.getTopicTime());
+	rpl.ship(333);
 	return;
 }
 

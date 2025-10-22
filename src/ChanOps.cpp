@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 15:52:43 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 15:40:26 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,10 @@ void Client::handleJoin( t_arg args )
 				join.list(it->first);
 				join.ship();
 				if (c->getTopic().empty() == false)
+				{
 					rpl_Topic(*c);
+					rpl_TopicWhoTime(*c);
+				}
 				rpl_NamReply(*c);
 				rpl_EndOfNames(*c);
 			}
@@ -190,7 +193,7 @@ void	Client::handleTopic( t_arg args )
 		return (rpl_noTopic(args[1]));
 	else
 	{
-		chan->setTopic(args[2]);
+		chan->setTopic(args[2], _nickname);
 		rpl_TopicAll(args[1]);
 	}
 	return ;

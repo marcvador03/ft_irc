@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 14:52:19 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 15:00:02 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,11 @@ class Channel {
 		
 		//topic related
 		std::string	getTopic( void ) const;
-		void 		setTopic( const std::string & );
+		void 		setTopic( const std::string &, const std::string & );
 		void 		setTopicLocked( bool );
 		bool 		isTopicLocked( void ) const;
+		std::string	getTopicCreator( void ) const;
+		std::string	getTopicTime( void ) const;
 
 		//operator management
 		void addOperator(Client & );
@@ -90,14 +92,16 @@ class Channel {
 		std::map <int, Client *>	_invites;
 
 		std::string	_name;			//channel name
-		std::string	_topic;			//channel topic
 		bool		_inviteOnly;	//mode 'i' - new members can only join when inviteed by other users (true) / everyone can join (false)
 		bool		_topicLocked;	//mode 't' - topic of the channel can (false) or cannot be changed (true)
 		bool		_hasKey;		//mode 'k' - the channel has key (password) (true) or doesn't have it (false)
 		std::string	_key;			//mode 'k''s key (password) storage
 		bool		_hasLimit;		//mode 'l' - flag for the limit - false = no limit set on the channel
 		size_t		_limit;			//mode 'l' - the channel doesn't have any limit of users (0) or has a limit of users within the range of unsigned int (1 - 4,294,967,295)
-		time_t		_creationtime;
+		std::time_t	_creationtime;
+		std::string	_topic;			//channel topic
+		std::string	_topiccreator;  //who created the last topic
+		std::time_t	_topiccreationtime;	
 };
 
 #endif

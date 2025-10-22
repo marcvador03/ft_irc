@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 15:41:06 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/06 14:32:45 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ class Client {
 		void	rpl_noTopic( const std::string & );
 		void	rpl_Topic( const std::string &);
 		void	rpl_TopicAll( const std::string & );
+		void	rpl_TopicWhoTime( Channel &chan );
 
 		/*ERR functions */
 		void	err_NeedMoreParameters( const std::string & );

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:14:20 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 13:34:01 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/15 17:29:28 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,49 @@
 # include <string>
 # include <vector>
 # include <sstream>
+# include <cctype>
 # include "ft_irc.h"
+
+enum CaseMapping { CASEMAPPING_ASCII, CASEMAPPING_RFC1459 };
+
+inline CaseMapping parseCaseMapping(const std::string &s)
+{
+	return (s == "ascii") ? CASEMAPPING_ASCII : CASEMAPPING_RFC1459;
+}
+
+inline char fold_ascii_char(unsigned char c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return static_cast<char>(c + ('a' - 'A'));
+	return static_cast<char>(c);
+}
+
+inline char fold_rfc1459_char(unsigned char c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return static_cast<char>(c + ('a' - 'A'));
+	if (c == '{')
+		return '[';
+	if (c == '}')
+		return ']';
+	if (c == '|')
+		return '\\';
+
+	return static_cast<char>(c);
+}
+
+// Template to fold any basic string-like type according to CaseMapping
+template<typename StringT>
+StringT casefold(const StringT &s, CaseMapping cm)
+{
+	StringT out;
+	for (size_t i = 0; i < s.size(); ++i)
+	{
+		unsigned char c = static_cast<unsigned char>(s[i]);
+		out.push_back(cm == CASEMAPPING_ASCII ? fold_ascii_char(c) : fold_rfc1459_char(c));
+	}
+	return out;
+}
 
 /*template<typename T>
 void	log(T input)
@@ -25,10 +67,10 @@ void	log(T input)
 	std::cout << "\033[0;36m" << input << "\033[0;37m "<< std::endl; 
 };*/
 
-template<typename U> 
-std::vector<U>	split(const U &input, char delimiter)
+template<typename T> 
+std::vector<T>	split(const T &input, char delimiter)
 {
-	std::vector<U>		tokens;
+	std::vector<T>		tokens;
 	std::string 		token;
 	std::string 		s(input);
 	std::istringstream	tokenStream(s);
@@ -39,6 +81,25 @@ std::vector<U>	split(const U &input, char delimiter)
 	}
 	return tokens;
 };
+
+template<typename T> 
+void toupper(T &str)
+{
+	for (size_t i = 0; i < str.size(); ++i)
+		str[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(str[i])));
+}
+
+template<typename T> 
+std::string trimstr (const T &str) 
+{
+	const std::string WHITESPACE = " \n\r\t\f\v";
+	size_t start = str.find_first_not_of(WHITESPACE);
+	if (start == std::string::npos)
+		return "";
+	size_t end = str.find_last_not_of(WHITESPACE);
+	return str.substr(start, end - start + 1);
+}
+
 
 /*template<typename U> 
 std::vector<std::string> split(U input, char delimiter)

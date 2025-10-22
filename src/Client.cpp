@@ -6,12 +6,13 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/02 14:36:19 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/17 15:22:42 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/utils.hpp"
 #include "../inc/Client.hpp"
+#include "../inc/Server.hpp"
 
 Client::Client (Server *s, int slot): //we will need to revisit all Server parameters set at start!!//
 		_server(s),
@@ -20,13 +21,23 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 		_isRegistered(false),
 		_hasNick(false),
 		_hasUser(false),
-		_chanlim(10),
-		_away(false)
+		_chanlim(s->getChanLim()),
+		_away(false),
+		_awaymsg("")
 {
+	struct sockaddr_in 	addr;
+	char 				ip_addr[INET_ADDRSTRLEN];
+	socklen_t			addr_len;
+
+	addr_len = sizeof(addr);
+	std::memset(&addr, 0, sizeof(addr));
 	this->_socklen = sizeof(this->_client_addr);
 	this->_clientfd = accept(_server->getFd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
 	if (this->_clientfd == -1)
 		throw Client::ErrnoException();
+	if(getsockname(_clientfd, (struct sockaddr *)&addr, &addr_len) == -1)
+		throw Client::ErrnoException();
+	_host = inet_ntop(AF_INET, &(addr.sin_addr), ip_addr, INET_ADDRSTRLEN);
 	std::cout << "Client connected" << std::endl;
 }
 
@@ -82,20 +93,39 @@ std::string	Client::getNickname( void ) const
 	return this->_nickname;
 }
 
+static bool isNickValidSymbol( unsigned char c )
+{
+	return ( c == '[' || c == ']' || c =='\\' || c == '`' || c == '_' || c == '^' || c == '{' || c == '}' || c == '|' );
+}
+
+
+bool Client::isNicknameValid( std::string &nick )
+{
+	if (nick.size() > static_cast<unsigned long>(_server->getLen("NICKLEN", "Nick", 30)))
+		return false;
+
+	unsigned char c0 = static_cast<unsigned char>(nick[0]);
+
+	if (!(isNickValidSymbol(c0) || std::isalpha(c0))) 
+		return false;
+	for (size_t i = 1; i < nick.size(); ++i) 
+	{
+		unsigned char c = static_cast<unsigned char>(nick[i]);
+		if (!(isNickValidSymbol(c) || std::isalnum(c) || c == '-'))
+			return false;
+	}
+	return true;		
+}
+
 int	Client::setNickname( std::string &nick)
 {
 	//check if nickname is provided
 	if (nick.empty())
 		return 431;
 	//validate nickname format
-	if (nick[0] == '#' || nick[0] == ':' || std::isspace(nick[0]))
+	if (Client::isNicknameValid(nick) == false)
 		return 432;
-	for (size_t i = 0; i < nick.size(); ++i)
-	{
-		char c = nick[i];
-		if (!std::isalnum(c) && std::string("[]{}\\|").find(c) == std::string::npos)
-			return 432;
-	}
+	//check if nickname is already in use
 	if (this->_server->InsertNick(nick) == false)
 		return 433;
 	this->_nickname = nick;
@@ -103,10 +133,49 @@ int	Client::setNickname( std::string &nick)
 	return _completeReg();
 }
 
+bool Client::isUsernameValid( std::string &user )
+{
+	if (user.size() > static_cast<unsigned long>(_server->getLen("USERLEN", "User", 12)))
+		return false;
+
+	for (size_t i = 0; i < user.size(); ++i) 
+	{
+		unsigned char c = static_cast<unsigned char>(user[i]);
+		if (c == 0 || c == '\r' || c == '\n' || c == ' ' || c == '@')
+			return false;
+		if (!std::isprint(c))
+			return false;
+	}
+	return true;		
+}
+
+bool Client::isRealnameValid( std::string &real )
+{
+	if (real.size() > REALNAME_LEN) //defined in Client.hpp
+		return false;
+	for (size_t i = 0; i < real.size(); ++i)
+	{
+		unsigned char c = static_cast<unsigned char>(real[i]);
+		if (c == 0 || c == '\r' || c == '\n')
+			return false;
+		if (!std::isprint(c))
+			return false;
+	}
+	return true;		
+}
+
 int	Client::setUser( std::string &user, std::string &real)
 {
-	if (user.empty() == true|| real.empty() == true)
-		return 431;
+	//check if username and real name are provided
+	if (user.empty() == true || real.empty() == true)
+		return 461;
+	//validate username format
+	if (Client::isUsernameValid(user) == false)
+		return 461;
+	//validate realname format
+	if (isRealnameValid(real) == false) //TO DO
+		return 461;
+
 	//missing validating user length
 	this->_username = user;
 	this->_realname = real;
@@ -122,6 +191,11 @@ std::string	Client::getHost( void ) const
 std::string	Client::getUser( void ) const
 {
 	return this->_username;
+}
+
+std::string	Client::getRealname( void ) const
+{
+	return this->_realname;
 }
 
 int		Client::leaveChannel( std::string name)
@@ -155,24 +229,56 @@ int		Client::leaveAllChannels( void )
 	}
 	return (0);
 }
+
+bool Client::isChannelnameValid( std::string &chan)
+{
+	std::string chantypes = _server->getSetting("CHANTYPES"); // can be "#&+!"
+	if (chantypes == "")
+		chantypes = "#";
 	
+	const int chanlen = _server->getLen("CHANNELLEN", "Channel", 32);
+
+	//check if channel name is not empty and prefix is valid according to the irc_config
+	if (chan.empty() || chantypes.find(chan[0]) == std::string::npos)
+		return false;
+	
+	//check channel name lenght
+	if (chan.length() < 2 || chan.length() > static_cast<size_t>(chanlen))
+		return false;
+	
+	//check if doesn't contain forbidden symbols
+	if (	chan.find(' ') != std::string::npos \
+			|| chan.find(0x07) != std::string::npos \
+			|| chan.find(',') != std::string::npos)
+		return false;
+	
+	//check if all characters are printable
+	for (size_t i = 0; i < chan.length(); ++i)
+	{
+		unsigned char c = static_cast<unsigned char>(chan[i]);
+		if (!std::isprint(c))
+			return false;
+	}
+
+	return true;
+}
+
 int		Client::joinChannel( std::string name, std::string key )
 {
 	Channel *ch;
 	
+	//check if channel limit per user is not exceeded
 	if (_channels.size() >= _chanlim)
 		return 405;
-	if (name[0] != '&' && name[0] != '#')
-		return 476;
-	if (	name.find(' ') != std::string::npos \
-			|| name.find(0x07) != std::string::npos \
-			|| name.find(',') != std::string::npos)
+	//channel name checks for setting up new channel
+	if (isChannelnameValid(name) == false)
 		return 476;
 	ch = _server->getChannel(name, *this);
 	if (ch->checkKey(key) == false)
 		return 475;
 	if (ch->isInviteOnly() == true && ch->isInvited(*this) == false)
 		return 473;
+	//checks if the channel's clients limit isn't reached
 	if (ch->hasReachedLimit() == true)
 		return 471;
 	ch->addMember(*this);
@@ -188,7 +294,7 @@ bool	Client::isPartofChannel( std::string &name )
 	ch = _server->getChannel(name, *this);
 	return (ch->isMember(*this));
 }
-		
+
 int		Client::registerPass( std::string &pass)
 {
 	if (pass.empty() == true && _server->checkPass(pass) == false)
@@ -197,6 +303,8 @@ int		Client::registerPass( std::string &pass)
 		return 462;
 	if (_server->checkPass(pass) == false)
 		return 464;
+	if (pass == "")
+		return 1; //no password set on server;
 	_isPassAccepted = true;
 	return 0;
 }
@@ -219,4 +327,14 @@ bool		Client::isRegistered( void ) const
 {
 	return (_isRegistered);
 
+}
+	
+bool		Client::getAwayStatus( void ) const
+{
+	return _away;
+}
+
+std::string	Client::getAwayMsg( void ) const
+{
+	return _awaymsg;
 }

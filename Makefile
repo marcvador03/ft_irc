@@ -18,7 +18,8 @@ SRC_NAMES := main.cpp \
 			 OtherCmds.cpp \
 			 Registration.cpp \
 			 Reply.cpp \
-			 Rpl.cpp
+			 Rpl.cpp \
+			 UserQry.cpp
 
 INC_NAMES := ft_irc.h 
 

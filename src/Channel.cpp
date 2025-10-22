@@ -6,13 +6,14 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:17:51 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/06 14:57:32 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:03:23 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Channel.hpp"
 
-Channel::Channel ( const std::string name , Client &c):
+Channel::Channel ( Server *s, const std::string &name , Client &c):
+	_server(s),
 	_name(name),
 	_inviteOnly(false),
 	_topicLocked(false),
@@ -57,6 +58,8 @@ void	Channel::removeMember( Client &c )
 		this->_clients.erase(it1);
 	if (it2 != this->_operators.end())
 		this->_operators.erase(it2);
+	if(_clients.empty() == true)
+		_server->deleteChannel(this);
 }
 
 bool 	Channel::isMember( Client &c )
@@ -92,7 +95,7 @@ bool Channel::isOperator(Client &c)
 }
 
 //key (password) related
-int Channel::setKey(const std::string &key)
+int Channel::setKey(const std::string &key, const bool only_check)
 {
 	if (key.empty() == true)
 		return -1;
@@ -101,8 +104,11 @@ int Channel::setKey(const std::string &key)
 		if (key[i] == 32 || std::isalnum(key[i]) == false)
 			return -1;
 	}
-	this->_hasKey = true;
-	this->_key = key;
+	if (only_check == false)
+	{
+		this->_hasKey = true;
+		this->_key = key;
+	}
 	return 0;
 }
 

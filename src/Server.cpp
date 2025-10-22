@@ -6,13 +6,16 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/06 12:53:16 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/20 19:43:49 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
+#include "../inc/utils.hpp"
+#include <cctype> // for toupper
+#include <climits> // for INT_MAX
 
-Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!!
+Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!! <-done
 	_name(servername),
 	_password(pass),
 	_version("1.0")	
@@ -25,67 +28,20 @@ Server::Server ( const std::string &servername, const std::string &pass ): // we
 
 Server::~Server( void )
 {
+	std::map<int, Client *>::iterator 			it;
+	std::map<std::string, Channel *>::iterator 	it2;
+
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{		
+		it->second->rpl_UnexpectedQuit("Server was shut");
+		delete it->second;
+	}
+	for (it2 = _channels.begin(); it2 != _channels.end(); it2++)
+		delete it2->second;
 	this->closefds();
 }
 
-void	Server::setSettings(const char *link)
-{
-	std::ifstream	config;
-	t_list			tmp;
-	std::string 	line, set, val;
-	
-	config.open(link);
-	if (config.is_open() == true)
-	{
-		for (int i = 0, j = 0; std::getline(config, line) ; i++, j++)
-		{
-			
-			if (line.find("=") == line.npos)
-				tmp.insert(std::pair<std::string, std::string>(line, ""));
-			else
-			{	
-				set = line.substr(0, line.find("="));	
-				val = line.substr(line.find("=") + 1, line.size());	
-				tmp.insert(std::pair<std::string, std::string>(set, val));
-			}
-			if (j == 13)
-			{	
-				_settings.push_back(tmp);
-				j = 0;
-				tmp.clear();
-			}
-		}
-		if (tmp.size() > 0)
-			_settings.push_back(tmp);
-		tmp.clear();
-		_setChanPrefix();
-	}
-	else
-		throw std::runtime_error("Could not open setting file");
-
-}
-
-std::string		Server::getSetting(const std::string str) const
-{
-	for (size_t i = 0; i < _settings.size();i++)
-	{
-		if (_settings[i].find(str) != _settings[i].end())
-			return _settings[i].find(str)->second;
-	}
-	return "";
-}
-
-void	Server::_setChanPrefix( void )
-{
-	std::string	str;
-
-	str = getSetting("STATUSMSG");
-	_chantags.erase(_chantags.begin(), _chantags.end());
-	if (str.empty() == true)
-		return;	
-	for (size_t i = 0; i < str.size();i++)
-		_chantags.push_back(str[0]);
-}
+/* Server launch sequences */
 
 void	Server::launch( void )
 {
@@ -96,12 +52,15 @@ void	Server::launch( void )
 	std::memset(&this->_server_addr, 0, sizeof(this->_server_addr));
 	this->_server_addr.sin_family = AF_INET;
 	this->_server_addr.sin_addr.s_addr = INADDR_ANY;
-	this->_server_addr.sin_port = htons(PORT);
+	this->_server_addr.sin_port = htons(this->_port);	
 	this->_socklen = sizeof(this->_server_addr);
 	std::cout << "Server launched" << std::endl;
+	int	reuse = 1;
+	if (setsockopt(this->_serverfd, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuse, sizeof(reuse)) == -1)
+		throw Server::ErrnoException(); 
 	if (bind(this->_serverfd, (const struct sockaddr *)&(this->_server_addr), sizeof(this->_server_addr)) == -1)
 		throw Server::ErrnoException(); 
-	std::cout << "Server bound to address and port: " << PORT << std::endl;
+	std::cout << "Server bound to address and port: " << this->_port << std::endl;
 }
 
 void	Server::listen_poll( void )
@@ -130,8 +89,15 @@ void	Server::listen_poll( void )
 			}
 		}
 	}
-	this->closefds();
 }
+
+void	Server::closefds( void )
+{
+	close(this->_serverfd);
+	std::cout << "Server file descriptor has been properly shutdown" << std::endl;
+}
+
+/* Method to receive bytes from client socket */
 
 void	Server::ReceiveInput(Client *c)
 {
@@ -155,7 +121,7 @@ void	Server::ReceiveInput(Client *c)
 		std::cout << "|" << buf;
 		for (std::string line; std::getline(ss, line);) 
 		{
-			line = this->_trim(line);
+			line = trimstr(line);
 			if (line.empty())
 				continue;
 			std::istringstream sub_line(line);
@@ -169,6 +135,10 @@ void	Server::ReceiveInput(Client *c)
 				}
 				else
 					std::getline(sub_line, args[i], ' ');
+			}
+			if (!args[0].empty()) {
+				toupper(args[0]); //capitalizing command token only
+				//std::cout << "Parsed command: " << args[0] << std::endl;
 			}
 			this->LaunchCmd(c);
 			args.erase(args.begin(), args.end());
@@ -222,94 +192,14 @@ void	Server::LaunchCmd(Client *c)
 		c->handleInvite(args);
 	else if (args[0] == "TOPIC")
 		c->handleTopic(args);
-}
-
-void	Server::closefds( void )
-{
-	close(this->_serverfd);
-	std::cout << "Server has been properly shutdown" << std::endl;
-}
-
-/* Internal Functions to add/remove clients within the list of connections */
-void	Server::addClient( void )
-{
-	Client	*c;
-
-	int	slot = this->getFirstSlot();
-	c = new Client(this, slot);
-	this->_pfd[slot].fd = c->getClientfd();
-	this->_pfd[slot].events = POLLIN;
-	this->_clients.insert(std::make_pair(slot, c));
-	std::cout << "A new Client was added" << std::endl;
-}
-
-void	Server::removeClient( const Client *client )
-{
-	std::map<int, Client *>::iterator it;
-	it = _clients.find(client->getSlot());
-	if (it != _clients.end())
-	{
-		close(client->getClientfd());
-		setFreeSlot(client->getSlot());
-		removeNick(client->getNickname());
-		delete it->second;
-		_clients.erase(it);
-		std::cout << "Client was disconnected" << std::endl;
-	}
-}
-		
-bool	Server::isClientExist(const std::string &name)
-{
-	std::map<int, Client *>::iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++)
-	{
-		if (name.compare(it->second->getNickname()) == 0)
-			return true;
-	}
-	return false;
-
-}
-std::map<int, Client *>	&Server::getAllClients( void )
-{
-	return _clients;
-}
-
-Client	&Server::getClient ( const std::string &name )
-{
-	std::map<int, Client *>::iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++)
-	{
-		if (name.compare(it->second->getNickname()) == 0)
-			return *it->second;
-	}
-	return *it->second;
-}
-
-/* Setters, Getters and private functions to manage available slot list */
-int	Server::getFirstSlot( void )
-{
-	for (int i = 0; i < MAX_CONNECTIONS; i++)
-	{
-		if (this->_slots[i] == false)
-		{
-			this->_slots[i] = true;
-			return i;
-		}
-	}
-	//if max connections is reached?
-	return (-1);
-}
-
-void	Server::setFreeSlot( const int i )
-{
-	this->_slots[i] = false;
-	//if i > max connections?
-}
-
-void	Server::setBusySlot( const int i)
-{
-	this->_slots[i] = true;
-	//if i > max connections?
+	else if (args[0] == "WHO")
+		c->handleWho(args);
+	else if (args[0] == "WHOIS")
+		c->handleWhoIs(args);
+	else if (args[0] == "AWAY")
+		c->handleAway(args);
+	else if (args[0] == "LIST")
+		c->handleList(args);
 }
 
 /*Getters & Setters */
@@ -336,73 +226,260 @@ std::string	Server::getVersion() const
 	return (this->_version);
 }
 
+void	Server::setPort(const int port)
+{
+	this->_port = port;
+}
+
+/*Settings getters & setters*/	
+
+std::string		Server::getSetting(const std::string str) const
+{
+	for (size_t i = 0; i < _settings.size();i++)
+	{
+		if (_settings[i].find(str) != _settings[i].end())
+			return _settings[i].find(str)->second;
+	}
+	return "";
+}
+
 t_settings	Server::getSettings() const
 {
 	return (this->_settings);
 }
 
+void	Server::setSettings(const char *link)
+{
+	std::ifstream	config;
+	t_list			tmp;
+	std::string 	line, set, val;
+	
+	config.open(link);
+	if (config.is_open() == true)
+	{
+		for (int i = 0, j = 0; std::getline(config, line) ; i++, j++)
+		{
+			
+			if (line.find("=") == line.npos)
+				tmp.insert(std::pair<std::string, std::string>(line, ""));
+			else
+			{	
+				set = line.substr(0, line.find("="));	
+				val = line.substr(line.find("=") + 1, line.size());	
+				tmp.insert(std::pair<std::string, std::string>(set, val));
+			}
+			if (j == 13)
+			{	
+				_settings.push_back(tmp);
+				j = 0;
+				tmp.clear();
+			}
+		}
+		if (tmp.size() > 0)
+			_settings.push_back(tmp);
+		tmp.clear();
+		_setChanPrefix();
+		_parseMaxtargets();
+		_parseTargmax();
+	}
+	else
+		throw std::runtime_error("Could not open setting file");
+}
+
+size_t			Server::getChanLim() const
+{
+	std::vector<std::string>	str;
+	std::map<char, int>		chanset;
+
+	str = split(getSetting("CHANLIMIT"), ',');
+	for (std::vector<std::string>::iterator it = str.begin(); it != str.end(); it++)
+	{
+		if ((*it).find(":") != (*it).npos)
+		{
+			for (size_t i = (*it).find(":") + 1; i < (*it).size();i++)
+			{
+				if (std::isdigit((*it)[i]) == false)
+					return 1000;	
+			}
+			size_t n = std::atoi((*it).substr((*it).find(":") + 1, (*it).size()).c_str());
+			for (size_t i = 0; i != (*it).find(":"); i++)
+			{
+				if ((*it)[i] == '#')
+					return n;
+			}
+		}
+	}
+	return 1000;
+}
+
+size_t Server::getTargmax() const
+{
+	return _targmaxDefault;
+}
+
+size_t Server::getTargmax(const std::string &cmd) const
+{
+	std::string key = trimstr(cmd); //utils.hpp
+	toupper(key); //utils.hpp
+	
+	std::map<std::string, size_t>::const_iterator it = _targmaxPerCommand.find(key);
+	if (it != _targmaxPerCommand.end())
+		return it->second;
+	return _targmaxDefault;
+}
+
+int Server::getLen(const std::string key, const std::string keyFullName, int stdLen) const
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting(key).c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! " << keyFullName << " lenght limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting standard value of " << stdLen << " characters." << std::endl;
+		return stdLen;
+	}
+	return static_cast<int>(lenLong);
+}
+
+/* Internal Functions to add/remove clients within the list of connections */
+void	Server::addClient( void )
+{
+	Client	*c;
+
+	int	slot = this->_getFirstSlot();
+	c = new Client(this, slot);
+	this->_pfd[slot].fd = c->getClientfd();
+	this->_pfd[slot].events = POLLIN;
+	this->_clients.insert(std::make_pair(slot, c));
+	std::cout << "A new Client was added" << std::endl;
+}
+
+void	Server::removeClient( const Client *client )
+{
+	std::map<int, Client *>::iterator it;
+	it = _clients.find(client->getSlot());
+	if (it != _clients.end())
+	{
+		close(client->getClientfd());
+		_setFreeSlot(client->getSlot());
+		removeNick(client->getNickname());
+		delete it->second;
+		_clients.erase(it);
+		std::cout << "Client was disconnected" << std::endl;
+	}
+}
+		
+bool	Server::isClientExist(const std::string &name)
+{
+	const std::string normalizedNick = _casefoldNick(name);
+	for (std::map<int, Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (_casefoldNick(it->second->getNickname()) == normalizedNick)
+			return true;
+	}
+	return false;
+}
+
+std::map<int, Client *>	&Server::getAllClients( void )
+{
+	return _clients;
+}
+
+Client	&Server::getClient ( const std::string &name )
+{
+	const std::string normalizedNick = _casefoldNick(name);
+	std::map<int, Client *>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		if (normalizedNick.compare(_casefoldNick(it->second->getNickname())) == 0)
+			return *it->second;
+	}
+	return *it->second;
+}
+
 /* Management of nickname list on server */
+
 bool 	Server::InsertNick(const std::string &nick)
 {
-	//insert in std::set return a std::pair, with first element pointing to the
-	//new element inserted or the duplicate element. The second element of the
-	//pair is false if it was a duplicate or true if it was inserted.
-	return (this->_nicknames.insert(nick).second);
+	// store the folded form to enforce case-insensitive uniqueness
+	return this->_nicknames.insert(_casefoldNick(nick)).second;
 }
 
 void	Server::removeNick(const std::string &nick)
 {
-	_nicknames.erase(_nicknames.find(nick));
+	_nicknames.erase(_casefoldNick(nick));
 	return;
 }
 
 /* Management of channel list on server */
-bool	Server::isChannelExist(std::string &name)
+bool	Server::isChannelExist(const std::string &name)
 {
-	std::map<std::string, Channel *>::iterator it;
-	it = _channels.find(name);
-	if (it == this->_channels.end())
-		return false;
-	return true;
-}
-
-/*Channel	*Server::createChannel(std::string &name)
-{
-	Channel *c = nullptr;
-	if (this->isChannelExist(name) == false)
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	const std::string normalizedChan = casefold(name, cm);
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
-		c = new Channel(name);
-		this->_channels.insert(std::make_pair(name, c));
+		if (casefold(it->first, cm) == normalizedChan)
+			return true;
 	}
-	return c;			
-}*/
+	return false;
+}
 
 Channel	*Server::getChannel(const std::string &name, Client &c)
 {
-	/*checks if the channel is already listed on the server list
-	 * and it not, creates it - are there cases where it should not be created? */
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	const std::string key = casefold(name, cm);
 
-	Channel *chan;
-
-	std::map<std::string, Channel *>::iterator it;
-	it = _channels.find(name);
-	if (it != this->_channels.end())
-		return it->second;
-	else
+	// try case-insensitive match
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
-		chan = new Channel(name, c);
-		this->_channels.insert(std::make_pair(name, chan));
+		if (casefold(it->first, cm) == key)
+			return it->second;
 	}
-	return chan;			
+
+	// not found: create with original casing
+	Channel *chan = new Channel(this, name, c);
+	_channels.insert(std::make_pair(name, chan));
+	return chan;
 }
 
 Channel	*Server::getChannel(const std::string &name)
 {
-	std::map<std::string, Channel *>::iterator it;
-	it = _channels.find(name);
-	if (it != this->_channels.end())
-		return it->second;
-	return it->second;
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	const std::string key = casefold(name, cm);
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+	{
+		if (casefold(it->first, cm) == key)
+			return it->second;
+	}
+	return NULL;
+}
+
+std::map<std::string, Channel *> Server::getAllChannels( void )
+{
+	return _channels;
+}
+
+std::vector<Channel *> Server::getChannelsforClient( Client & client)
+{
+	std::vector<Channel *> result;
+	for (std::map<std::string, Channel*>::const_iterator it = _channels.begin(); it !=_channels.end(); ++it)
+	{
+		if (it->second->isMember(client))
+			result.push_back(it->second);
+	}
+	return result;
+}
+
+void	Server::deleteChannel(Channel *chan)
+{
+	std::string name;
+	
+	if (chan == NULL)
+		return;
+	name = chan->getName();
+	delete _channels.find(name)->second;
+	_channels.erase(_channels.find(name));
+	return ;
 }
 
 /* Password check */
@@ -413,41 +490,103 @@ bool	Server::checkPass(const std::string &pass) const
 	return false;
 }
 
-/*std::vector<Channel*> Server::getChannelsForClient(const Client *client) const
-{
-	std::vector<Channel*> result;
-	for (std::map<std::string, Channel*>::const_iterator it = _channels.begin(); it !=_channels.end(); ++it)
-	{
-		if (it->second->isMember(const_cast<Client*>(client)))
-			result.push_back(it->second);
-	}
-	return result;
-}*/
 
-/*void Server::_removeClient(Client *client)
+/*PRIVATE:*/
+/* Setters, Getters and private functions to manage available slot list */
+int	Server::_getFirstSlot( void )
 {
-	//remove from all channels
-	for (std::map<std::string, Channel *>::iterator it = _channels.begin(); it != _channels.end(); ++it)
-		it->second->removeMember(client);
-
-	//remove from connections map
-	for (std::map<int, Client*>::iterator it = _connections.begin(); it != _connections.end(); ++it)
+	for (int i = 0; i < MAX_CONNECTIONS; i++)
 	{
-		if (it->second == client)
+		if (this->_slots[i] == false)
 		{
-			_connections.erase(it);
-			break;
+			this->_slots[i] = true;
+			return i;
 		}
 	}
-	delete client; //check if it doesn't cause segfault/double free
-}*/
+	//if max connections is reached?
+	return (-1);
+}
 
-std::string Server::_trim (const std::string &str) 
+void	Server::_setFreeSlot( const int i )
 {
-	const std::string WHITESPACE = " \n\r\t\f\v";
-	size_t start = str.find_first_not_of(WHITESPACE);
-	if (start == std::string::npos)
-		return "";
-	size_t end = str.find_last_not_of(WHITESPACE);
-	return str.substr(start, end - start + 1);
+	this->_slots[i] = false;
+	//if i > max connections?
+}
+
+void	Server::_setBusySlot( const int i)
+{
+	this->_slots[i] = true;
+	//if i > max connections?
+}
+
+void	Server::_setChanPrefix( void )
+{
+	std::string	str;
+
+	str = getSetting("STATUSMSG");
+	_chantags.clear();
+	if (str.empty() == true)
+		return;	
+	for (size_t i = 0; i < str.size();i++)
+		_chantags.push_back(str[i]);
+}
+
+void Server::_parseMaxtargets()
+{
+	char *endptr;
+	long lenLong = strtol(Server::getSetting("MAXTARGETS").c_str(), &endptr, 10);
+	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	{
+		std::cout << "Error! Maxtargets limit given in irc_config is not a valid number!" << std::endl
+				  << "Setting unlimited number of targets." << std::endl;
+		_maxtargets = 0;
+		return;
+	}
+	_maxtargets = static_cast<size_t>(lenLong);
+}
+
+static size_t strToSizeT( const std::string& str )
+{
+	char *endptr;
+	long valueLong = strtol(str.c_str(), &endptr, 10);
+	if (*endptr != '\0' || valueLong < 1 || valueLong > INT_MAX)
+		return 0;
+	return static_cast<size_t>(valueLong);
+}
+
+void Server::_parseTargmax()
+{
+	_targmaxDefault = _maxtargets; // default to server-wide max targets
+
+	const std::string targmaxSetting = getSetting("TARGMAX");
+	if (targmaxSetting.empty())
+		return;
+
+	std::vector<std::string> entries = split(targmaxSetting, ',');
+	for (std::vector<std::string>::iterator it = entries.begin(); it != entries.end(); ++it)
+	{
+		std::string entry = trimstr(*it);
+		size_t colonPos = entry.find(':');
+		if (colonPos == std::string::npos)
+			continue; // malformed entry, skip
+
+		std::string cmd = trimstr(entry.substr(0, colonPos));
+		std::string valueStr = trimstr(entry.substr(colonPos + 1));
+
+		size_t value = strToSizeT(valueStr);
+		if (value == 0)
+		{
+			std::cout << "Error! Targmax value for command " << cmd << " is not a valid number!" << std::endl
+					  << "Skipping this entry." << std::endl;
+			continue;
+		}
+		_targmaxPerCommand[cmd] = value;
+	}
+}
+
+// Wrapper that uses utils::casefold according to ISUPPORT CASEMAPPING
+std::string Server::_casefoldNick(const std::string& s) const
+{
+	const CaseMapping cm = parseCaseMapping(getSetting("CASEMAPPING"));
+	return casefold(s, cm);
 }

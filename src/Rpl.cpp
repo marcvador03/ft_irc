@@ -3,25 +3,62 @@
 /*                                                        :::      ::::::::   */
 /*   Rpl.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/10/06 15:04:25 by mfleury          ###   ########.fr       */
+=======
+/*   Updated: 2025/10/14 13:08:18 by mfleury          ###   ########.fr       */
+>>>>>>> fe18696f771d42addfe4da3e34a226d73f515bec
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
 
-/*RPL_AWAY*/
-void	Client::rpl_Away( void )
+/*RPL_AWAY 301*/
+void	Client::rpl_Away( const std::string &nick )
+{
+	Reply	rpl(*this);
+
+	if (_server->getClient(nick).getAwayStatus() == false)
+		return;
+	rpl.list(_nickname);
+	rpl.list(nick);
+	rpl.list(_server->getClient(nick).getAwayMsg());
+	rpl.ship(301);
+	return ;
+}
+
+/*305*/
+void	Client::rpl_Unaway( void )
 {
 	Reply	rpl(*this);
 
 	rpl.list(_nickname);
+<<<<<<< HEAD
 	rpl.list(_nickname);
 	//client away message string
 	rpl.ship(301);
 	return ;
+=======
+	rpl.list("You are no longer marked as being away");	
+	rpl.ship(305);
+
+	return;
+}
+
+/*306*/
+void	Client::rpl_NowAway( void )
+{
+	Reply	rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list("You have been marked as being away");	
+	rpl.ship(306);
+
+	return;
+>>>>>>> fe18696f771d42addfe4da3e34a226d73f515bec
 }
 
 /*RPL_NAMES_REPLY*/
@@ -241,5 +278,190 @@ void	Client::rpl_Topic( const std::string &chan )
 	rpl.list(_server->getChannel(chan)->getTopic());
 	rpl.ship(332);
 		
+	return;
+}
+
+void	Client::rpl_UnexpectedQuit( const std::string &msg )
+{
+	Reply	rpl(*this);
+
+	/*rpl.list("ERROR");
+	rpl.list(msg);
+	rpl.ship();*/
+	rpl.list("QUIT");
+	rpl.list(msg);
+	rpl.ship();
+	
+	return;
+}
+
+
+/*352*/
+void	Client::rpl_WhoReply( const std::string &chan )
+{
+	Reply		rpl(*this);
+	std::string	str;
+
+	rpl.list(_nickname);
+	rpl.list(chan);
+	rpl.list(_username);
+	rpl.list(_host);
+	rpl.list(getServername());
+	rpl.list(_nickname);
+	if (_away == false)
+		str = "H";
+	else
+		str = "G";
+	if (_server->isChannelExist(chan) == true && _server->getChannel(chan)->isOperator(*this) == true)
+		str += "*";
+	rpl.list(str);
+	rpl.list("0" + _realname);
+	rpl.ship(352);
+	return;
+}
+
+/*315*/
+void	Client::rpl_EndOfWho( const std::string &mask )
+{
+	Reply		rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(mask);
+	rpl.ship(315);
+	return ;
+}
+
+/*311*/
+void	Client::rpl_WhoIsUser( const std::string &nick )
+{
+	Reply		rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(nick);
+	rpl.list(_server->getClient(nick).getUser());
+	rpl.list(_server->getClient(nick).getHost());
+	rpl.list("*");
+	rpl.list(_server->getClient(nick).getRealname());
+	rpl.ship(311);	
+	
+	return;
+}
+
+/*312*/
+void	Client::rpl_WhoIsServer( const std::string &nick )
+{
+	Reply		rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list(nick);
+	rpl.list(getServername());
+	rpl.list("FT_IRC server");
+	rpl.ship(312);
+	
+	return;
+}
+
+/*319*/
+void	Client::rpl_WhoIsChannels( const std::string &nick )
+{
+	Reply								rpl(*this);
+	std::vector<Channel *>::iterator	it;
+	std::vector<Channel *>				chan_list;
+
+	chan_list = _server->getChannelsforClient(_server->getClient(nick));
+	if (chan_list.empty() == true)
+		return;
+	rpl.list(_nickname);
+	rpl.list(nick);
+	for (it = chan_list.begin(); it != chan_list.end(); it++)
+	{
+		if ((*it)->isOperator(_server->getClient(nick)) == true)
+			rpl.list("@" + (*it)->getName());
+		else
+			rpl.list((*it)->getName());
+	}
+	rpl.ship(319);
+	
+	return;
+}
+
+/*338*/
+void	Client::rpl_WhoIsActually( const std::string &nick )
+{
+	Reply		rpl(*this);
+
+	rpl.list(_nickname);
+	rpl.list(nick);
+	rpl.list(_username + "@" + _host);
+	rpl.list("is actually using host");
+	rpl.ship(338);
+	
+	return;
+}
+
+/*378*/
+void	Client::rpl_WhoIsHost( const std::string &nick )
+{
+	Reply		rpl(*this);
+	rpl.list(_nickname);
+	rpl.list(nick);
+	rpl.list("is connecting from " + _host);
+	rpl.ship(378);
+	
+	return;
+}
+
+/*318*/
+void	Client::rpl_EndofWhoIs( const std::string &nick )
+{
+	Reply		rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list(nick);
+	rpl.list("End of /WHOIS list");
+	rpl.ship(318);
+
+	return;
+}
+
+/*321*/
+void	Client::rpl_ListStart( void )
+{
+	Reply		rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list("Channel :Users Name");
+	rpl.ship(321);
+	
+	return;
+}
+
+/*322*/
+void	Client::rpl_List( Channel & chan)
+{
+	Reply		rpl(*this);
+	std::map<int, Client *> list;
+	std::ostringstream	ss;
+	
+	rpl.list(_nickname);
+	rpl.list(chan.getName());
+	list = chan.getAllClients();
+	ss << list.size();
+	rpl.list(ss.str());
+	rpl.list(chan.getTopic());
+	rpl.ship(322);
+	
+	return;
+}
+
+/*323*/
+void	Client::rpl_ListEnd( void )
+{
+	Reply		rpl(*this);
+	
+	rpl.list(_nickname);
+	rpl.list("End of /LIST");
+	rpl.ship(323);
+	
 	return;
 }

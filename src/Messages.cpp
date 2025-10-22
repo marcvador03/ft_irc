@@ -6,7 +6,7 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 13:40:24 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/14 12:50:24 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ void Client::handlePrivMsg( t_arg args )
 			case 0:
 			{
 				Reply	privmsg(*this, _nickname, _server->getClient(args[1]));
-				if (_away == true)
-					rpl_Away();
+				if (_server->getClient(args[1]).getAwayStatus() == true)
+					rpl_Away(args[1]);
 				privmsg.list("PRIVMSG");
 				privmsg.list(args[1]);
 				privmsg.list(args[2]);

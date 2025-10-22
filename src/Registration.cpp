@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Registration.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/01 17:43:26 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/13 16:48:32 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
+#include "../inc/Server.hpp"
 
 /*NICK*/
 void Client::handleNick( t_arg args ) 
@@ -23,27 +24,28 @@ void Client::handleNick( t_arg args )
 			err_NoNicknameGiven();
 			break;
 		case 432:
-			err_ErroneusNickname(args[1]);
+			err_ErroneousNickname(args[1]);
 			break;
 		case 433:
 			err_NicknameInUse(args[1]);
 			break;
-		case 1:
-			nick.list(args[0]);
-			nick.list(args[1]);
-			nick.ship();
-			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
+		case 1://first time registration of nickname on server
+			//nick.list(args[0]);
+			//nick.list(args[1]);
+			//nick.ship();
+			//std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
 			rpl_Welcome();
 			rpl_YourHost();
 			rpl_Created();
 			rpl_MyInfo();
 			rpl_ISupport();
 			break;
-		case 0:
+		case 0: //nickname change after registration
 			nick.list(args[0]);
 			nick.list(args[1]);
 			nick.ship();
 			std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
+			break;
 	}
 	return;
 }
@@ -67,18 +69,41 @@ void Client::handleUser( t_arg args )
 			break;
 		case 0:
 			std::cout << "Username and Realname changed" << std::endl;
+			break;
 	}
 	return;
 }
 
 /*PASS*/
-void Client::handlePass( t_arg args ) 
+void Client::handlePass(t_arg args)
 {
-	Reply	pass(*this);
-	
-	switch (registerPass(args[1])) {
-		case 461:
-			err_NeedMoreParameters(args[0]);
+	// Expected layout: args[0] = "PASS", args[1] = <password>
+	// Problems you saw (no reply on just "PASS") usually come from:
+	// 1. args.size() == 1 so we return early, but err_NeedMoreParameters got a lowercase "pass"
+	//    (if your err_* helpers normalize/lookup on uppercase it may silently fail).
+	// 2. Or you sometimes even get args.size() == 0 (parser stripped the command), so args[0] was never valid.
+	//
+	// Fix: always pass the canonical uppercase "PASS" to the error helper and guard before indexing args[1].
+
+	// Already registered? (RFC: PASS must be sent before registration completes)
+	if (isRegistered())
+	{
+		err_AlreadyRegistered();
+		return;
+	}
+
+	// Not enough parameters (need the password token)
+	if (args.size() < 2 || args[1].empty())
+	{
+		err_NeedMoreParameters("PASS");
+		return;
+	}
+
+	// Now we have a candidate password
+	switch (registerPass(args[1]))
+	{
+		case 461: // (Should not happen anymore; we handled missing param above)
+			err_NeedMoreParameters("PASS");
 			break;
 		case 462:
 			err_AlreadyRegistered();
@@ -88,19 +113,38 @@ void Client::handlePass( t_arg args )
 			break;
 		case 0:
 			std::cout << "Password accepted" << std::endl;
+			break;
+		default:
+			// Unknown return code: optional debug
+			std::cerr << "registerPass() returned unexpected code\n";
+			break;
 	}
-	return;
 }
 
+/*QUIT*/
 void Client::handleQuit( t_arg args ) 
 {
 	Reply	quit(*this, _nickname, 's', 'n');
-	std::string reason = (args.size() > 1) ? args[1] : "";
+	std::string reason;
+	if (args.size() > 1)
+		reason = args[1];
+	//if more reasons print all
+	for (size_t i = 2; i < args.size(); ++i) {
+		if (!reason.empty())
+			reason += " ";
+		reason += args[i];
+	}
+
+	//strip leading ':'
+	if (!reason.empty() && reason[0] == ':')
+		reason.erase(0, 1);
 	
+	if (reason.empty())
+		reason = "Client Quit";
+
 	leaveAllChannels();
 	quit.list("QUIT");
-	quit.list("Quit: " + args[1]);
+	quit.list(":" + reason);
 	quit.ship();
 	_server->removeClient(this);
-	return;
 }

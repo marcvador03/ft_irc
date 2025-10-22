@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:13:42 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/06 15:00:02 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:02:59 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,12 @@
  */
 
 class Client;
+class Server;
 
 class Channel {
 	public:
 		/* Coplien form */	
-		Channel ( const std::string name, Client & );
+		Channel ( Server *s, const std::string &name, Client &);
 		~Channel ( void );
 
 		/*Getters and setters */
@@ -44,7 +45,7 @@ class Channel {
 		bool isMember( Client & );
 		
 		//key (password) related
-		int				setKey(const std::string &key);
+		int				setKey(const std::string &key, const bool only_check);
 		void			unsetKey( void );
 		bool 			checkKey(const std::string &key) const;
 		bool 			hasKey(void) const;
@@ -86,6 +87,8 @@ class Channel {
 		/* Coplien form - unauthorized constructors */	
 		Channel ( const Channel &other );
 		Channel &operator-( const Channel &other );
+		
+		Server		*_server;
 		
 		std::map <int, Client *>	_clients;
 		std::map <int, Client *>	_operators;	

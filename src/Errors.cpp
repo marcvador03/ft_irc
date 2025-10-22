@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Errors.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
+/*   By: milosz <milosz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:31:02 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/02 14:19:58 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/10 17:52:31 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,9 @@ void	Client::err_InviteOnlyChan( const std::string &chan )
 
 void	Client::err_BadChanMask( const std::string &chan )
 {
-	Reply	err(*this);
+	Reply	err(*this, _nickname);
 
-	err.list(_nickname);
+	//err.list(_nickname);
 	err.list(chan);
 	err.list("Bad channel mask");
 	err.ship(476);
@@ -93,9 +93,9 @@ void	Client::err_BadChanMask( const std::string &chan )
 
 void	Client::err_notOnChannel( const std::string &chan ) 
 {
-	Reply	err(*this);
+	Reply	err(*this, _nickname);
 
-	err.list(_nickname);
+	//err.list(_nickname);
 	err.list(chan);
 	err.list("You're not on that channel");
 	err.ship(442);
@@ -104,9 +104,9 @@ void	Client::err_notOnChannel( const std::string &chan )
 
 void	Client::err_noTextToSend( void )
 {
-	Reply	err(*this);
+	Reply	err(*this, _nickname);
 
-	err.list(_nickname);
+	//err.list(_nickname);
 	err.list("No text to send");
 	err.ship(412);
 	return ;
@@ -152,6 +152,21 @@ void	Client::err_InvalidModeParam( Channel &chan, const std::string &key, const 
 {
 	Reply	err(*this);
 	
+	err.list(_nickname);
+	err.list(chan.getName());
+	err.list(key);
+	err.list(param);
+	err.list(msg);
+	err.ship(696);
+	return ;
+}
+
+/*696 overload*/
+void	Client::err_InvalidModeParam( Channel &chan, const char key, const std::string &param, const std::string &msg )
+{
+	Reply	err(*this);
+	
+	err.list(_nickname);
 	err.list(chan.getName());
 	err.list(key);
 	err.list(param);
@@ -182,12 +197,12 @@ void	Client::err_NoNicknameGiven( void )
 }
 
 /*432*/
-void	Client::err_ErroneusNickname( const std::string &nick )
+void	Client::err_ErroneousNickname( const std::string &nick )
 {
 	Reply	err(*this);
 	
 	err.list(nick);
-	err.list("Erroneus nickname");
+	err.list("Erroneous nickname");
 	err.ship(432);
 	return;
 }
@@ -225,13 +240,27 @@ void	Client::err_PasswdMismatch ( void )
 }
 
 /*443*/
-void	Client::err_UserOnChannel( const std::string &chan ) 
+void	Client::err_UserOnChannel( const std::string &nick, const std::string &chan ) 
+{
+	Reply	err(*this, _nickname);
+
+	//err.list(_nickname);
+	err.list(nick);
+	err.list(chan);
+	err.list("is already on channel");
+	err.ship(443);
+	return ;
+}
+
+/*441*/
+void	Client::err_UserNotInChannel( const std::string &nick, const std::string &chan ) 
 {
 	Reply	err(*this);
 
 	err.list(_nickname);
+	err.list(nick);
 	err.list(chan);
-	err.list(":is already on channel");
+	err.list("They aren't on that channel");
 	err.ship(443);
 	return ;
 }

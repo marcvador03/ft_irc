@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/22 14:20:38 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:44:32 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,9 +330,10 @@ size_t Server::getTargmax(const std::string &cmd) const
 
 int Server::getLen(const std::string key, const std::string keyFullName, int stdLen) const
 {
-	char *endptr;
-	long lenLong = strtol(Server::getSetting(key).c_str(), &endptr, 10);
-	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	long lenLong;
+	std::istringstream(Server::getSetting(key)) >> lenLong;
+	
+	if (lenLong < 1 || lenLong > INT_MAX)
 	{
 		std::cout << "Error! " << keyFullName << " lenght limit given in irc_config is not a valid number!" << std::endl
 				  << "Setting standard value of " << stdLen << " characters." << std::endl;
@@ -533,9 +534,11 @@ void	Server::_setChanPrefix( void )
 
 void Server::_parseMaxtargets()
 {
-	char *endptr;
-	long lenLong = strtol(Server::getSetting("MAXTARGETS").c_str(), &endptr, 10);
-	if (*endptr != '\0' || lenLong < 1 || lenLong > INT_MAX)
+	long lenLong;
+	std::istringstream(Server::getSetting("MAXTARGETS")) >> lenLong;
+
+	//long lenLong = strtol(Server::getSetting("MAXTARGETS").c_str(), &endptr, 10);
+	if (lenLong < 1 || lenLong > INT_MAX)
 	{
 		std::cout << "Error! Maxtargets limit given in irc_config is not a valid number!" << std::endl
 				  << "Setting unlimited number of targets." << std::endl;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.hpp                                          :+:      :+:    :+:   */
+/*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:14:20 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/15 17:29:28 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:25:41 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,6 @@ StringT casefold(const StringT &s, CaseMapping cm)
 	}
 	return out;
 }
-
-/*template<typename T>
-void	log(T input)
-{
-	std::cout << "\033[0;36m" << input << "\033[0;37m "<< std::endl; 
-};*/
 
 template<typename T> 
 std::vector<T>	split(const T &input, char delimiter)

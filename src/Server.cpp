@@ -6,12 +6,12 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/20 19:43:49 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:20:38 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Server.hpp"
-#include "../inc/utils.hpp"
+#include "../inc/Utils.hpp"
 #include <cctype> // for toupper
 #include <climits> // for INT_MAX
 

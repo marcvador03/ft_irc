@@ -34,6 +34,7 @@ CC = c++
 
 CFLAGS = -Wall -Werror -Wextra -MMD -MP -std=c++98
 CFLAGS += -g 
+CFLAGS += -fsanitize=address 
 #CFLAGS += -I $(INC_DIR)
 
 #LIB_NAMES :=

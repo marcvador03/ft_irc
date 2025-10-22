@@ -6,12 +6,12 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:41:55 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/22 14:10:34 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:20:51 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
-#include "../inc/utils.hpp"
+#include "../inc/Utils.hpp"
 
 /*JOIN*/
 void Client::handleJoin( t_arg args ) 

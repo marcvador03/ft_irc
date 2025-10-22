@@ -6,14 +6,13 @@
 /*   By: mfleury <mfleury@student.42barcelona.com>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 10:19:36 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/01 17:40:35 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:23:28 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REPLY_HPP
 # define REPLY_HPP
 # include <sys/socket.h>
-# include <bits/stdc++.h>
 # include "ft_irc.h"
 # include "Client.hpp"
 # include <utility>

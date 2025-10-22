@@ -6,12 +6,12 @@
 /*   By: mfleury <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:42:42 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 12:50:24 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:21:02 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Client.hpp"
-#include "../inc/utils.hpp"
+#include "../inc/Utils.hpp"
 
 /*PRIVMSG*/
 void Client::handlePrivMsg( t_arg args )

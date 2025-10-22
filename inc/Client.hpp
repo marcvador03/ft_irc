@@ -6,32 +6,18 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/22 14:05:08 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/22 14:25:08 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
-# include <sys/socket.h>
-# include <sys/types.h>
-# include <netdb.h>
-# include <netinet/in.h>
-# include <bits/stdc++.h>
-# include <vector>
 # include "ft_irc.h"
 # include "Channel.hpp"
 # include "Server.hpp"
 # include "Reply.hpp"
 
 #define REALNAME_LEN 50
-
-/*
-**`Client.hpp` / `Client.cpp`**  
-- Store client socket, nickname, username, operator status, etc.  
-- Track which channel(s) this client is in.  
-- Handle raw input parsing (buffering, partial messages).  
-- Implement commands like `NICK`, `USER`, `JOIN`, `PRIVMSG`.  
-*/
 
 class Channel;
 class Server;

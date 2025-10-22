@@ -6,35 +6,22 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/20 19:46:10 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:25:28 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
-# define PORT 6667
 # define MAX_CONNECTIONS 1000
-# include <ctime>
-# include <fstream>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <sys/types.h>
-# include <bits/stdc++.h>
 # include <sys/poll.h>
 # include "ft_irc.h"
 # include "Client.hpp"
 # include "Channel.hpp"
-#include "../inc/utils.hpp"
-
-/*
-**`Server.hpp` / `Server.cpp`**  
-- Initialize listening sockets (IPv4/IPv6).  
-- Store and manage all connected `Client` objects.  
-- Dispatch incoming data (commands) to the right handlers.  
-- Provide methods for channel creation/deletion.  
-*/
 
 class Client;
 class Channel;

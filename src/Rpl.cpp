@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/21 20:23:22 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/23 14:13:21 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,17 +283,17 @@ void	Client::rpl_UnexpectedQuit( const std::string &msg )
 
 
 /*352*/
-void	Client::rpl_WhoReply( const std::string &chan )
+void	Client::rpl_WhoReply( const Client &subject, const std::string &chan )
 {
 	Reply		rpl(*this);
 	std::string	str;
 
 	rpl.list(_nickname);
 	rpl.list(chan);
-	rpl.list(_username);
-	rpl.list(_host);
+	rpl.list(subject._username);
+	rpl.list(subject._host);
 	rpl.list(getServername());
-	rpl.list(_nickname);
+	rpl.list(subject._nickname);
 	if (_away == false)
 		str = "H";
 	else

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/23 14:44:11 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/23 14:50:40 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ class Client {
 		void	rpl_WhoIsUser( const std::string & );
 		void	rpl_WhoIsServer( const std::string & );
 		void	rpl_WhoIsChannels( const std::string & );
-		void	rpl_WhoIsActually( const std::string & );
 		void	rpl_WhoIsHost( const std::string & );
 		void	rpl_EndofWhoIs( const std::string & );
 		void	rpl_Away( const std::string & );
@@ -114,7 +113,6 @@ class Client {
 		void	rpl_ListStart( void );
 		void	rpl_List( Channel & );
 		void	rpl_ListEnd( void );
-			
 		void	rpl_UnexpectedQuit( const std::string & );
 
 		/*ERR functions */

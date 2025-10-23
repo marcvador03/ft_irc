@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 09:30:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/23 14:42:50 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/23 14:50:12 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ void	Client::handleWhoIs( t_arg args )
 	rpl_WhoIsUser(nick);
 	rpl_WhoIsServer(nick);
 	rpl_WhoIsChannels(nick);
-	if (nick == _nickname)
-		rpl_WhoIsActually(nick);
 	rpl_WhoIsHost(nick);
 	rpl_Away(nick);
 	rpl_EndofWhoIs(nick);

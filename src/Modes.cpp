@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:03:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/16 18:48:12 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/21 19:57:06 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ void Client::handleMode( t_arg args )
 	Channel	*chan;
 	
 	if (args.size() == 1)
-		err_noSuchChannel(args[1]);
+		err_NeedMoreParameters(args[0]);
 	else if (_server->isChannelExist(args[1]) == false)
 		err_noSuchChannel(args[1]);
 	else 
 	{
-		chan = _server->getChannel(args[1], *this);	
+		chan = _server->getChannel(args[1]); //lookup-only - safe because you checked isChannelExist before
 		if (args.size() == 2)
 		{
 			rpl_ChannelModeIs(*chan, args[1]);
@@ -75,7 +75,7 @@ int	Client::_construct_modestring(t_arg &args, t_list &string, Channel &chan)
 		std::string	sign (1, args[2][i - 1]);
 		if (sign != "-" && sign != "+")
 			return (err_InvalidModeParam(chan, "", "", "incorrect mode string, missing + or -"), -1);
-		for (; args[2][i] != '-' && args[2][i] != '+' && i < args[2].size(); i++)
+		for (; i < args[2].size() && args[2][i] != '-' && args[2][i] != '+'; i++)
 		{
 			if ((args[2][i] == 'l' || args[2][i] == 'k'))
 			{
@@ -95,6 +95,9 @@ int	Client::_construct_modestring(t_arg &args, t_list &string, Channel &chan)
 			{
 				if (j >= args.size() || _server->isClientExist(args[j]) == false)
 					return (err_InvalidModeParam(chan, "o", "", "missing or invalid target user"), -1);
+				//check if target user is member of the channel
+				else if (chan.isMember(_server->getClient(args[j])) == false)
+					return (err_UserNotInChannel(args[j], chan.getName()), -1);
 				else
 					string.insert(std::pair<std::string, std::string>(sign + args[2][i], args[j++]));
 			}

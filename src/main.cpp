@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 19:24:40 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/14 19:29:40 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/21 19:33:55 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ int	main ( int argc, char **argv )
 	signal(SIGINT, handle_signal);
 	try {
 		server.setPort(port);
-		//std::cout << "Server password set to: " << password << std::endl;
 		server.setSettings("irc_config");
 		server.launch();
 		server.listen_poll();

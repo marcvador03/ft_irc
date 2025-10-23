@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/23 14:16:08 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:43:46 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void Client::handleNick( t_arg args )
 		case 433:
 			err_NicknameInUse(args[1]);
 			break;
-		case 1://first time registration of nickname on server
+		case 1: //first time registration of nickname on server
 			rpl_Welcome();
 			rpl_YourHost();
 			rpl_Created();
@@ -74,12 +74,6 @@ void Client::handleUser( t_arg args )
 void Client::handlePass(t_arg args)
 {
 	// Expected layout: args[0] = "PASS", args[1] = <password>
-	// Problems you saw (no reply on just "PASS") usually come from:
-	// 1. args.size() == 1 so we return early, but err_NeedMoreParameters got a lowercase "pass"
-	//    (if your err_* helpers normalize/lookup on uppercase it may silently fail).
-	// 2. Or you sometimes even get args.size() == 0 (parser stripped the command), so args[0] was never valid.
-	//
-	// Fix: always pass the canonical uppercase "PASS" to the error helper and guard before indexing args[1].
 
 	// Already registered? (RFC: PASS must be sent before registration completes)
 	if (isRegistered())
@@ -98,7 +92,7 @@ void Client::handlePass(t_arg args)
 	// Now we have a candidate password
 	switch (registerPass(args[1]))
 	{
-		case 461: // (Should not happen anymore; we handled missing param above)
+		case 461: // 2nd check
 			err_NeedMoreParameters("PASS");
 			break;
 		case 462:
@@ -111,7 +105,6 @@ void Client::handlePass(t_arg args)
 			std::cout << "Password accepted" << std::endl;
 			break;
 		default:
-			// Unknown return code: optional debug
 			std::cerr << "registerPass() returned unexpected code\n";
 			break;
 	}

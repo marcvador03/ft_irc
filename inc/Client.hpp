@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/23 11:47:47 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:44:11 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ class Client {
 		int			setUser( std::string &, std::string &);
 		std::string	getUser( void ) const;
 		std::string	getRealname( void ) const;
-		//int			setRealname( std::string & );
 		int			registerPass( std::string &);
 		std::string	getHost( void ) const;
 		int			leaveChannel( std::string );
@@ -101,7 +100,7 @@ class Client {
 		void	rpl_noTopic( const std::string & );
 		void	rpl_Topic( const std::string &);
 		void	rpl_TopicAll( const std::string & );
-		void	rpl_WhoReply( const std::string & );
+		void	rpl_WhoReply( const Client &subject, const std::string & );
 		void	rpl_EndOfWho( const std::string & );
 		void	rpl_WhoIsUser( const std::string & );
 		void	rpl_WhoIsServer( const std::string & );
@@ -128,7 +127,7 @@ class Client {
 		void	err_BadChanMask( const std::string & );
 		void	err_notOnChannel( const std::string & );
 		void	err_noTextToSend( void );
-		void	err_noSuchNick( void );
+		void	err_noSuchNick( const std::string & );
 		void	err_UModeUnknownFlag( void );
 		void	err_ChanOPrivsNeeded( const std::string & );
 		void	err_InvalidModeParam( Channel &, const std::string &, const std::string &, const std::string & );

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:13:37 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/22 14:25:28 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:39:37 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,16 @@ class Server {
 		virtual ~Server( void );
 
 		/* Server launch sequences */
-		void	launch( void ); // initiate socket server and binds it to given port
-		void	listen_poll( void ); // sets the server in listening mode and keeps polling inputs
-		void	closefds( void ); // sweep function to properly close all sockets
+		void			launch( void ); // initiate socket server and binds it to given port
+		void			listen_poll( void ); // sets the server in listening mode and keeps polling inputs
+		void			closefds( void ); // sweep function to properly close all sockets
 	
-		static bool	signal;
-		t_arg 		args;
+		static bool		signal;
+		t_arg 			args;
 		
 		/* Method to receive bytes from client socket */
-		void	ReceiveInput(Client *);
-		void	LaunchCmd(Client *);
+		void			ReceiveInput(Client *);
+		void			LaunchCmd(Client *);
 
 		/*Getters & Setters */
 		int				getFd() const;	
@@ -50,41 +50,41 @@ class Server {
 		std::string		getLaunchTime() const;	
 		std::string		getVersion() const;
 		void			setPort(const int port);
-		
+
 		/*Settings getters & setters*/	
 		std::string		getSetting(const std::string) const;
 		t_settings		getSettings() const;	
 		void			setSettings(const char *);
-				
 		size_t			getChanLim() const;
 		size_t			getTargmax() const; // default TARGMAX
 		size_t			getTargmax(const std::string &cmd) const; //per-command TARGMAX
 		int				getLen(const std::string key, const std::string keyFullName, int stdLen) const;
 
 		/* Functions to add/remove clients within the list of connections */
-		void					addClient ( void );
-		void					removeClient ( const Client *client );
-		bool					isClientExist(const std::string &name);
-		std::map<int, Client *>	&getAllClients( void );
-		Client					&getClient ( const std::string & );
+		void			addClient ( void );
+		void			removeClient ( const Client *client );
+		bool			isClientExist(const std::string &name);
+		std::map<int, Client *>
+						&getAllClients( void );
+		Client			&getClient ( const std::string & );
 		
 		/* Management of nickname list on server */
-		bool 	InsertNick(const std::string &nick);
-		void 	removeNick(const std::string &nick);
+		bool		 	InsertNick(const std::string &nick);
+		void 			removeNick(const std::string &nick);
 		
 
 		/* Management of channel list on server */
-		bool	isChannelExist(const std::string &name);
-		Channel	*getChannel( const std::string &name, Client & );	
-		Channel	*getChannel( const std::string &name );	
+		bool			isChannelExist(const std::string &name);
+		Channel			*getChannel( const std::string &name, Client & );	
+		Channel			*getChannel( const std::string &name );	
 		std::map<std::string, Channel *>
-				getAllChannels( void );
+						getAllChannels( void );
 		std::vector<Channel *>
-				getChannelsforClient( Client & );
-		void	deleteChannel(Channel *);
+						getChannelsforClient( Client & );
+		void			deleteChannel(Channel *);
 		
 		/* Password check */
-		bool	checkPass(const std::string &) const;
+		bool			checkPass(const std::string &) const;
 		
 		public:
 			class ErrnoException: public std::exception {
@@ -103,9 +103,9 @@ class Server {
 		Server &operator-( const Server &other );
 
 		/* Internal functions to manage available slots in pollfd array struct */
-		int		_getFirstSlot( void );
-		void	_setFreeSlot( const int i );
-		void	_setBusySlot( const int i); // unused
+		int					_getFirstSlot( void );
+		void				_setFreeSlot( const int i );
+		void				_setBusySlot( const int i); // unused
 		
 		/* Server variables */
 		std::string			_name; //server name
@@ -115,10 +115,10 @@ class Server {
 		std::map<int, bool>	_slots; // list slots for pollfd and status false: free to accept new client true: occupied by a client
 		char				_launchtime[100];
 		std::string			_version;
-		
-		size_t							_maxtargets;
-		size_t			 				_targmaxDefault;
-		std::map<std::string, size_t>	_targmaxPerCommand;
+		size_t				_maxtargets;
+		size_t			 	_targmaxDefault;
+		std::map<std::string, size_t>
+							_targmaxPerCommand;
 	
 		/* Variables and methods related to Settings*/	
 		t_settings			_settings; //RPL_ISUPORT parameters

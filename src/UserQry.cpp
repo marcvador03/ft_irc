@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 09:30:03 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/23 14:14:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:42:50 by mpietrza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@ void	Client::handleWho( t_arg args )
 	std::map<int, Client *> 			cli;
 	std::map<int, Client *>::iterator	it;
 
+	//need a parameter
+	if (args.size() == 1)
+	{
+		err_NeedMoreParameters("WHO");
+		return ;
+	}
 	if (_server->isChannelExist(args[1]) == true)
 	{
 		chan = _server->getChannel(args[1]);
@@ -27,13 +33,16 @@ void	Client::handleWho( t_arg args )
 	else if (_server->isClientExist(args[1]))
 		cli.insert(std::make_pair<int, Client *>(0, &_server->getClient(args[1])));
 	else
+	{
+		rpl_EndOfWho(args[1]);
 		return;
+	}
 	for (it = cli.begin(); it != cli.end(); it++)
 	{
 		if (chan == NULL)
-			rpl_WhoReply("*");
+			rpl_WhoReply(*it->second, "*");
 		else
-			rpl_WhoReply(args[1]);	
+			rpl_WhoReply(*it->second, args[1]);	
 	}
 	rpl_EndOfWho(args[1]);
 	return ;
@@ -51,10 +60,12 @@ void	Client::handleWhoIs( t_arg args )
 	else
 		nick = args[1];
 	if (_server->isClientExist(nick) == false)
-		return (err_noSuchNick());
+		return (err_noSuchNick(nick));
 	rpl_WhoIsUser(nick);
 	rpl_WhoIsServer(nick);
 	rpl_WhoIsChannels(nick);
+	if (nick == _nickname)
+		rpl_WhoIsActually(nick);
 	rpl_WhoIsHost(nick);
 	rpl_Away(nick);
 	rpl_EndofWhoIs(nick);

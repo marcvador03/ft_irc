@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/22 15:57:47 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 10:46:35 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,9 @@ void	Server::ReceiveInput(Client *c)
 		throw Server::ErrnoException(); 
 	else if (bytes == 0)
 	{
-		delete this;
+		removeClient(c);
+		//delete c;
+		//delete this;
 		return;
 	}
 	else

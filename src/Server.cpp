@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:31:46 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/23 11:46:01 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:13:48 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <cctype> // for toupper
 #include <climits> // for INT_MAX
 
-Server::Server ( const std::string &servername, const std::string &pass ): // we will need to update default inputs with program argv!! <-done
+Server::Server ( const std::string &servername, const std::string &pass ):
 	_name(servername),
 	_password(pass),
 	_version("1.0")	
@@ -509,13 +509,11 @@ int	Server::_getFirstSlot( void )
 void	Server::_setFreeSlot( const int i )
 {
 	this->_slots[i] = false;
-	//if i > max connections?
 }
 
 void	Server::_setBusySlot( const int i)
 {
 	this->_slots[i] = true;
-	//if i > max connections?
 }
 
 void	Server::_setChanPrefix( void )

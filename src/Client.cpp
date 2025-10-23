@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:50:46 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/23 11:47:09 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:12:54 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ Client::Client (Server *s, int slot): //we will need to revisit all Server param
 	this->_clientfd = accept(_server->getFd(), (struct sockaddr *)&this->_client_addr, &this->_socklen);
 	if (this->_clientfd == -1)
 		throw Client::ErrnoException();
-	if(getsockname(_clientfd, (struct sockaddr *)&addr, &addr_len) == -1)
+	if (inet_ntop(AF_INET, &(addr.sin_addr), ip_addr, INET_ADDRSTRLEN) == NULL)
 		throw Client::ErrnoException();
-	_host = inet_ntop(AF_INET, &(addr.sin_addr), ip_addr, INET_ADDRSTRLEN);
+	_host = ip_addr;
 	std::cout << "Client connected" << std::endl;
 }
 

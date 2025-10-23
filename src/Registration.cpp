@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:44:16 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/13 16:48:32 by mpietrza         ###   ########.fr       */
+/*   Updated: 2025/10/23 14:16:08 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,6 @@ void Client::handleNick( t_arg args )
 			err_NicknameInUse(args[1]);
 			break;
 		case 1://first time registration of nickname on server
-			//nick.list(args[0]);
-			//nick.list(args[1]);
-			//nick.ship();
-			//std::cout << "Nickname changed from '" << oldNick << "' to '" << args[1] << "'." << std::endl;
 			rpl_Welcome();
 			rpl_YourHost();
 			rpl_Created();

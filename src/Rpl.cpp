@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:01:53 by mfleury           #+#    #+#             */
-/*   Updated: 2025/10/22 14:11:12 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:15:10 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ void	Client::rpl_CreationTime( const std::string &target )
 	Reply	rpl(*this);
 	
 	rpl.list(target);
-	//rpl.list(chan->getCreationTime());
 	rpl.ship(329);
 	return;
 }
@@ -160,7 +159,7 @@ void	Client::rpl_YourHost( void )
 {
 	Reply	rpl(*this);
 	
-	rpl.list(_nickname); // client is not nickname, to be checked
+	rpl.list(_nickname);
 	rpl.list("Your host is ");
 	rpl.list(getServername());
 	rpl.ship(2);
@@ -171,7 +170,7 @@ void	Client::rpl_Created( void )
 {
 	Reply	rpl(*this);
 	
-	rpl.list(getNickname()); // client is not nickname, to be checked
+	rpl.list(getNickname());
 	rpl.list("The server was created ");
 	rpl.list(getServerLaunchTime());
 	rpl.list(", running version ");
@@ -184,7 +183,7 @@ void	Client::rpl_MyInfo( void )
 {
 	Reply	rpl(*this);
 
-	rpl.list(getNickname()); // client is not nickname, to be checked
+	rpl.list(getNickname());
 	rpl.list(getServername());
 	rpl.list(getServerVersion());
 	rpl.list("o");
@@ -199,7 +198,7 @@ void	Client::rpl_ISupport( void )
 	t_settings	settings = getServerSettings();
 	for (size_t i = 0; i < settings.size(); i++)
 	{
-			rpl.list(getNickname()); // client is not nickname, to be checked
+			rpl.list(getNickname());
 			for (t_list::const_iterator it = settings[i].begin(); it != settings[i].end(); it++)	
 				rpl.list(it->first + "=" + it->second);
 			rpl.list("are supported by this server");
@@ -262,9 +261,6 @@ void	Client::rpl_UnexpectedQuit( const std::string &msg )
 {
 	Reply	rpl(*this);
 
-	/*rpl.list("ERROR");
-	rpl.list(msg);
-	rpl.ship();*/
 	rpl.list("QUIT");
 	rpl.list(msg);
 	rpl.ship();
@@ -362,20 +358,6 @@ void	Client::rpl_WhoIsChannels( const std::string &nick )
 	return;
 }
 
-/*338*/
-void	Client::rpl_WhoIsActually( const std::string &nick )
-{
-	Reply		rpl(*this);
-
-	rpl.list(_nickname);
-	rpl.list(nick);
-	rpl.list(_username + "@" + _host);
-	rpl.list("is actually using host");
-	rpl.ship(338);
-	
-	return;
-}
-
 /*378*/
 void	Client::rpl_WhoIsHost( const std::string &nick )
 {
@@ -439,6 +421,5 @@ void	Client::rpl_ListEnd( void )
 	rpl.list(_nickname);
 	rpl.list("End of /LIST");
 	rpl.ship(323);
-	
 	return;
 }

@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 18:14:20 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/22 14:25:41 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:17:59 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,20 +94,6 @@ std::string trimstr (const T &str)
 	return str.substr(start, end - start + 1);
 }
 
-
-/*template<typename U> 
-std::vector<std::string> split(U input, char delimiter)
-{
-	std::vector<std::string> tokens;
-	std::string token;
-	std::istringstream tokenStream(input);
-	
-	while (std::getline(tokenStream, token, delimiter)) {
-		if (!token.empty())
-			tokens.push_back(token);
-	}
-	return tokens;
-};*/
-std::string trim(const std::string &str);
+//std::string trim(const std::string &str);
 
 #endif

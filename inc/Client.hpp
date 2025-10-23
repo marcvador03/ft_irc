@@ -6,7 +6,7 @@
 /*   By: mpietrza <mpietrza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:20:44 by mpietrza          #+#    #+#             */
-/*   Updated: 2025/10/22 14:25:08 by mfleury          ###   ########.fr       */
+/*   Updated: 2025/10/23 11:47:47 by mfleury          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ class Client {
 		/* Setters & Getters */
 		int			getClientfd( void ) const;
 		int			getSlot( void ) const;
+		void		incrementBuffer( char buf[BUF_SIZE], int bytes);
+		std::string	readBuffer( void ) const;
+		std::string	getLineBuffer( void );
 		std::string	getServername( void ) const;
 		std::string	getServerLaunchTime( void ) const;
 		std::string	getServerVersion( void ) const;
@@ -171,6 +174,7 @@ class Client {
 		/* Internal variables for socket client management */
 		socklen_t			_socklen;
 		struct sockaddr_in	_client_addr;
+		std::string			_buffer;
 
 		/* Internal helpers */
 		void	_send(std::string &);

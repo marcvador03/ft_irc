@@ -1,8 +1,8 @@
 # ft_irc : IRC Server Implementation
 
 A **custom IRC (Internet Relay Chat) server** written in **C++98**, designed as a project for [School 42](https://www.42.fr/).
-This implementation adheres to the [RFC 1459](https://tools.ietf.org/html/rfc1459) and [RFC 2810-2813](https://tools.ietf.org/html/rfc2810) standards, supporting core IRC features like channels, user authentication, and basic commands.
-Developed in collaboration with Milosz Pietrzak.
+This implementation adheres to the [RFC 1459](https://tools.ietf.org/html/rfc1459) and [RFC 2810-2813](https://tools.ietf.org/html/rfc2810) standards, supporting core IRC features like channels, user authentication, and basic commands. Developed in collaboration with [Milosz Pietrzak](https://github.com/mpietrza).
+
 ---
 
 ## **Features**

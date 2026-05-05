@@ -136,7 +136,14 @@ ft_irc/
 
 ---
 
+## **License**
+
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
 ## **Acknowledgments**
 
 - Big thanks to my project companyon Milosz (https://github.com/mpietrza/mpietrza) !
 - Thanks to [École 42](https://www.42.fr/) for the project guidelines.
+- We tested AI to generate some functions, and we did not like it... Eventually it helped to generate this README :)
